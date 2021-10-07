@@ -1,0 +1,13 @@
+.home-screen {
+    display: grid;
+    height: 100%;
+
+    background-color: #f3f5f4;
+}
+
+.home-view-container {
+    display: grid;
+    height: 100%;
+
+    grid-template-rows: max-content auto;
+}

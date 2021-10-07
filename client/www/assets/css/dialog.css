@@ -1,0 +1,107 @@
+.dialog-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0.5, 0.5, 0.5, 0.5);
+}
+
+.dialog-view-container {
+    height: 100%;
+    width: 100%;
+
+    display: grid;
+}
+
+.dialog-view {
+    align-self: center;
+    justify-self: center;
+
+    max-width: 500px;
+    max-height: 600px;
+
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 40px 1fr 40px;
+    padding: 20px;
+    background-color: #fff;
+
+    border-radius: 5px;
+}
+
+.dialog-view .dialog-title {
+    grid-row: 1;
+
+    text-align: center;
+}
+
+.dialog-view .dialog-title h1 {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.dialog-view .tiny-dialog-field-caption {
+    font-size: 10px;
+    line-height: 10px;
+}
+
+.dialog-view .dialog-body {
+    grid-row: 2;
+}
+
+.dialog-view .dialog-buttons-container {
+    grid-row: 3;
+}
+
+.dialog-view .dialog-buttons-container .dialog-buttons {
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: 1fr 100px 0.75fr 100px 1fr;
+
+    height: 100%;
+}
+
+.dialog-view .dialog-buttons-container .dialog-buttons-dismiss-only {
+    grid-template-columns: 1fr 100px 1fr;
+}
+
+.dialog-view .dialog-buttons-container .btn {
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: 1fr;
+    height: 100%;
+
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.dialog-view .dialog-buttons-container .btn span {
+    grid-row: 1;
+    grid-column: 1;
+
+    align-self: center;
+    text-align: center;
+}
+
+.dialog-view .dialog-buttons-container .btn:nth-child(1) {
+    grid-column: 2;
+
+    border: solid 2px #ccc;
+    background-color: #fff;
+
+    color: #ccc;
+}
+
+.dialog-view .dialog-buttons-container .btn:nth-child(2) {
+    grid-column: 4;
+
+    background-color: #707070;
+    color: #ccc;
+}
+
+.dialog-view .dialog-buttons-container .btn:hover {
+    background-color: #000;
+    color: #fff;
+    border: none;
+}

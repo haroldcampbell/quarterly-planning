@@ -1,0 +1,15 @@
+# Specify filepatterns you want git to ignore.
+
+**/node_modules/**/*
+**/dist/**
+**/.env
+**/vendor
+app/desktop_app/server/server
+
+.DS_Store
+
+spikes/**
+
+server/server
+
+

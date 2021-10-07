@@ -1,0 +1,36 @@
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, shrink-to-fit=no"
+        />
+        <title>Quarterly Planning Assistant</title>
+
+        {{/*
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,400,700,900&display=swap" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Serif+Caption&display=swap" />
+        */}}
+
+        <link rel="stylesheet" href="/assets/css/site.css" />
+        <link rel="stylesheet" href="/assets/css/common.css" />
+
+        <link rel="stylesheet" href="/dist/js/main.css" />
+
+         <script>
+            if (location.host == "localhost:8083") {
+                document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] +
+                    ':35729/livereload.js?snipver=1"></' + 'script>')
+            }
+        </script>
+    </head>
+
+    <body>
+        <form id="csrf-auth-form">{{ .csrfField }}</form>
+        <section class="app"></section>
+        {{/* <script src="/assets/dist/gtap.js" type="module"></script> */}}
+        <script src="/dist/js/desktop_app.js" type="module"></script>
+    </body>
+</html>

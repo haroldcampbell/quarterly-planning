@@ -1,0 +1,20 @@
+.app {
+    height: 100%;
+}
+
+.view-container {
+    /* border: solid 1px red; */
+    /* margin: 10px; */
+}
+
+.drop-zone-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0, 203, 203, 0.5);
+    /* background-color: rgba(252, 203, 203, 0.5); */
+
+    z-index: 100000;
+}

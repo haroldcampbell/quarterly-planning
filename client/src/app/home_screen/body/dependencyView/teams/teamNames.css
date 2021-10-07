@@ -1,0 +1,42 @@
+.team-names-container-wrapper {
+    border-top: solid 1px #707070;
+    border-right: solid 1px #707070;
+    background-color: #fff;
+    height: 100%;
+    width: 249px;
+}
+
+.team-names-container {
+    text-align: center;
+
+    display: grid;
+    grid-auto-rows: 62px; /* 40px (height) + 10px x 2 (top/bottom padding) + 1px x 2 (borders)*/
+    grid-auto-flow: row;
+    row-gap: 2px;
+
+    justify-items: center;
+}
+
+.team-names-container li.team-name {
+    display: grid;
+    justify-items: center;
+    width: 100%;
+    padding: 10px 0px;
+}
+
+.team-names-container li.team-name div {
+    width: 200px;
+    border: solid 1px #707070;
+    height: 40px;
+    background-color: #fff;
+    line-height: 40px;
+}
+
+.team-names-container li.selected {
+    background-color: #eae7e7;
+}
+
+.team-names-container li.selected div {
+    background-color: #707070;
+    color: #f3f5f4;
+}

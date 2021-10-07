@@ -1,0 +1,138 @@
+body {
+    font-family: 'Open Sans', 'Roboto', 'PT Serif Caption', sans-serif;
+    font-size: 14px;
+    font-style: normal;
+    line-height: 1.8em;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    color: #34495D;
+    position: relative;
+
+    /* background-color: #f3f3f3; */
+  }
+
+  pre,
+  h1,
+  h2,
+  h3,
+  p,
+  ul,
+  li {
+    padding: 0;
+    margin: 0;
+  }
+
+
+  li {
+    list-style: none;
+  }
+
+  h1 {
+    font-family: "Roboto";
+    font-weight: 400;
+    font-size: 2.8em;
+    line-height: 1.4em;
+  }
+  h1 > strong{
+    font-family: "Roboto";
+    font-weight: 900;
+    font-size: 1.0em;
+    line-height: 1.4em;
+  }
+
+
+  h2 {
+    font-family: "Roboto";
+    font-weight: 900;
+    font-size: 2.0em;
+    line-height: 1.4em;
+  }
+
+  h3 {
+    font-family: "Roboto";
+    font-weight: 600;
+    font-size: 1.2em;
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  .large-text {
+    font-size: 1.2em;
+    font-weight: 300;
+  }
+
+  .regular-text,
+  .text {
+    font-size: 1em;
+    font-weight: 300;
+  }
+
+  .regular-text {
+    font-weight: 400;
+  }
+
+  .vis-thumb-overlay-title,
+  .vis-thumb-overlay-title a,
+  .bold-text {
+    font-family: "Roboto";
+    font-weight: 400;
+    font-size: 1em;
+  }
+
+
+  .vis-thumb-overlay-text,
+  .text-small {
+    font-size: 0.9em;
+    font-weight: 300;
+  }
+
+  .vis-thumb-info-title {
+    color:#404040;
+  }
+
+  .vis-thumb-info-text {
+    color:#404040;
+    font-weight: #959595;
+  }
+
+  .sec-footer {
+    position: relative;
+    background-color: #01131C;
+  }
+
+  .sec-footer .container {
+    padding: 0 20px;
+    display: grid;
+    grid-template-rows: 1em 2em 1em;
+  }
+
+  .sec-footer .item-1 {
+    grid-column: 1;
+    grid-row: 2;
+    text-align: left;
+    font-weight: 400;
+    color: #aaa;
+  }
+
+  .sec-footer .item-2 {
+    grid-column: 2;
+    grid-row: 2;
+    text-align: right;
+  }
+
+  .sec-footer a {
+    color: #fff;
+    text-decoration: none;
+    display: inline-block;
+    font-weight: 400;
+    margin-right: 20px;
+  }
+
+  .sec-footer a.comp-name {
+    color: #FB4742;
+  }
+

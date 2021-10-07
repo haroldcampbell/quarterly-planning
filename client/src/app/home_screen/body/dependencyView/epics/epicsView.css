@@ -1,0 +1,43 @@
+.epics-container-wrapper {
+    /* padding: 10px 0px; */
+    border-top: solid 1px transparent;
+    border-bottom: solid 1px #707070;
+
+    /* width: 100%; */
+    /* height: 64px; */
+    padding: 11px 0;
+    display: block;
+}
+
+.epics-container-wrapper:first-of-type {
+    border-top: none;
+}
+
+.epics-container {
+    display: block;
+    height: 40px;
+    padding: 0 20px;
+
+    white-space: nowrap;
+    /* background-color: red; */
+    /* width: 100%; */
+}
+
+.epics-container .epic-name {
+    display: inline-block;
+    border: solid 1px #707070;
+    height: 40px;
+    line-height: 40px;
+    border-radius: 10px;
+    margin-right: 25px;
+    background-color: #fff;
+}
+
+.epics-container .epic-name:last-of-type {
+    margin-right: 0;
+}
+
+.epics-container .epic-name div {
+    padding: 0 10px;
+    /* font-size: 10px; */
+}

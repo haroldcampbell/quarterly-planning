@@ -1,0 +1,59 @@
+.tab-view-container {
+    display: grid;
+    grid-template-rows: 30px 1fr;
+}
+
+.tab-view-tab-buttons-container {
+    grid-row: 1;
+    align-self: center;
+    height: 30px;
+}
+.tab-view-tab-buttons-container .tab-item-button {
+    height: 100%;
+    padding: 0 10px;
+    margin-right: 2px;
+    border-radius: 2px 2px 0 0;
+    border-style: solid;
+    border-width: 1px;
+    border-bottom: none;
+
+    display: inline-block;
+    cursor: pointer;
+
+    background-color: #ccc;
+}
+
+.tab-view-tab-buttons-container .active-tab-item-button {
+    background-color: white;
+}
+
+.tab-view-tab-buttons-container
+    .tab-item-button
+    .tab-item-button-text-container {
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: 1fr;
+
+    height: 100%;
+}
+
+.tab-view-tab-buttons-container .tab-item-button .tab-button-text {
+    display: inline-block;
+    align-self: center;
+    grid-row: 1;
+    grid-column: 1;
+}
+
+.tab-view-body-container {
+    grid-row: 2;
+}
+
+.tab-view-body-container .tab-item-body {
+    height: 100%;
+
+    display: none;
+}
+
+.tab-view-body-container .active-tab-item-body {
+    display: block;
+}

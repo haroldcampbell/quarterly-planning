@@ -1,0 +1,5 @@
+.dependency-view-container {
+    height: 100%;
+    display: grid;
+    grid-template-columns: max-content auto;
+}

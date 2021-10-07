@@ -1,0 +1,14 @@
+github.com/golang/go v0.0.0-20211007034140-6f74ed06c5b0 h1:8wpVi/JPWuzQ91vThqRBOTLjct0Mkw9n1jUUk2aNhbA=
+github.com/golang/go/src v0.0.0-20211007034140-6f74ed06c5b0 h1:x2QpxD5FnFGa4LnO0noOW2/xSoMXS675kEmRMVjZ/SE=
+github.com/gorilla/csrf v1.7.1 h1:Ir3o2c1/Uzj6FBxMlAUB6SivgVMy1ONXwYgXn+/aHPE=
+github.com/gorilla/csrf v1.7.1/go.mod h1:+a/4tCmqhG6/w4oafeAZ9pEa3/NZOWYVbD9fV0FwIQA=
+github.com/gorilla/mux v1.8.0 h1:i40aqfkR1h2SlN9hojwV5ZA91wcXFOvkdNIeFDP5koI=
+github.com/gorilla/mux v1.8.0/go.mod h1:DVbg23sWSpFRCP0SfiEN6jmj59UnW/n46BH5rLB71So=
+github.com/gorilla/securecookie v1.1.1 h1:miw7JPhV+b/lAHSXz4qd/nN9jRiAFV5FwjeKyCS8BvQ=
+github.com/gorilla/securecookie v1.1.1/go.mod h1:ra0sb63/xPlUeL+yeDciTfxMRAA+MP+HVt/4epWDjd4=
+github.com/gorilla/websocket v1.4.2 h1:+/TMaTYc4QFitKJxsQ7Yye35DkWvkdLcvGKqM+x0Ufc=
+github.com/gorilla/websocket v1.4.2/go.mod h1:YR8l580nyteQvAITg2hZ9XVh4b55+EU/adAjf1fMHhE=
+github.com/haroldcampbell/go_utils v0.0.0-20210616030453-a32c65e31d69 h1:/TeJpXkAcuUm8azrw+PjZyvn0PNqr+QBHIxxYRPwWDY=
+github.com/haroldcampbell/go_utils v0.0.0-20210616030453-a32c65e31d69/go.mod h1:osvhXu8dBMQJ6hYDZtAvrElEItgGFcX7UQvWPzDdUB8=
+github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
+github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
