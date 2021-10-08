@@ -43,13 +43,14 @@ export class TeamEpicsViewController extends lib.BaseViewController {
     private ctx!: any; /** SVG Node */
     private epicDictionary = new Map<string, epicNode>();
     private epics: Epic[] = [];
+    private epicControllers: EpicsViewController[] = [];
 
     private lastRowIndex = 0;
+    private maxRowWidth = 0; /** Used to adjust the svg element size */
 
     initData(teamEpics?: TeamEpics[]) {
         const svgHostElm = gtap.$class("team-epics-scroll-container")[0];
         this.ctx = gtap.container(SVGContainerID, svgHostElm, "width: 200%; height:100%; position:absolute");
-
 
         teamEpics?.forEach((epics) => {
             this.initTeamEpics(epics)
@@ -61,8 +62,10 @@ export class TeamEpicsViewController extends lib.BaseViewController {
         let epicController = new EpicsViewController(this, this.ctx, this.lastRowIndex, epics);
 
         epicController.onEpicCreated = (epic, epicSvgNode) => { this.epicCreated(epic, epicSvgNode); }
-        epicController.onCompleted = (rowsCompleted) => { this.updatedRowsAdded(rowsCompleted); }
+        epicController.onCompleted = (rowsCompleted, maxXBounds) => { this.onEpicRowAdded(rowsCompleted, maxXBounds); }
         epicController.initController();
+
+        this.epicControllers.push(epicController);
 
         this.view.addView(epicController.view);
     }
@@ -79,19 +82,24 @@ export class TeamEpicsViewController extends lib.BaseViewController {
     }
 
     onTeamEpicsAdded() {
-
         this.epicDictionary.forEach((obj, key) => {
             if (obj.epic.Upstreams) {
                 this.wireUpstreams(key, obj.epic.Upstreams, obj.epicSvgNode);
             }
         })
 
-        // console.log(`onTeamEpicsAdded gtap.$id("team-epics-scroll-container")`, gtap.$class("team-epics-scroll-container")[0])
+        this.epicControllers.forEach((controller) => {
+            controller.updateViewWidth(this.maxRowWidth);
+        })
     }
 
     /** Updates the lastRowIndex with the number of rows added by the  epicController */
-    updatedRowsAdded(rowsAdded: number) {
+    onEpicRowAdded(rowsAdded: number, maxXBounds: number) {
         this.lastRowIndex += rowsAdded;
+        if (maxXBounds > this.maxRowWidth) {
+            this.maxRowWidth = maxXBounds;
+            this.ctx.domContainer.$style(`width:${this.maxRowWidth}px; height:100%;position:absolute;`);
+        }
     }
 
     wireUpstreams(sourceID: string, targetUpstreams: any[], sourceSVGNode: any) {
@@ -104,31 +112,26 @@ export class TeamEpicsViewController extends lib.BaseViewController {
 
             const target = this.epicDictionary.get(id);
             const startRect = target?.epicSvgNode.getBBox();
-            // epicSvgNodexxx.getClientRects();
             const endRect = sourceSVGNode.getBBox();
-            // const startRect = target?.node.getBoundingClientRect();
-            // const endRect = sourceNode.getBoundingClientRect();
 
-            // const bb = cxt.getBBox()
-            // console.log(startRect, "<-", endRect);
-            // const p = gtap.path(svgContainerID, `connection[${counter++}][${id}-${sourceID}]`);
+            const start = {
+                x: startRect?.x + startRect?.width,
+                y: startRect?.y + 20
+            }
 
-            // p.$appendCSS("connection")
-            // p.$path({ x: startRect?.x, y: startRect?.y }, { x: endRect.x, y: endRect.y }, true);
-            // target?.node
+            const end = {
+                x: endRect?.x,
+                y: endRect?.y + 20
+            }
 
-            const lID = `lconnection[${counter++}][${id}-${sourceID}]`
-            const l = gtap.line(SVGContainerID, lID, startRect?.x + startRect?.width, startRect?.y + 20, endRect.x, endRect.y + 20)
-            l.$appendCSS("connection");
+            const p = gtap.path(SVGContainerID, `connection[${counter++}][${id}-${sourceID}]`);
+            p.$path(start, end, true);
+            p.$appendCSS("connection");
+
+            // const lID = `lconnection[${counter++}][${id}-${sourceID}]`;
+            // const l = gtap.line(SVGContainerID, lID, start, end);
+            // l.$appendCSS("connection");
         })
     }
-
-    // initView() {
-    //     super.initView();
-    //     this.view.viewContent()
-
-    //     // console.log(`gtap.$id("team-epics-scroll-container")`, gtap.$class("team-epics-scroll-container")[0])
-
-    // }
 }
 
