@@ -35,3 +35,10 @@
 .epics-container .epic-name div {
     padding: 0 10px;
 }
+
+svg rect.epic {
+    fill: #fff;
+    stroke: #707070;
+    stroke-width: 1px;
+    border-radius: 10px;
+}

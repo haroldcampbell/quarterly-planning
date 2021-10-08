@@ -1,7 +1,7 @@
 export type Epic = {
-    ID: any;
+    ID: string;
     Name: string;
-    Upstreams?: any[];
+    Upstreams?: string[];
 }
 
 export type Team = {
@@ -12,3 +12,5 @@ export type TeamEpics = {
     Team: Team;
     Epics: Epic[];
 }
+
+export const SVGContainerID = "dependency-connections";

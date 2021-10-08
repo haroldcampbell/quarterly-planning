@@ -4,6 +4,15 @@
 }
 
 .team-epics-scroll-container {
+    position: relative;
     overflow-x: scroll;
     display: grid;
+}
+
+#dependency-connections {
+}
+
+#dependency-connections .connection {
+    stroke: #fe89b7;
+    fill: none;
 }
