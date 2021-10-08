@@ -3,9 +3,24 @@
     height: 100%;
 
     background-color: #f3f5f4;
+    grid-template-columns: auto max-content;
 }
 
-.home-view-container {
+/** Container for the main on-screen elements*/
+.screen-main-panel-container {
+    display: grid;
+    height: 100%;
+
+    background-color: #f3f5f4;
+}
+
+/** Container for the selected epic, etc.*/
+.screen-details-panel-container {
+    display: grid;
+    height: 100%;
+}
+
+.screen-main-panel-container .home-view-container {
     display: grid;
     height: 100%;
 

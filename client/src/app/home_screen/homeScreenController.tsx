@@ -6,12 +6,11 @@ import * as lib from "../../core/lib";
 import "./homeScreen.css"
 import { ScreenNavController } from "./nav/screenNavController";
 import { BodyController } from "./body/bodyController";
+import { SelectedEpicDetailsController } from "./selectedEpicDetails/SelectedEpicDetailsController";
 
-class Screen extends lib.BaseScreen {
-    private content = (<div className='home-screen' />);
-
-    screenContent() {
-        return this.content;
+class MainPanelView extends lib.BaseView {
+    viewContent() {
+        return <div className='screen-main-panel-container' />;
     }
 
     loadSubviews(viewContent: any) {
@@ -30,18 +29,56 @@ class Screen extends lib.BaseScreen {
     }
 }
 
+class DetailsPanelView extends lib.BaseView {
+    viewContent() {
+        return <div className='screen-details-panel-container' />;
+    }
+
+    loadSubviews(viewContent: any) {
+        this.views.forEach((v) => {
+            const vContent = v.viewContent();
+
+            v.loadSubviews(vContent);
+            viewContent.appendChild(vContent);
+        });
+    }
+}
+
+class HomeScreen extends lib.BaseScreen {
+    screenContent() {
+        return <div className='home-screen' />;
+    }
+
+    loadSubviews(viewContent: any) {
+        this.views.forEach((v) => {
+            const vContent = v.viewContent();
+
+            v.loadSubviews(vContent);
+            viewContent.appendChild(vContent);
+        });
+    }
+}
+
 export class HomeScreenController extends lib.BaseScreenController {
-    protected _screen: lib.IScreen = new Screen(this);
+    protected _screen: lib.IScreen = new HomeScreen(this);
 
     private screenNavController = new ScreenNavController(this);
     private bodyController = new BodyController(this);
+    private selectedEpicDetails = new SelectedEpicDetailsController(this);
 
     initScreen() {
+        const mainPanelView = new MainPanelView(this)
+        const detailsPanelView = new DetailsPanelView(this)
+
         this.screenNavController.initController();
         this.bodyController.initController();
+        mainPanelView.addView(this.screenNavController.view);
+        mainPanelView.addView(this.bodyController.view);
+        this._screen.addView(mainPanelView);
 
-        this._screen.addView(this.screenNavController.view);
-        this._screen.addView(this.bodyController.view);
+        this.selectedEpicDetails.initController();
+        detailsPanelView.addView(this.selectedEpicDetails.view);
+        this._screen.addView(detailsPanelView);
 
         super.initScreen();
     }
