@@ -29,10 +29,7 @@ class EpicsView extends lib.BaseView {
         this.content.style.width = `${width}px`;
     }
 
-    addEpic(svgCtx: any, lastRowIndex: number, epic: Epic): any {
-        // let elm = <div>{epic.Name}</div>;
-        // this.epicNames.appendChild(<li className="epic-name">{elm}</li>);
-
+    addEpic(lastRowIndex: number, epic: Epic): any {
         const x = this.xOffset
         const y = 12 + lastRowIndex * 64;
         const r = gtap.rect(SVGContainerID)
@@ -43,13 +40,17 @@ class EpicsView extends lib.BaseView {
         r.$height(shapeHeight);
         r.$rxy(shapeEornerRadius);
 
+        r.onclick = () => {
+            console.log("xxx howdy from: ", epic)
+        }
+
         const t = gtap.text(SVGContainerID);
+        t.$class("epic-name")
         t.$xy(x + 10, y + 25);
         t.$text(epic.Name);
 
         const textWidth = t.$textBoundingBox().width + 20;
         const width = textWidth < 40 ? 40 : textWidth;
-        console.log(`epic name ${epic.Name} size: ${t.$textBoundingBox().width}`)
 
         r.$width(width);
 
@@ -62,17 +63,15 @@ class EpicsView extends lib.BaseView {
 export class EpicsViewController extends lib.BaseViewController {
     protected _view: lib.IView = new EpicsView(this);
 
-    private svgCtx: any;
     private lastRowIndex: number;
     private teamEpics: TeamEpics;
 
     public onEpicCreated?: (epic: Epic, epicSvgNode: any) => void;
     public onCompleted?: (rowsCreated: number, maxXBounds: number) => void;
 
-    constructor(parentController: IViewController | IScreenController, svgCtx: any, lastRowIndex: number, epics: TeamEpics) {
+    constructor(parentController: IViewController | IScreenController, lastRowIndex: number, epics: TeamEpics) {
         super(parentController);
 
-        this.svgCtx = svgCtx;
         this.teamEpics = epics;
         this.lastRowIndex = lastRowIndex;
     }
@@ -82,7 +81,7 @@ export class EpicsViewController extends lib.BaseViewController {
         let maxXBounds = 0;
 
         this.teamEpics.Epics.forEach((e) => {
-            const svgNode = epicsView.addEpic(this.svgCtx, this.lastRowIndex, e);
+            const svgNode = epicsView.addEpic(this.lastRowIndex, e);
             const xbounds = svgNode.$x() + svgNode.$width() + rowPadding;
             maxXBounds = xbounds > maxXBounds ? xbounds : maxXBounds;
             this.onEpicCreated?.(e, svgNode);

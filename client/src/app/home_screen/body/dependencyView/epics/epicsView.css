@@ -18,27 +18,13 @@
     white-space: nowrap;
 }
 
-.epics-container .epic-name {
-    display: inline-block;
-    border: solid 1px #707070;
-    height: 40px;
-    line-height: 40px;
-    border-radius: 10px;
-    margin-right: 25px;
-    background-color: #fff;
-}
-
-.epics-container .epic-name:last-of-type {
-    margin-right: 0;
-}
-
-.epics-container .epic-name div {
-    padding: 0 10px;
-}
-
 svg rect.epic {
     fill: #fff;
     stroke: #707070;
     stroke-width: 1px;
     border-radius: 10px;
+}
+
+svg text.epic-name {
+    pointer-events: none;
 }

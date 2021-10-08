@@ -59,7 +59,7 @@ export class TeamEpicsViewController extends lib.BaseViewController {
     }
 
     initTeamEpics(epics: TeamEpics) {
-        let epicController = new EpicsViewController(this, this.ctx, this.lastRowIndex, epics);
+        let epicController = new EpicsViewController(this, this.lastRowIndex, epics);
 
         epicController.onEpicCreated = (epic, epicSvgNode) => { this.epicCreated(epic, epicSvgNode); }
         epicController.onCompleted = (rowsCompleted, maxXBounds) => { this.onEpicRowAdded(rowsCompleted, maxXBounds); }
