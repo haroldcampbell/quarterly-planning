@@ -32,7 +32,7 @@ export class TeamsNamesViewController extends lib.BaseViewController {
 
     private teams?: Team[];
 
-    initData(teams?: Team[], teamEpics?: TeamEpics[]) {
+    initData(teams?: Team[]) {
         this.teams = teams;
 
         let teamsNamesView = this.view as TeamsNamesView

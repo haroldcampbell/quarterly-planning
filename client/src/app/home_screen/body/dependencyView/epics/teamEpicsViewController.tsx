@@ -1,6 +1,6 @@
 import * as gtap from "../../../../../../www/dist/js/gtap";
 import * as lib from "../../../../../core/lib";
-import { Team, TeamEpics } from "../../../_defs";
+import { Epic, Team, TeamEpics } from "../../../_defs";
 import { EpicsViewController } from "./epicsViewController";
 
 /** @jsx gtap.$jsx */
@@ -30,17 +30,12 @@ class TeamEpicsView extends lib.BaseView {
 
         super.initView();
     }
-
-    // addTemEpics(node: HTMLElement) {
-    // this.container.appendChild(node)
-    // }
 }
-
 
 export class TeamEpicsViewController extends lib.BaseViewController {
     protected _view: lib.IView = new TeamEpicsView(this);
 
-    initData(teams?: Team[], teamEpics?: TeamEpics[]) {
+    initData(teamEpics?: TeamEpics[]) {
         teamEpics?.forEach((epics) => {
             this.initTeamEpics(epics)
         })
@@ -49,9 +44,18 @@ export class TeamEpicsViewController extends lib.BaseViewController {
     initTeamEpics(epics: TeamEpics) {
         let epicController = new EpicsViewController(this, epics);
 
+        epicController.onEpicCreated = (epic, epicNode) => { this.epicCreated(epic, epicNode); }
+        epicController.onEpicsLoad = () => { this.addDependencyConnections() }
         epicController.initController();
 
-        // (this._view as TeamEpicsView).addTemEpics(epicController.view.viewContent());
         this.view.addView(epicController.view);
+    }
+
+    epicCreated(epic: Epic, epicNode: HTMLElement) {
+        console.log("Created Epic node", epic, epicNode)
+    }
+
+    addDependencyConnections() {
+
     }
 }

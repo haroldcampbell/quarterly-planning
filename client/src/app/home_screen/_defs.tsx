@@ -1,7 +1,7 @@
 export type Epic = {
+    ID: any;
     Name: string;
-    // Upstreams:
-    // Downstreams:
+    Upstreams?: any[];
 }
 
 export type Team = {

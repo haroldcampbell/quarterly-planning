@@ -33,18 +33,24 @@ export class EpicsViewController extends lib.BaseViewController {
 
     private teamEpics: TeamEpics;
 
+    public onEpicCreated?: (epic: Epic, epicNode: HTMLElement) => void;
+    public onEpicsLoad?: () => void;
     constructor(parentController: IViewController | IScreenController, epics: TeamEpics) {
         super(parentController);
 
         this.teamEpics = epics;
     }
 
+
     initView() {
         let epicsView = this.view as EpicsView
 
         this.teamEpics.Epics.forEach((e) => {
-            epicsView.addEpic(e);
+            let node = epicsView.addEpic(e);
+            this.onEpicCreated?.(e, node);
         });
+
+        this.onEpicsLoad?.();
 
         super.initView();
     }
