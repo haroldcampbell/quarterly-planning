@@ -13,10 +13,12 @@ import { Epic } from "../_defs";
 import "./layoutGrid.css"
 import "./selectedEpicDetailsView.css"
 
-export const OSubjectEpicSelected = "view-measure-details";
+export const OSubjectViewEpicDetails = "view-epic-details";
+export const OSubjectHideEpicDetails = "hide-epic-details";
 
 class SelectedEpicDetailsView extends lib.BaseView {
-    private content = <div className='selected-epic-details-view-container' ></div>;
+    private content = <div className='selected-epic-details-view-container hide-epic-details' ></div>;
+    // private selectedEpic?: Epic;
 
     viewContent() {
         return this.content;
@@ -31,43 +33,55 @@ class SelectedEpicDetailsView extends lib.BaseView {
         const epicDetailsView = new EpicDetailsView(this.parentController);
         const upstreamView = new UpstreamDetailsView(this.parentController);
         const downstreamView = new DownstreamDetailsView(this.parentController);
-        // downstreamView.initView();
 
         this.addView(teamView);
         this.addView(epicDetailsView);
         this.addView(upstreamView);
         this.addView(downstreamView);
 
-        // this.content.appendChild(teamView.viewContent());
-        // this.content.appendChild(epicDetailsView.viewContent());
-        // this.content.appendChild(upstreamView.viewContent());
-        // this.content.appendChild(downstreamView.viewContent());
-
         super.initView();
+    }
+
+    showEpicDetails(epic: Epic) {
+        this.content.classList.remove("hide-epic-details");
+    }
+
+    hideEpicDetails() {
+        this.content.classList.add("hide-epic-details");
     }
 }
 
 export class SelectedEpicDetailsController extends lib.BaseViewController implements lib.IObserver {
     protected _view: lib.IView = new SelectedEpicDetailsView(this);
 
+    private detailsView = this._view as SelectedEpicDetailsView;
+
     initController() {
-        lib.Observable.subscribe(OSubjectEpicSelected, this);
+        lib.Observable.subscribe(OSubjectViewEpicDetails, this);
+        lib.Observable.subscribe(OSubjectHideEpicDetails, this);
 
         super.initController();
     }
 
     onUpdate(subject: string, state: lib.ObserverState): void {
         switch (subject) {
-            case OSubjectEpicSelected: {
+            case OSubjectViewEpicDetails: {
                 const { epic } = state.value;
                 this.onEpicSelected(epic);
                 break;
+            }
+            case OSubjectHideEpicDetails: {
+                this.onHideEpicDetails();
             }
         }
     }
 
     onEpicSelected(epic: Epic) {
-        console.log("XX SelectedEpicDetailsController", epic)
+        this.detailsView.showEpicDetails(epic);
+    }
+
+    onHideEpicDetails() {
+        this.detailsView.hideEpicDetails();
     }
 }
 

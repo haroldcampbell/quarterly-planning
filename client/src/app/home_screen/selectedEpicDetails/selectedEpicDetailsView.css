@@ -11,6 +11,11 @@
     row-gap: 5px;
 }
 
+.hide-epic-details {
+    width: 0;
+    overflow: hidden;
+}
+
 .selected-epic-details-view-container label {
     font-size: 12px;
     color: #9f9f9f;

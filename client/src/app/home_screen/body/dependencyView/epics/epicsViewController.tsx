@@ -1,7 +1,7 @@
 import * as gtap from "../../../../../../www/dist/js/gtap";
 import * as lib from "../../../../../core/lib";
 import { IViewController, IScreenController } from "../../../../../core/lib";
-import { OSubjectEpicSelected } from "../../../selectedEpicDetails/selectedEpicDetailsViewController";
+import { OSubjectViewEpicDetails } from "../../../selectedEpicDetails/selectedEpicDetailsViewController";
 import { Epic, SVGContainerID, TeamEpics } from "../../../_defs";
 
 /** @jsx gtap.$jsx */
@@ -59,7 +59,7 @@ class EpicsView extends lib.BaseView {
     }
 
     onEpicSelected(epic: Epic) {
-        lib.Observable.notify(OSubjectEpicSelected, {
+        lib.Observable.notify(OSubjectViewEpicDetails, {
             source: this,
             value: { epic: epic },
         });
