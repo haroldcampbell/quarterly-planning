@@ -22,9 +22,18 @@ export abstract class BaseView implements IView {
         return <div className=''> </div>;
     }
 
-    loadSubviews(viewContent: any) {}
+    loadSubviews(viewContent: any) { }
 
     addView(subView: IView) {
         this.views.push(subView);
     }
+}
+
+export function LoadSubviews(views: IView[], viewContent: any) {
+    views.forEach((v) => {
+        const vContent = v.viewContent();
+
+        v.loadSubviews(vContent);
+        viewContent.appendChild(vContent);
+    });
 }

@@ -1,6 +1,7 @@
 import * as gtap from "../../../../../../www/dist/js/gtap";
 import * as lib from "../../../../../core/lib";
 import { IViewController, IScreenController } from "../../../../../core/lib";
+import { OSubjectEpicSelected } from "../../../selectedEpicDetails/selectedEpicDetailsViewController";
 import { Epic, SVGContainerID, TeamEpics } from "../../../_defs";
 
 /** @jsx gtap.$jsx */
@@ -40,9 +41,7 @@ class EpicsView extends lib.BaseView {
         r.$height(shapeHeight);
         r.$rxy(shapeEornerRadius);
 
-        r.onclick = () => {
-            console.log("xxx howdy from: ", epic)
-        }
+        r.onclick = () => { this.onEpicSelected(epic); }
 
         const t = gtap.text(SVGContainerID);
         t.$class("epic-name")
@@ -57,6 +56,13 @@ class EpicsView extends lib.BaseView {
         this.xOffset += width + colGap;
 
         return r;
+    }
+
+    onEpicSelected(epic: Epic) {
+        lib.Observable.notify(OSubjectEpicSelected, {
+            source: this,
+            value: { epic: epic },
+        });
     }
 }
 

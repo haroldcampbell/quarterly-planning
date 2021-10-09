@@ -1,0 +1,27 @@
+.rows {
+    display: grid;
+    grid-template-rows: min-content;
+    grid-auto-flow: row dense;
+    row-gap: 15px;
+}
+
+.rows > .row-cell {
+    /* border: solid 1px red; */
+}
+
+.rows > .row-cell-2 {
+    display: grid;
+    grid-auto-flow: column dense;
+    column-gap: 15px;
+}
+
+.rows .cell {
+    /* border: solid 1px red; */
+}
+
+.rows .cell-right {
+    text-align: right;
+    /* border: solid 1px red; */
+}
+
+

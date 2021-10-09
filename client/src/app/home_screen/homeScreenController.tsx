@@ -6,7 +6,7 @@ import * as lib from "../../core/lib";
 import "./homeScreen.css"
 import { ScreenNavController } from "./nav/screenNavController";
 import { BodyController } from "./body/bodyController";
-import { SelectedEpicDetailsController } from "./selectedEpicDetails/SelectedEpicDetailsController";
+import { SelectedEpicDetailsController } from "./selectedEpicDetails/selectedEpicDetailsViewController";
 
 class MainPanelView extends lib.BaseView {
     viewContent() {

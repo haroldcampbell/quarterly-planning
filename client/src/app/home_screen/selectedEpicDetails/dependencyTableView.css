@@ -1,0 +1,47 @@
+.dependency-wrapper-container {
+    max-height: 100px;
+    position: relative;
+    overflow: auto;
+}
+
+.dependency-table-view-container table {
+    position: relative;
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 14px;
+}
+.dependency-table-view-container table label {
+    /* font-weight: 100; */
+    font-size: 12px;
+}
+
+.dependency-table-view-container th.epic-connection {
+    width: 20px;
+}
+.dependency-table-view-container th.team-names,
+.dependency-table-view-container td.team-names {
+    width: 100px;
+    /* max-width: 100px; */
+    text-align: left;
+    /* overflow: hidden; */
+    /* text-overflow: ellipsis; */
+    /* white-space: nowrap; */
+}
+.dependency-table-view-container th.epic-names,
+.dependency-table-view-container td.epic-names {
+    /* width: 20px; */
+    text-align: left;
+    padding-left: 5px;
+}
+.dependency-table-view-container th {
+    position: sticky;
+    top: 0; /* Don't forget this, required for the stickiness */
+    background-color: #eae7e7;
+    text-align: left;
+    padding: 2px 0 0 0;
+}
+/* .dependency-table-view-container thead tr th { */
+/* } */
+.dependency-table-view-container tbody tr {
+    border-bottom: solid 1px #eae7e7;
+}

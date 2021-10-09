@@ -3,5 +3,71 @@
     height: 100%;
 
     border-left: solid 1px #707070;
-    background-color: #f3f5f4;
+    background-color: #eae7e7;
+
+    display: grid;
+    grid-template-rows: min-content min-content auto;
+    grid-auto-flow: row dense;
+    row-gap: 5px;
+}
+
+.selected-epic-details-view-container label {
+    font-size: 12px;
+    color: #9f9f9f;
+    margin: 0;
+    padding: 0;
+    line-height: 12px;
+}
+
+.selected-epic-details-view-container h3 {
+    font-size: 24px;
+    color: #707070;
+    font-weight: 300;
+    margin: 0;
+    padding: 0;
+}
+
+.selected-epic-details-container__team-name,
+.selected-epic-details-container__epic,
+.selected-epic-details-container__upstream,
+.selected-epic-details-container__downstream {
+    padding: 20px 15px;
+    background-color: #fff;
+}
+
+.selected-epic-details-container__upstream .dependency-info,
+.selected-epic-details-container__downstream .dependency-info {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: min-content auto;
+    column-gap: 10px;
+    align-self: center;
+}
+
+.selected-epic-details-container__upstream .cell-right,
+.selected-epic-details-container__downstream .cell-right {
+    display: grid;
+    align-self: center;
+    justify-self: right;
+    grid-auto-columns: min-content;
+}
+
+.selected-epic-details-container__upstream button.flat-btn,
+.selected-epic-details-container__downstream button.flat-btn {
+    border: none;
+    font-size: 24px;
+    font-weight: 100;
+    color: #9f9f9f;
+    background-color: #fff;
+}
+
+.selected-epic-details-container__epic {
+}
+
+.selected-epic-details-container__upstream {
+    /* border: solid 1px red; */
+}
+
+.selected-epic-details-container__downstream {
+    /* border: solid 1px red; */
 }
