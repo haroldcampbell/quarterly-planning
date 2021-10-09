@@ -7,6 +7,8 @@ import { EpicsViewController } from "./epicsViewController";
 
 import "./teamEpics.css"
 
+export const OSubjectTeamEpicsScrollContainerResized = "team-epics-scroll-container-resized";
+
 class TeamEpicsView extends lib.BaseView {
     private content = <div className='team-epics-container-wrapper' />;
     private scrollContainer = <div className="team-epics-scroll-container" />;
@@ -28,6 +30,18 @@ class TeamEpicsView extends lib.BaseView {
     initView() {
         this.content.appendChild(this.scrollContainer);
 
+        // Get the size of the scrollContainer.
+        // I'm doing this cause I can't get the fucking clientWidth or
+        // getBoundingClientRect to report the correct width.
+        const resizeObserver = new ResizeObserver(entries => {
+            lib.Observable.notify(OSubjectTeamEpicsScrollContainerResized, {
+                source: this,
+                value: { contentWidth: entries[0].contentRect },
+            });
+        });
+
+        resizeObserver.observe(this.scrollContainer);
+
         super.initView();
     }
 }
@@ -47,6 +61,10 @@ export class TeamEpicsViewController extends lib.BaseViewController {
 
     private lastRowIndex = 0;
     private maxRowWidth = 0; /** Used to adjust the svg element size */
+
+    initView() {
+        super.initView();
+    }
 
     initData(teamEpics?: TeamEpics[]) {
         const svgHostElm = gtap.$class("team-epics-scroll-container")[0];
@@ -89,7 +107,7 @@ export class TeamEpicsViewController extends lib.BaseViewController {
         })
 
         this.epicControllers.forEach((controller) => {
-            controller.updateViewWidth(this.maxRowWidth);
+            controller.setMaxRowWidth(this.maxRowWidth);
         })
     }
 
@@ -127,10 +145,6 @@ export class TeamEpicsViewController extends lib.BaseViewController {
             const p = gtap.path(SVGContainerID, `connection[${counter++}][${id}-${sourceID}]`);
             p.$path(start, end, true);
             p.$appendCSS("connection");
-
-            // const lID = `lconnection[${counter++}][${id}-${sourceID}]`;
-            // const l = gtap.line(SVGContainerID, lID, start, end);
-            // l.$appendCSS("connection");
         })
     }
 }

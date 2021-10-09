@@ -7,6 +7,7 @@ import { Epic, SVGContainerID, TeamEpics } from "../../../_defs";
 /** @jsx gtap.$jsx */
 
 import "./epicsView.css"
+import { OSubjectTeamEpicsScrollContainerResized } from "./teamEpicsViewController";
 
 const colGap = 25;
 const shapeEornerRadius = 10;
@@ -66,11 +67,14 @@ class EpicsView extends lib.BaseView {
     }
 }
 
-export class EpicsViewController extends lib.BaseViewController {
+export class EpicsViewController extends lib.BaseViewController implements lib.IObserver {
     protected _view: lib.IView = new EpicsView(this);
 
     private lastRowIndex: number;
     private teamEpics: TeamEpics;
+
+    private maxXBounds = 0;
+    private maxRowWidth = 0;/** The max row with across all of the epic view controllers */
 
     public onEpicCreated?: (epic: Epic, epicSvgNode: any) => void;
     public onCompleted?: (rowsCreated: number, maxXBounds: number) => void;
@@ -84,21 +88,44 @@ export class EpicsViewController extends lib.BaseViewController {
 
     initView() {
         let epicsView = this.view as EpicsView
-        let maxXBounds = 0;
 
         this.teamEpics.Epics.forEach((e) => {
             const svgNode = epicsView.addEpic(this.lastRowIndex, e);
             const xbounds = svgNode.$x() + svgNode.$width() + rowPadding;
-            maxXBounds = xbounds > maxXBounds ? xbounds : maxXBounds;
+            this.maxXBounds = xbounds > this.maxXBounds ? xbounds : this.maxXBounds;
             this.onEpicCreated?.(e, svgNode);
         });
 
-        this.onCompleted?.(1, maxXBounds);
+        this.onCompleted?.(1, this.maxXBounds);
+
+        lib.Observable.subscribe(OSubjectTeamEpicsScrollContainerResized, this);
 
         super.initView();
     }
 
-    updateViewWidth(maxRowWidth: number) {
-        (this.view as EpicsView).updateViewWidth(maxRowWidth);
+    onUpdate(subject: string, state: lib.ObserverState): void {
+        switch (subject) {
+            case OSubjectTeamEpicsScrollContainerResized: {
+                const { contentWidth } = state.value;
+                this.onTeamEpicsScrollContainerResized(contentWidth);
+                break;
+            }
+        }
+    }
+
+    setMaxRowWidth(maxRowWidth: number) {
+        this.maxRowWidth = maxRowWidth;
+    }
+
+    private updateViewWidth(width: number) {
+        (this.view as EpicsView).updateViewWidth(width);
+    }
+
+    onTeamEpicsScrollContainerResized(contentWidth: DOMRectReadOnly) {
+        if (contentWidth.width > this.maxRowWidth) {
+            this.updateViewWidth(contentWidth.width);
+        } else {
+            this.updateViewWidth(this.maxRowWidth);
+        }
     }
 }
