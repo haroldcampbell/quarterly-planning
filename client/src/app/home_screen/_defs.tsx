@@ -16,3 +16,11 @@ export type TeamEpics = {
 }
 
 export const SVGContainerID = "dependency-connections";
+
+export type InputChangeCallback = (e: Event, dataOptionKey: string) => void;
+
+export enum SelectedEpicDetailsDataOptions {
+    TeamName = "selected-epic-details[team-name]"
+}
+
+export const OSubjectWillUpdateTeamName = "will-update-team-name";

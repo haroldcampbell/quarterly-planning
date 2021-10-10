@@ -89,7 +89,7 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
     initView() {
         let epicsView = this.view as EpicsView
 
-        this.teamEpics.Epics.forEach((e) => {
+        this.teamEpics.Epics?.forEach((e) => {
             const svgNode = epicsView.addEpic(this.lastRowIndex, e);
             const xbounds = svgNode.$x() + svgNode.$width() + rowPadding;
             this.maxXBounds = xbounds > this.maxXBounds ? xbounds : this.maxXBounds;

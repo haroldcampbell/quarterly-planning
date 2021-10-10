@@ -32,6 +32,25 @@
     padding: 0;
 }
 
+.selected-epic-details-container__team-name input {
+    font-size: 24px;
+    color: #707070;
+    font-weight: 300;
+    margin: 0;
+    display: block;
+
+    width: 100%;
+    padding: 0px;
+    border: none;
+    border-bottom: solid 2px #fff;
+}
+
+.selected-epic-details-container__team-name input:focus {
+    outline: none;
+    border-bottom: solid 2px #2680eb;
+    color: #2680eb;
+}
+
 .selected-epic-details-container__team-name,
 .selected-epic-details-container__epic,
 .selected-epic-details-container__upstream,

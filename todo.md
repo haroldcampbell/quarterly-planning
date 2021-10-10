@@ -1,5 +1,5 @@
 [] Edit Names
-    [] Team Name
+    [X] Team Name
     [] Epic Name
 
 [] Create new Team

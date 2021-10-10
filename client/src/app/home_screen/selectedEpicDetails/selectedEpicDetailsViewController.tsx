@@ -1,12 +1,13 @@
 import * as gtap from "../../../../www/dist/js/gtap";
 import * as lib from "../../../core/lib";
+import * as dataStore from "../../data/dataStore";
 
 import { DownstreamDetailsView } from "./downstreamDetailsView";
 import { EpicDetailsView } from "./epicDetailsView";
 import { TeamNameDetailsView } from "./teamNameDetailsView";
 import { UpstreamDetailsView } from "./upstreamDetailsView";
 
-import { Epic } from "../_defs";
+import { Epic, InputChangeCallback, SelectedEpicDetailsDataOptions } from "../_defs";
 
 /** @jsx gtap.$jsx */
 
@@ -23,7 +24,6 @@ class SelectedEpicDetailsView extends lib.BaseView {
     private epicDetailsView = new EpicDetailsView(this.parentController);
     private upstreamView = new UpstreamDetailsView(this.parentController);
     private downstreamView = new DownstreamDetailsView(this.parentController);
-
 
     viewContent() {
         return this.content;
@@ -51,19 +51,33 @@ class SelectedEpicDetailsView extends lib.BaseView {
         this.content.classList.remove("hide-epic-details");
     }
 
+    wireOnInputChanged(callback: InputChangeCallback) {
+        this.teamView.onInputChanged = (e: Event, dataOptionKey: string) => { callback(e, dataOptionKey) }
+
+    }
+
     hideEpicDetails() {
         this.content.classList.add("hide-epic-details");
     }
 }
 
+type InputHandler = (e: Event) => void;
+
 export class SelectedEpicDetailsController extends lib.BaseViewController implements lib.IObserver {
     protected _view: lib.IView = new SelectedEpicDetailsView(this);
 
+    private selectedEpic?: Epic;
+
     private detailsView = this._view as SelectedEpicDetailsView;
+    private inputChangeMap = new Map<string, InputHandler>();
 
     initController() {
         lib.Observable.subscribe(OSubjectViewEpicDetails, this);
         lib.Observable.subscribe(OSubjectHideEpicDetails, this);
+
+        this.detailsView.wireOnInputChanged((e: Event, dataOptionKey: string) => this.onInputChanged(e, dataOptionKey));
+
+        this.inputChangeMap.set(SelectedEpicDetailsDataOptions.TeamName, (e: Event) => this.onInputChangedTeamName(e));
 
         super.initController();
     }
@@ -82,11 +96,32 @@ export class SelectedEpicDetailsController extends lib.BaseViewController implem
     }
 
     onEpicSelected(epic: Epic) {
+        this.selectedEpic = epic;
         this.detailsView.showEpicDetails(epic);
     }
 
     onHideEpicDetails() {
+        this.selectedEpic = undefined;
         this.detailsView.hideEpicDetails();
+    }
+
+    onInputChanged(e: Event, dataOptionKey: string) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const handler = this.inputChangeMap.get(dataOptionKey)
+        handler?.(e)
+    }
+
+    onInputChangedTeamName(e: Event) {
+        if (this.selectedEpic === undefined) {
+            return;
+        }
+
+        const node = e!.target as HTMLInputElement;
+        node.blur();
+
+        dataStore.UpdateTeamName(this.selectedEpic.TeamID, node.value);
     }
 }
 
