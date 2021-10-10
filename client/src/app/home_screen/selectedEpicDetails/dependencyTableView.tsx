@@ -8,38 +8,32 @@ import "./dependencyTableView.css"
 export class DependencyTableView extends lib.BaseView {
     private content = <div className='dependency-table-view-container' />
 
-    viewContent() {
-        return this.content;
-    }
-
-    initView() {
-        const headerRow = <thead>
+    private tbody = <tbody></tbody>;
+    private table = <table>
+        <thead>
             <tr>
                 <th className="epic-connection"></th>
                 <th className="team-names"><label>TEAMS</label></th>
                 <th className="epic-names"><label>EPICS</label></th>
             </tr>
-        </thead>;
+        </thead>
+        {this.tbody}
+    </table>;
 
-        const tbody = <tbody></tbody>;
-        const table = <table>
-            {headerRow}
-            {tbody}
-        </table>;
+    viewContent() {
+        return this.content;
+    }
 
-
-        this.addTableRows(tbody, true, "XXX1", "AAA");
-        this.addTableRows(tbody, true, "XXaaaaass cccc dd ddd X2", "ABB");
-        this.addTableRows(tbody, false, "XXX3", "ACC");
-        this.addTableRows(tbody, false, "XXX4", "DDD");
-        this.addTableRows(tbody, true, "XXX5", "ASD");
-        this.addTableRows(tbody, true, "XXX6", "ATSD");
-
-        this.content.appendChild(table);
+    initView() {
+        this.content.appendChild(this.table);
         super.initView();
     }
 
-    addTableRows(tableNode: HTMLElement, directConnection: boolean, teamName: string, epicName: string) {
+    clearTableRows() {
+        this.tbody.innerText = "";
+    }
+
+    addTableRows(directConnection: boolean, teamName: string, epicName: string) {
         const connection = directConnection ? "@" : "";
 
         const tableRow = <tr>
@@ -48,6 +42,6 @@ export class DependencyTableView extends lib.BaseView {
             <td className="epic-names"><div>{epicName}</div></td>
         </tr>;
 
-        tableNode.appendChild(tableRow);
+        this.tbody.appendChild(tableRow);
     }
 }

@@ -18,7 +18,12 @@ export const OSubjectHideEpicDetails = "hide-epic-details";
 
 class SelectedEpicDetailsView extends lib.BaseView {
     private content = <div className='selected-epic-details-view-container hide-epic-details' ></div>;
-    // private selectedEpic?: Epic;
+
+    private teamView = new TeamNameDetailsView(this.parentController);
+    private epicDetailsView = new EpicDetailsView(this.parentController);
+    private upstreamView = new UpstreamDetailsView(this.parentController);
+    private downstreamView = new DownstreamDetailsView(this.parentController);
+
 
     viewContent() {
         return this.content;
@@ -29,20 +34,20 @@ class SelectedEpicDetailsView extends lib.BaseView {
     }
 
     initView() {
-        const teamView = new TeamNameDetailsView(this.parentController);
-        const epicDetailsView = new EpicDetailsView(this.parentController);
-        const upstreamView = new UpstreamDetailsView(this.parentController);
-        const downstreamView = new DownstreamDetailsView(this.parentController);
-
-        this.addView(teamView);
-        this.addView(epicDetailsView);
-        this.addView(upstreamView);
-        this.addView(downstreamView);
+        this.addView(this.teamView);
+        this.addView(this.epicDetailsView);
+        this.addView(this.upstreamView);
+        this.addView(this.downstreamView);
 
         super.initView();
     }
 
     showEpicDetails(epic: Epic) {
+        this.teamView.onEpicSelected(epic);
+        this.epicDetailsView.onEpicSelected(epic);
+        this.upstreamView.onEpicSelected(epic);
+        this.downstreamView.onEpicSelected(epic);
+
         this.content.classList.remove("hide-epic-details");
     }
 

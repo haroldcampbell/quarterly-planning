@@ -1,14 +1,16 @@
 import * as gtap from "../../../../www/dist/js/gtap";
 import * as lib from "../../../core/lib";
+import { Epic } from "../_defs";
 
 /** @jsx gtap.$jsx */
 
 export class EpicDetailsView extends lib.BaseView {
+    private epicNameElm = <h3></h3>;
     private content = <div className='selected-epic-details-container__epic rows' >
         <div className="row-cell">
             <div className="cell">
                 <label>SELECTED EPIC</label>
-                <h3>Epic SME3</h3>
+                {this.epicNameElm}
             </div>
         </div>
         <div className="row-cell">
@@ -31,5 +33,9 @@ export class EpicDetailsView extends lib.BaseView {
 
     viewContent() {
         return this.content;
+    }
+
+    onEpicSelected(epic: Epic) {
+        (this.epicNameElm as HTMLElement).innerText = epic.Name;
     }
 }
