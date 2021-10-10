@@ -1,5 +1,5 @@
 import * as lib from "../../core/lib";
-import { Epic, OSubjectWillUpdateEpicName, OSubjectWillUpdateTeamName, Team } from "../home_screen/_defs";
+import { Epic, OSubjectDataStoreReady, OSubjectWillUpdateEpicName, OSubjectWillUpdateTeamName, Team } from "../home_screen/_defs";
 
 const _teamsMap: { [key: string]: Team } = {
     "A1": { ID: "A1", Name: "Team 1" },
@@ -23,7 +23,7 @@ const _teamIDs: string[] = [
     "A8",
 ];
 
-const _epicsByTeamID = new Map<number, Epic[]>([
+const _epicsByRowIndex = new Map<number, Epic[]>([
     [0, [
         { ID: "1", TeamID: "A1", Name: "Epic IL1" },
         { ID: "2", TeamID: "A1", Name: "Epic IL2", Upstreams: ["1"] },
@@ -88,8 +88,8 @@ export function getTeamByID(teamID: string): Team {
     return _teamsMap[teamID]
 }
 
-export function getEpicsByTeam(): Map<number, Epic[]> {
-    return _epicsByTeamID;
+export function getEpicsByTeamRow(): Map<number, Epic[]> {
+    return _epicsByRowIndex;
 }
 
 // Contains epicID -> Epic mapping
@@ -98,12 +98,25 @@ let _epicsByID: Map<string, Epic>;
 // Contains a map of epicID to array of downstream epicIDs
 let _downStreamsByEpicID: Map<string, string[]>;
 
+const _epicsByTeamID = new Map<string, Epic[]>();
+export function getEpicsByTeamID(teamID: string): Epic[] {
+    return _epicsByTeamID.get(teamID)!;
+}
 
+function processEpicsByTeamID() {
+    for (let epic of _epicsByID.values()) {
+        if (!_epicsByTeamID.has(epic.TeamID)) {
+            _epicsByTeamID.set(epic.TeamID, []);
+        }
+        _epicsByTeamID.get(epic.TeamID)?.push(epic);
+    }
+
+}
 /** Populates a map with epics[epicID]*/
 function processTeamEpics(): Map<string, Epic> {
     const epicsByIDMap = new Map<string, Epic>()
 
-    for (let epics of _epicsByTeamID.values()) {
+    for (let epics of _epicsByRowIndex.values()) {
         epics.forEach(epic => {
             epicsByIDMap.set(epic.ID, epic)
         })
@@ -142,9 +155,19 @@ function processDownstreamEpics(): Map<string, string[]> {
     return downStreamsEpicIDsMap;
 }
 
+function onDataStoreReady() {
+    lib.Observable.notify(OSubjectDataStoreReady, {
+        source: undefined,
+        value: undefined,
+    });
+}
+
 async function wireServerData() {
     _epicsByID = await processTeamEpics();
     _downStreamsByEpicID = await processDownstreamEpics();
+
+    await processEpicsByTeamID();
+    await onDataStoreReady();
 }
 
 export function UpdateTeamName(teamID: string, value: string) {

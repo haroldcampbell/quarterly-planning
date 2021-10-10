@@ -133,7 +133,6 @@ export class SelectedEpicDetailsController extends lib.BaseViewController implem
         const node = e!.target as HTMLInputElement;
         node.blur();
 
-        console.log(">> onInputChangedEpicName:", e, node.value)
         dataStore.UpdateEpicName(this.selectedEpic.ID, node.value);
     }
 }

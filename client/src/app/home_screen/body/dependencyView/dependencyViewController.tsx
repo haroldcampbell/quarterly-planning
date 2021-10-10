@@ -1,7 +1,7 @@
 import * as gtap from "../../../../../www/dist/js/gtap";
 import * as lib from "../../../../core/lib";
 import * as dataStore from "../../../data/dataStore";
-import { Team, TeamEpics, Epic } from "../../_defs";
+import { Team, TeamEpics, Epic, OSubjectDataStoreReady } from "../../_defs";
 
 /** @jsx gtap.$jsx */
 
@@ -30,7 +30,7 @@ class DependencyView extends lib.BaseView {
     }
 }
 
-export class DependencyViewController extends lib.BaseViewController {
+export class DependencyViewController extends lib.BaseViewController implements lib.IObserver {
     protected _view: lib.IView = new DependencyView(this);
 
     private teamNamesController = new TeamsNamesViewController(this);
@@ -43,17 +43,17 @@ export class DependencyViewController extends lib.BaseViewController {
         this.teamNamesController.initController();
         this.teamEpicsViewController.initController();
 
-        this.loadData();
-
         this.view.addView(this.teamNamesController.view);
         this.view.addView(this.teamEpicsViewController.view);
+
+        lib.Observable.subscribe(OSubjectDataStoreReady, this);
 
         super.initView();
     }
 
     loadData() {
         this.teams = dataStore.getTeams();
-        let epics = dataStore.getEpicsByTeam();
+        let epics = dataStore.getEpicsByTeamRow();
 
         this.teams.forEach((t, index) => {
             const teamEpic = { Team: t, Epics: epics.get(index) };
@@ -62,5 +62,14 @@ export class DependencyViewController extends lib.BaseViewController {
 
         this.teamNamesController.initData(this.teams);
         this.teamEpicsViewController.initData(this.teamEpics);
+    }
+
+    onUpdate(subject: string, state: lib.ObserverState): void {
+        switch (subject) {
+            case OSubjectDataStoreReady: {
+                this.loadData();
+                break;
+            }
+        }
     }
 }

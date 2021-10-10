@@ -1,3 +1,6 @@
+export type XYOnly = { x: number, y: number };
+export type PathInfo = { p: any, start: XYOnly, end: XYOnly };
+
 export type Epic = {
     ID: string;
     TeamID: string;
@@ -23,6 +26,9 @@ export enum SelectedEpicDetailsDataOptions {
     TeamName = "selected-epic-details[team-name]",
     EpicName = "selected-epic-details[epic-name]",
 }
+
+/** The data has been fetched and processed */
+export const OSubjectDataStoreReady = "data-store-data-ready";
 
 export const OSubjectWillUpdateTeamName = "will-update-team-name";
 export const OSubjectWillUpdateEpicName = "will-update-epic-name";

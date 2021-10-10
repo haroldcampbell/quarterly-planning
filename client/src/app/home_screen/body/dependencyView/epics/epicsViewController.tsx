@@ -19,17 +19,11 @@ type EpicViewSVGNode = {
     svgTextNode: any;
 }
 class EpicsView extends lib.BaseView {
-    private content = <div className='epics-container-wrapper' />;
     private epicNames = <ul className="epics-container"></ul>
+    private content = <div className='epics-container-wrapper' >{this.epicNames}</div>;
 
-    private xOffset: number = rowPadding;
     viewContent() {
         return this.content;
-    }
-
-    initView() {
-        this.content.appendChild(this.epicNames);
-        super.initView();
     }
 
     updateViewWidth(width: number) {
@@ -37,29 +31,14 @@ class EpicsView extends lib.BaseView {
     }
 
     addEpic(lastRowIndex: number, epic: Epic): EpicViewSVGNode {
-        const x = this.xOffset
-        const y = 12 + lastRowIndex * 64;
-        const r = gtap.rect(SVGContainerID)
+        const r = gtap.rect(SVGContainerID);
         r.$class("epic")
-        r.$x(x);
-        r.$y(y);
-        r.$width(40);
-        r.$height(shapeHeight);
-        r.$rxy(shapeEornerRadius);
 
         r.onclick = () => { this.onEpicSelected(epic); }
 
         const t = gtap.text(SVGContainerID);
         t.$class("epic-name")
-        t.$xy(x + 10, y + 25);
         t.$text(epic.Name);
-
-        const textWidth = t.$textBoundingBox().width + 20;
-        const width = textWidth < 40 ? 40 : textWidth;
-
-        r.$width(width);
-
-        this.xOffset += width + colGap;
 
         return {
             svgRectNode: r,
@@ -84,10 +63,12 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
     private maxXBounds = 0;
     private maxRowWidth = 0;/** The max row with across all of the epic view controllers */
 
-    public onEpicCreated?: (epic: Epic, epicSvgNode: any) => void;
+    public onEpicCreated?: (epic: Epic) => void;
     public onCompleted?: (rowsCreated: number, maxXBounds: number) => void;
+    public onLayoutNeeded?: (maxXBounds: number, didUpdateTeamId?: string) => void;
 
     private epicsViewSVGMap = new Map<string, EpicViewSVGNode>();
+    private xOffset!: number;
 
     constructor(parentController: IViewController | IScreenController, lastRowIndex: number, epics: TeamEpics) {
         super(parentController);
@@ -96,16 +77,17 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
         this.lastRowIndex = lastRowIndex;
     }
 
-    initView() {
+    initController() {
         let epicsView = this.view as EpicsView
 
+        this.xOffset = rowPadding;
         this.teamEpics.Epics?.forEach((e) => {
             const svgNodes = epicsView.addEpic(this.lastRowIndex, e);
-            const svgRectNode = svgNodes.svgRectNode;
 
             this.epicsViewSVGMap.set(e.ID, svgNodes);
-            this.calcBounds(svgNodes);
-            this.onEpicCreated?.(e, svgRectNode);
+            this.sizeSVGNodes(svgNodes);
+            this.updateRowBounds(svgNodes);
+            this.onEpicCreated?.(e);
         });
 
         this.onCompleted?.(1, this.maxXBounds);
@@ -113,11 +95,8 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
         lib.Observable.subscribe(OSubjectTeamEpicsScrollContainerResized, this);
         lib.Observable.subscribe(OSubjectWillUpdateEpicName, this);
 
-        super.initView();
+        super.initController();
     }
-
-    // IMPLEMENT  OSubjectWillUpdateEpicName so that I can rename the Epic
-    //  Will have to recalculate the rowMax and trigger a reflow in the teamEpicsViewController
 
     onUpdate(subject: string, state: lib.ObserverState): void {
         switch (subject) {
@@ -134,7 +113,28 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
         }
     }
 
-    calcBounds(svgNodes: EpicViewSVGNode) {
+    sizeSVGNodes(svgNodes: EpicViewSVGNode) {
+        const x = this.xOffset
+        const y = 12 + this.lastRowIndex * 64;
+
+        svgNodes.svgRectNode.$x(x);
+        svgNodes.svgRectNode.$y(y);
+
+        svgNodes.svgRectNode.$width(40);
+        svgNodes.svgRectNode.$height(shapeHeight);
+        svgNodes.svgRectNode.$rxy(shapeEornerRadius);
+
+        svgNodes.svgTextNode.$xy(x + 10, y + 25);
+
+        const textWidth = svgNodes.svgTextNode.$textBoundingBox().width + 20;
+        const width = textWidth < 40 ? 40 : textWidth;
+
+        svgNodes.svgRectNode.$width(width);
+
+        this.xOffset += width + colGap;
+    }
+
+    updateRowBounds(svgNodes: EpicViewSVGNode) {
         const svgRectNode = svgNodes.svgRectNode;
         const xbounds = svgRectNode.$x() + svgRectNode.$width() + rowPadding;
         this.maxXBounds = xbounds > this.maxXBounds ? xbounds : this.maxXBounds;
@@ -161,9 +161,27 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
             return;
         }
 
-        const svgNodes = this.epicsViewSVGMap.get(epic.ID);
-        console.log(">> [onEpicNameUpdated] svgNodes: ", this.epicsViewSVGMap, svgNodes);
+        let svgNodes = this.epicsViewSVGMap.get(epic.ID);
 
         svgNodes?.svgTextNode.$text(epic.Name);
+
+        this.xOffset = rowPadding;
+        this.teamEpics.Epics?.forEach((e) => {
+            svgNodes = this.epicsViewSVGMap.get(e.ID);
+            if (svgNodes === undefined) {
+                return;
+            }
+
+            this.sizeSVGNodes(svgNodes);
+            this.updateRowBounds(svgNodes);
+        });
+
+        this.onLayoutNeeded?.(this.maxXBounds, epic.TeamID);
+    }
+
+    getEpicSVGRectNode(epicID: string): any {
+        let svgNodes = this.epicsViewSVGMap.get(epicID);
+
+        return svgNodes?.svgRectNode
     }
 }
