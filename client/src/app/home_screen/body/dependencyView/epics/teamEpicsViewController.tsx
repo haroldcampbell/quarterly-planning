@@ -139,7 +139,7 @@ export class TeamEpicsViewController extends lib.BaseViewController {
                     const targetSVGNode = controller.getEpicSVGRectNode(epic.ID);
 
                     pInfo.start = this.calcUpstreamStart(targetSVGNode);
-                    pInfo.p.$path(pInfo.start, pInfo.end, true);
+                    orienPath(pInfo.p, pInfo.start, pInfo.end);
                 });
             }
 
@@ -152,7 +152,7 @@ export class TeamEpicsViewController extends lib.BaseViewController {
                     const targetSVGNode = controller.getEpicSVGRectNode(epic.ID);
 
                     pInfo.end = this.calcDownstreamEnd(targetSVGNode);
-                    pInfo.p.$path(pInfo.start, pInfo.end, true);
+                    orienPath(pInfo.p, pInfo.start, pInfo.end);
                 });
             }
         }));
@@ -201,7 +201,7 @@ export class TeamEpicsViewController extends lib.BaseViewController {
             const { start, end } = this.calcDependencyConnection(targetSVGNode, sourceSVGNode);
 
             const p = gtap.path(SVGContainerID, `connection[${counter++}][${upstreamEpicID}-${sourceID}]`);
-            p.$path(start, end, true);
+            orienPath(p, start, end);
             p.$appendCSS("connection");
 
             const pathInfo = { p, start, end };
@@ -215,5 +215,22 @@ export class TeamEpicsViewController extends lib.BaseViewController {
             }
             this.downstreamConnectionMap.get(sourceID)?.push(pathInfo);
         })
+    }
+}
+
+/**
+ * HACK: This is to ensure that the dependency connetions always
+ * flow horizonatally.
+ *
+ * I didn't want to have to modify groundtap's path function.
+ */
+function orienPath(p: any, start: XYOnly, end: XYOnly) {
+    const w = end.x - start.x;
+    const y = end.y - start.y;
+
+    if (w > y) {
+        p.$path(start, end, true);
+    } else {
+        p.$path(end, start, true);
     }
 }

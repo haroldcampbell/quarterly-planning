@@ -13,6 +13,15 @@
 }
 
 #dependency-connections .connection {
-    stroke: #fe89b7;
+    stroke: #1f8ce8;
+    stroke-width: 0.5px;
     fill: none;
+    stroke-dasharray: 2px 2px;
+    stroke-linecap: round;
+    /* stroke-dasharray: none; */
+}
+
+#dependency-connections .selected-epic-connection {
+    stroke-width: 0.5px;
+    stroke-dasharray: none;
 }
