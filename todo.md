@@ -1,9 +1,19 @@
 [] Edit Names
     [X] Team Name
     [] Epic Name
+    [] Consistency check
+        [] Team Name in Upstream dependency
+        [] Team Name in Downstream dependency
+        [] Epic Name in Upstream dependency
+        [] Epic Name in Downstream dependency
 
 [] Create new Team
 [] Create new Epic
+    [] When team has zero epics
+    [] In team with existing epic
+        [] at the fist position
+        [] at the last position
+        [] middle
 
 [] Side-panel dependencies
     [] Add Upstream dependency
@@ -15,6 +25,7 @@
     [] Edit expected start week
         [] Sync-epic to new week boundary location
         [] Highlight conflicts between epics that start after upstream dependency
+
 [] Add Epic Duration to Estimated Size
     [] Update the epic size based on the estimated size
     [] Update Projected End field
@@ -31,12 +42,6 @@
         [] Hide Downstream dependency
     [] Hide Teams that are not a dependency
 
-[] Delete Team
-[] Delete Epic
-[] Delete Side-panel dependencies
-    [] Delete Upstream dependency
-    [] Delete Downstream dependency
-
 [] Migrate client-site in-memory data to server-side in-memory
     [] Identify APIs
         [] CRUD Team
@@ -46,6 +51,17 @@
     [] Create routes
 
 [] Migrate to MongoDB
+
+[] Delete Team
+[] Delete Epic
+[] Delete Side-panel dependencies
+    [] Delete Upstream dependency
+    [] Delete Downstream dependency
+
+
+[] Cancel Edit Name changes with Esc key
+    [] Team name
+    [] Epic Name
 
 [] Fix lines to be pretty
 

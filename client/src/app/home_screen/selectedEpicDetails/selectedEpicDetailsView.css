@@ -32,7 +32,8 @@
     padding: 0;
 }
 
-.selected-epic-details-container__team-name input {
+.selected-epic-details-container__team-name input,
+.selected-epic-details-container__epic input {
     font-size: 24px;
     color: #707070;
     font-weight: 300;
@@ -45,7 +46,8 @@
     border-bottom: solid 2px #fff;
 }
 
-.selected-epic-details-container__team-name input:focus {
+.selected-epic-details-container__team-name input:focus,
+.selected-epic-details-container__epic input:focus {
     outline: none;
     border-bottom: solid 2px #2680eb;
     color: #2680eb;

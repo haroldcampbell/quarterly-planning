@@ -35,12 +35,13 @@ export class TeamNameDetailsView extends lib.BaseView {
                 source: this,
                 value: {},
             });
-        }
+        };
+
         this.teamNameElm.onchange = (e: Event) => {
             this.onInputChanged?.(e, SelectedEpicDetailsDataOptions.TeamName);
         };
 
-        super.initView()
+        super.initView();
     }
 
     onEpicSelected(epic: Epic) {

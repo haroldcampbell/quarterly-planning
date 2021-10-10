@@ -1,5 +1,5 @@
 import * as lib from "../../core/lib";
-import { Epic, OSubjectWillUpdateTeamName, Team } from "../home_screen/_defs";
+import { Epic, OSubjectWillUpdateEpicName, OSubjectWillUpdateTeamName, Team } from "../home_screen/_defs";
 
 const _teamsMap: { [key: string]: Team } = {
     "A1": { ID: "A1", Name: "Team 1" },
@@ -147,13 +147,23 @@ async function wireServerData() {
     _downStreamsByEpicID = await processDownstreamEpics();
 }
 
-export function UpdateTeamName(teamID: string, newTeamName: string) {
+export function UpdateTeamName(teamID: string, value: string) {
     const team = getTeamByID(teamID);
 
-    team.Name = newTeamName;
+    team.Name = value;
     lib.Observable.notify(OSubjectWillUpdateTeamName, {
         source: undefined,
         value: { team: team },
+    });
+}
+
+export function UpdateEpicName(epicID: string, value: string) {
+    const epic = getEpicByID(epicID);
+
+    epic!.Name = value;
+    lib.Observable.notify(OSubjectWillUpdateEpicName, {
+        source: undefined,
+        value: { epic: epic },
     });
 }
 

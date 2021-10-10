@@ -56,7 +56,6 @@ export class TeamEpicsViewController extends lib.BaseViewController {
 
     private ctx!: any; /** SVG Node */
     private epicDictionary = new Map<string, epicNode>();
-    private epics: Epic[] = [];
     private epicControllers: EpicsViewController[] = [];
 
     private lastRowIndex = 0;
@@ -89,6 +88,8 @@ export class TeamEpicsViewController extends lib.BaseViewController {
     }
 
     epicCreated(epic: Epic, epicSvgNode: any) {
+        // TODO: This is a leaky abstractions.
+        // We shouldn't be storing the epicSvgNode since it creates a tight coupling
         if (this.epicDictionary.has(epic.ID)) {
             return
         }
@@ -96,7 +97,6 @@ export class TeamEpicsViewController extends lib.BaseViewController {
             epic: epic,
             epicSvgNode: epicSvgNode
         });
-        this.epics.push(epic);
     }
 
     onTeamEpicsAdded() {

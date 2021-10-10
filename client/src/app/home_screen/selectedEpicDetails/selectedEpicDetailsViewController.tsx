@@ -53,7 +53,7 @@ class SelectedEpicDetailsView extends lib.BaseView {
 
     wireOnInputChanged(callback: InputChangeCallback) {
         this.teamView.onInputChanged = (e: Event, dataOptionKey: string) => { callback(e, dataOptionKey) }
-
+        this.epicDetailsView.onInputChanged = (e: Event, dataOptionKey: string) => { callback(e, dataOptionKey) }
     }
 
     hideEpicDetails() {
@@ -78,6 +78,7 @@ export class SelectedEpicDetailsController extends lib.BaseViewController implem
         this.detailsView.wireOnInputChanged((e: Event, dataOptionKey: string) => this.onInputChanged(e, dataOptionKey));
 
         this.inputChangeMap.set(SelectedEpicDetailsDataOptions.TeamName, (e: Event) => this.onInputChangedTeamName(e));
+        this.inputChangeMap.set(SelectedEpicDetailsDataOptions.EpicName, (e: Event) => this.onInputChangedEpicName(e));
 
         super.initController();
     }
@@ -122,6 +123,18 @@ export class SelectedEpicDetailsController extends lib.BaseViewController implem
         node.blur();
 
         dataStore.UpdateTeamName(this.selectedEpic.TeamID, node.value);
+    }
+
+    onInputChangedEpicName(e: Event) {
+        if (this.selectedEpic === undefined) {
+            return;
+        }
+
+        const node = e!.target as HTMLInputElement;
+        node.blur();
+
+        console.log(">> onInputChangedEpicName:", e, node.value)
+        dataStore.UpdateEpicName(this.selectedEpic.ID, node.value);
     }
 }
 
