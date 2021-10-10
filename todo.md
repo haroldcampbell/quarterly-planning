@@ -1,11 +1,11 @@
-[] Edit Names
+[X] Edit Names
     [X] Team Name
-    [] Epic Name
-    [] Consistency check
-        [] Team Name in Upstream dependency
-        [] Team Name in Downstream dependency
-        [] Epic Name in Upstream dependency
-        [] Epic Name in Downstream dependency
+    [X] Epic Name
+    [X] Consistency check
+        [X] Team Name in Upstream dependency
+        [X] Team Name in Downstream dependency
+        [X] Epic Name in Upstream dependency
+        [X] Epic Name in Downstream dependency
 
 [] Create new Team
 [] Create new Epic
