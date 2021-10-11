@@ -90,29 +90,49 @@ export function getTeamByID(teamID: string): Team {
     return _teamsMap[teamID]
 }
 
-// export function getEpicsByTeamRow(): Map<number, Epic[]> {
-// return _epicsByRowIndex;
-// }
-
-// Contains epicID -> Epic mapping
+/** Contains epicID -> Epic mapping */
 let _epicsByID: Map<string, Epic>;
 
-// Contains a map of epicID to array of downstream epicIDs
+/** Contains a map of epicID to array of downstream epicIDs */
 let _downStreamsByEpicID: Map<string, string[]>;
 
-// const _epicsByTeamID = new Map<string, Epic[]>();
 export function getEpicsByTeamID(teamID: string): Epic[] {
     return _epicsByTeamID.get(teamID)!;
 }
 
-// function processEpicsByTeamID() {
-//     for (let epic of _epicsByID.values()) {
-//         if (!_epicsByTeamID.has(epic.TeamID)) {
-//             _epicsByTeamID.set(epic.TeamID, []);
-//         }
-//         _epicsByTeamID.get(epic.TeamID)?.push(epic);
-//     }
-// }
+export function addNewEpic(epic: Epic) {
+    _epicsByTeamID.get(epic.TeamID)!.push(epic);
+    _epicsByID.set(epic.ID, epic);
+}
+
+export function getEpicByID(epicID: string): Epic | undefined {
+    return _epicsByID.get(epicID);
+}
+
+/** Returns an array of downstream epicIDs for the specified epic */
+export function getDownstreamEpicsByID(epicID: string): string[] | undefined {
+    return _downStreamsByEpicID.get(epicID);
+}
+
+export function UpdateTeamName(teamID: string, value: string) {
+    const team = getTeamByID(teamID);
+
+    team.Name = value;
+    lib.Observable.notify(OSubjectWillUpdateTeamName, {
+        source: undefined,
+        value: { team: team },
+    });
+}
+
+export function UpdateEpicName(epicID: string, value: string) {
+    const epic = getEpicByID(epicID);
+
+    epic!.Name = value;
+    lib.Observable.notify(OSubjectWillUpdateEpicName, {
+        source: undefined,
+        value: { epic: epic },
+    });
+}
 
 /** Populates a map with epics[epicID]*/
 function processTeamEpics(): Map<string, Epic> {
@@ -124,15 +144,6 @@ function processTeamEpics(): Map<string, Epic> {
         })
     }
     return epicsByIDMap;
-}
-
-export function getEpicByID(epicID: string): Epic | undefined {
-    return _epicsByID.get(epicID);
-}
-
-/** Returns an array of downstream epicIDs for the specified epic */
-export function getDownstreamEpicsByID(epicID: string): string[] | undefined {
-    return _downStreamsByEpicID.get(epicID);
 }
 
 /** Builds the downstream epics by walking the epic.upstreams  */
@@ -170,26 +181,6 @@ async function wireServerData() {
 
     // await processEpicsByTeamID();
     await onDataStoreReady();
-}
-
-export function UpdateTeamName(teamID: string, value: string) {
-    const team = getTeamByID(teamID);
-
-    team.Name = value;
-    lib.Observable.notify(OSubjectWillUpdateTeamName, {
-        source: undefined,
-        value: { team: team },
-    });
-}
-
-export function UpdateEpicName(epicID: string, value: string) {
-    const epic = getEpicByID(epicID);
-
-    epic!.Name = value;
-    lib.Observable.notify(OSubjectWillUpdateEpicName, {
-        source: undefined,
-        value: { epic: epic },
-    });
 }
 
 wireServerData();

@@ -22,10 +22,38 @@ svg rect.epic {
     fill: #fff;
     stroke: #eae7e7;
     stroke-width: 1px;
-    /* border-radius: 5px; */
 }
 
 svg text.epic-name {
     pointer-events: none;
     font-size: 10px;
+}
+
+svg rect.new-epic-btn-container {
+    fill: #f3f5f4;
+    stroke: none;
+    stroke-width: 1px;
+}
+
+svg rect.new-epic-btn-container:hover {
+    fill: #707070;
+    cursor: pointer;
+}
+
+svg rect.new-epic-btn-head {
+    pointer-events: none;
+    fill: transparent;
+    stroke-width: 1px;
+}
+
+svg text.new-epic-btn-text {
+    pointer-events: none;
+    font-size: 10px;
+    fill: #eae7e7;
+}
+svg line.new-epic-btn-line {
+    pointer-events: none;
+    fill: #fff;
+    stroke: #eae7e7;
+    stroke-width: 1px;
 }

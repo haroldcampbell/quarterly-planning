@@ -32,3 +32,5 @@ export const OSubjectDataStoreReady = "data-store-data-ready";
 
 export const OSubjectWillUpdateTeamName = "will-update-team-name";
 export const OSubjectWillUpdateEpicName = "will-update-epic-name";
+
+export const OSubjectCreateNewEpic = "create-new-epic";

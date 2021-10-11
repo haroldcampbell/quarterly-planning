@@ -81,7 +81,7 @@ export class TeamEpicsViewController extends lib.BaseViewController {
     initTeamEpics(epics: TeamEpics) {
         let epicController = new EpicsViewController(this, this.lastRowIndex, epics);
 
-        epicController.onEpicCreated = (epic) => { this.epicCreated(epic, epicController); }
+        epicController.onEpicCreated = (epic) => { this.bindEpicToController(epic, epicController); }
         epicController.onCompleted = (rowsCompleted, maxXBounds) => { this.onEpicRowAdded(rowsCompleted, maxXBounds); }
         epicController.onLayoutNeeded = (maxXBounds, didUpdateTeamId) => { this.onLayoutNeeded(maxXBounds, didUpdateTeamId); }
         epicController.initController();
@@ -90,7 +90,7 @@ export class TeamEpicsViewController extends lib.BaseViewController {
         this.teamEpicsView.addEpicView(epicController.view.viewContent());
     }
 
-    epicCreated(epic: Epic, epicController: EpicsViewController) {
+    bindEpicToController(epic: Epic, epicController: EpicsViewController) {
         if (this.epicControllerDictionary.has(epic.ID)) {
             return
         }

@@ -2,7 +2,7 @@ import * as gtap from "../../../../../../www/dist/js/gtap";
 import * as lib from "../../../../../core/lib";
 import { IViewController, IScreenController } from "../../../../../core/lib";
 import { OSubjectViewEpicDetails } from "../../../selectedEpicDetails/selectedEpicDetailsViewController";
-import { Epic, OSubjectWillUpdateEpicName, SVGContainerID, TeamEpics } from "../../../_defs";
+import { Epic, OSubjectCreateNewEpic, OSubjectWillUpdateEpicName, SVGContainerID, TeamEpics } from "../../../_defs";
 
 /** @jsx gtap.$jsx */
 
@@ -30,6 +30,39 @@ class EpicsView extends lib.BaseView {
 
     updateViewWidth(width: number) {
         this.content.style.width = `${width}px`;
+    }
+
+    addNewEpicControl(svgNodesY: number, newEpicCallback: (node?: EpicViewSVGNode) => void, lastSVGNodes?: EpicViewSVGNode) {
+        const x = lastSVGNodes?.svgRectNode.$x() + lastSVGNodes?.svgRectNode.$width();
+
+        const rCon = gtap.rect(SVGContainerID);
+        rCon.$class("new-epic-btn-container");
+        rCon.$width(15);
+        rCon.$height(30);
+        rCon.$x(x + 5);
+        rCon.$y(svgNodesY - 2);
+        rCon.onclick = () => {
+            newEpicCallback(lastSVGNodes);
+        }
+
+        const r = gtap.rect(SVGContainerID);
+        r.$class("new-epic-btn-head");
+        r.$width(15);
+        r.$height(10);
+        r.$x(x + 5);
+        r.$y(svgNodesY - 2);
+
+        const l = gtap.vLine(SVGContainerID);
+        l.$class("new-epic-btn-line");
+        l.$x(x + colGap / 2 - .5);
+        l.$y(svgNodesY + 9);
+        l.$height(20);
+
+        const t = gtap.text(SVGContainerID);
+        t.$class("new-epic-btn-text")
+        t.$text("+");
+        t.$x(x + 9);
+        t.$y(svgNodesY + 7);
     }
 
     addEpic(lastRowIndex: number, epic: Epic): EpicViewSVGNode {
@@ -80,16 +113,11 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
     }
 
     initController() {
-        let epicsView = this.view as EpicsView
-
         this.xOffset = rowPadding;
-        this.teamEpics.Epics?.forEach((e) => {
-            const svgNodes = epicsView.addEpic(this.lastRowIndex, e);
+        this.teamEpics.Epics?.forEach((epic) => {
+            this.createEpic(epic);
 
-            this.epicsViewSVGMap.set(e.ID, svgNodes);
-            this.sizeSVGNodes(svgNodes);
-            this.updateRowBounds(svgNodes);
-            this.onEpicCreated?.(e);
+            this.onEpicCreated?.(epic);
         });
 
         this.onCompleted?.(1, this.maxXBounds);
@@ -98,6 +126,37 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
         lib.Observable.subscribe(OSubjectWillUpdateEpicName, this);
 
         super.initController();
+    }
+
+    createEpic(epic: Epic) {
+        let epicsView = this.view as EpicsView
+        const svgNodes = epicsView.addEpic(this.lastRowIndex, epic);
+
+        this.epicsViewSVGMap.set(epic.ID, svgNodes);
+        this.sizeSVGNodes(svgNodes);
+        this.updateRowBounds(svgNodes);
+
+        epicsView.addNewEpicControl(this.getSVGNodeY(), (node) => { this.onCreateNewEpicCallback(epic.TeamID, node) }, svgNodes);
+    }
+
+    /**
+     *
+     * @param previousNode is the node infront of where the new node will be created
+     */
+    onCreateNewEpicCallback(teamID: string, previousNode?: EpicViewSVGNode) {
+        const newEpic: Epic = {
+            ID: `epic-${Date.now()}`,
+            TeamID: teamID,
+            Name: "New Epic",
+        }
+
+        lib.Observable.notify(OSubjectCreateNewEpic, {
+            source: this,
+            value: {
+                epic: newEpic,
+                epicController: this,
+            },
+        });
     }
 
     onUpdate(subject: string, state: lib.ObserverState): void {
@@ -115,9 +174,13 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
         }
     }
 
+    getSVGNodeY(): number {
+        return 2 + this.lastRowIndex * 64;
+    }
+
     sizeSVGNodes(svgNodes: EpicViewSVGNode) {
         const x = this.xOffset
-        const y = 2 + this.lastRowIndex * 64;
+        const y = this.getSVGNodeY();
 
         svgNodes.svgRectNode.$x(x);
         svgNodes.svgRectNode.$y(y + ShapeYOffset);
@@ -126,7 +189,7 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
         svgNodes.svgRectNode.$height(shapeHeight);
         svgNodes.svgRectNode.$rxy(shapeEornerRadius);
 
-        svgNodes.svgTextNode.$xy(x + 10, y + 25);
+        svgNodes.svgTextNode.$xy(x + 10, y + 23);
 
         const textWidth = svgNodes.svgTextNode.$textBoundingBox().width + 20;
         const width = textWidth < 40 ? 40 : textWidth;

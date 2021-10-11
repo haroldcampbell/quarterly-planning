@@ -1,11 +1,12 @@
 import * as gtap from "../../../../../www/dist/js/gtap";
 import * as lib from "../../../../core/lib";
 import * as dataStore from "../../../data/dataStore";
-import { Team, TeamEpics, Epic, OSubjectDataStoreReady } from "../../_defs";
+import { Team, TeamEpics, Epic, OSubjectDataStoreReady, OSubjectCreateNewEpic } from "../../_defs";
 
 /** @jsx gtap.$jsx */
 
 import "./dependencyView.css"
+import { EpicsViewController } from "./epics/epicsViewController";
 import { TeamEpicsViewController } from "./epics/teamEpicsViewController";
 import { TeamsNamesViewController } from "./teams/teamNamesController";
 
@@ -47,6 +48,7 @@ export class DependencyViewController extends lib.BaseViewController implements 
         this.view.addView(this.teamEpicsViewController.view);
 
         lib.Observable.subscribe(OSubjectDataStoreReady, this);
+        lib.Observable.subscribe(OSubjectCreateNewEpic, this);
 
         super.initView();
     }
@@ -70,6 +72,17 @@ export class DependencyViewController extends lib.BaseViewController implements 
                 this.loadData();
                 break;
             }
+            case OSubjectCreateNewEpic: {
+                const { epic, epicController } = state.value;
+                this.onCreateNewEpic(epic, epicController);
+                break;
+            }
         }
+    }
+
+    onCreateNewEpic(epic: Epic, epicController: EpicsViewController) {
+        dataStore.addNewEpic(epic);
+        epicController.createEpic(epic);
+        this.teamEpicsViewController.bindEpicToController(epic, epicController);
     }
 }
