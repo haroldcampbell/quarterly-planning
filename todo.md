@@ -1,19 +1,14 @@
-[X] Edit Names
-    [X] Team Name
-    [X] Epic Name
-    [X] Consistency check
-        [X] Team Name in Upstream dependency
-        [X] Team Name in Downstream dependency
-        [X] Epic Name in Upstream dependency
-        [X] Epic Name in Downstream dependency
 
-[] Create new Team
 [] Create new Epic
     [] When team has zero epics
     [] In team with existing epic
         [] at the fist position
         [] at the last position
         [] middle
+
+========
+NEXT
+========
 
 [] Side-panel dependencies
     [] Add Upstream dependency
@@ -25,6 +20,8 @@
     [] Edit expected start week
         [] Sync-epic to new week boundary location
         [] Highlight conflicts between epics that start after upstream dependency
+
+[] Create new Team
 
 [] Add Epic Duration to Estimated Size
     [] Update the epic size based on the estimated size
@@ -68,3 +65,19 @@
 [] Explore addition of excel fields
 
 [] Explore Decision log
+
+
+========
+ DONE
+========
+
+[X] Edit Names
+    [X] Team Name
+    [X] Epic Name
+    [X] Consistency check
+        [X] Team Name in Upstream dependency
+        [X] Team Name in Downstream dependency
+        [X] Epic Name in Upstream dependency
+        [X] Epic Name in Downstream dependency
+
+
