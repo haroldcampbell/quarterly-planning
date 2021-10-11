@@ -2,6 +2,7 @@ import * as lib from "../../core/lib";
 import { Epic, OSubjectDataStoreReady, OSubjectWillUpdateEpicName, OSubjectWillUpdateTeamName, Team } from "../home_screen/_defs";
 
 const _teamsMap: { [key: string]: Team } = {
+    // "A0": { ID: "A0", Name: "Team 0" },
     "A1": { ID: "A1", Name: "Team 1" },
     "A2": { ID: "A2", Name: "Team 2" },
     "A3": { ID: "A3", Name: "Team 3" },
@@ -13,6 +14,7 @@ const _teamsMap: { [key: string]: Team } = {
 }
 
 const _teamIDs: string[] = [
+    // "A0",
     "A1",
     "A2",
     "A3",
@@ -23,32 +25,32 @@ const _teamIDs: string[] = [
     "A8",
 ];
 
-const _epicsByRowIndex = new Map<number, Epic[]>([
-    [0, [
+const _epicsByTeamID = new Map<string, Epic[]>([
+    ["A1", [
         { ID: "1", TeamID: "A1", Name: "Epic IL1" },
         { ID: "2", TeamID: "A1", Name: "Epic IL2", Upstreams: ["1"] },
         { ID: "3", TeamID: "A1", Name: "Epic IL3" },
         { ID: "4", TeamID: "A1", Name: "Epic IL4" },
     ]],
-    [1, [
+    ["A2", [
         { ID: "5", TeamID: "A2", Name: "Epic P1" },
         { ID: "6", TeamID: "A2", Name: "Epic P2" },
     ]],
-    [2, [
+    ["A3", [
         { ID: "7", TeamID: "A3", Name: "Epic SME1" },
         { ID: "8", TeamID: "A3", Name: "Epic SME2" },
         { ID: "9", TeamID: "A3", Name: "Epic SME3", Upstreams: ["2", "6", "18", "22", "23"] },
         { ID: "10", TeamID: "A3", Name: "Epic SME4" },
     ]],
-    [3, [
+    ["A4", [
         { ID: "11", TeamID: "A4", Name: "Epic M1" },
         { ID: "12", TeamID: "A4", Name: "Epic M2" },
         { ID: "13", TeamID: "A4", Name: "Epic M3" },
     ]],
-    [4, [
+    ["A5", [
         { ID: "14", TeamID: "A5", Name: "Epic DW1" },
     ]],
-    [5, [
+    ["A6", [
         { ID: "15", TeamID: "A6", Name: "Epic CRM1" },
         { ID: "16", TeamID: "A6", Name: "Epic CRM2" },
         { ID: "17", TeamID: "A6", Name: "Epic CRM3", Upstreams: ["6"] },
@@ -57,13 +59,13 @@ const _epicsByRowIndex = new Map<number, Epic[]>([
         { ID: "20", TeamID: "A6", Name: "Epic CRM6" },
         { ID: "21", TeamID: "A6", Name: "Epic CRM7", Upstreams: ["9"] },
     ]],
-    [6, [
+    ["A7", [
         { ID: "22", TeamID: "A7", Name: "Epic ACO1" },
         { ID: "23", TeamID: "A7", Name: "Epic ACO2", Upstreams: ["11", "15"] },
         { ID: "24", TeamID: "A7", Name: "Epic ACO3" },
         { ID: "25", TeamID: "A7", Name: "Epic ACO4" },
     ]],
-    [7, [
+    ["A8", [
         { ID: "26", TeamID: "A8", Name: "Epic CN1" },
         { ID: "27", TeamID: "A8", Name: "Epic CN2" },
     ]],
@@ -88,9 +90,9 @@ export function getTeamByID(teamID: string): Team {
     return _teamsMap[teamID]
 }
 
-export function getEpicsByTeamRow(): Map<number, Epic[]> {
-    return _epicsByRowIndex;
-}
+// export function getEpicsByTeamRow(): Map<number, Epic[]> {
+// return _epicsByRowIndex;
+// }
 
 // Contains epicID -> Epic mapping
 let _epicsByID: Map<string, Epic>;
@@ -98,25 +100,25 @@ let _epicsByID: Map<string, Epic>;
 // Contains a map of epicID to array of downstream epicIDs
 let _downStreamsByEpicID: Map<string, string[]>;
 
-const _epicsByTeamID = new Map<string, Epic[]>();
+// const _epicsByTeamID = new Map<string, Epic[]>();
 export function getEpicsByTeamID(teamID: string): Epic[] {
     return _epicsByTeamID.get(teamID)!;
 }
 
-function processEpicsByTeamID() {
-    for (let epic of _epicsByID.values()) {
-        if (!_epicsByTeamID.has(epic.TeamID)) {
-            _epicsByTeamID.set(epic.TeamID, []);
-        }
-        _epicsByTeamID.get(epic.TeamID)?.push(epic);
-    }
+// function processEpicsByTeamID() {
+//     for (let epic of _epicsByID.values()) {
+//         if (!_epicsByTeamID.has(epic.TeamID)) {
+//             _epicsByTeamID.set(epic.TeamID, []);
+//         }
+//         _epicsByTeamID.get(epic.TeamID)?.push(epic);
+//     }
+// }
 
-}
 /** Populates a map with epics[epicID]*/
 function processTeamEpics(): Map<string, Epic> {
     const epicsByIDMap = new Map<string, Epic>()
 
-    for (let epics of _epicsByRowIndex.values()) {
+    for (let epics of _epicsByTeamID.values()) {
         epics.forEach(epic => {
             epicsByIDMap.set(epic.ID, epic)
         })
@@ -166,7 +168,7 @@ async function wireServerData() {
     _epicsByID = await processTeamEpics();
     _downStreamsByEpicID = await processDownstreamEpics();
 
-    await processEpicsByTeamID();
+    // await processEpicsByTeamID();
     await onDataStoreReady();
 }
 

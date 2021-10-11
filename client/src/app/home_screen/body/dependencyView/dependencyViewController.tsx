@@ -53,10 +53,10 @@ export class DependencyViewController extends lib.BaseViewController implements 
 
     loadData() {
         this.teams = dataStore.getTeams();
-        let epics = dataStore.getEpicsByTeamRow();
 
         this.teams.forEach((t, index) => {
-            const teamEpic = { Team: t, Epics: epics.get(index) };
+            let epics = dataStore.getEpicsByTeamID(t.ID);
+            const teamEpic = { Team: t, Epics: epics };
             this.teamEpics.push(teamEpic);
         })
 
