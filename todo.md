@@ -1,18 +1,10 @@
-
-[] Create new Epic
-    [] In team with existing epic
-        [] at the fist position
-        [X] at the last position
-        [X] middle
-    [X] relayout the add-epic button when an epic's size changes
+[] Side-panel dependencies
+    [] Add Upstream dependency
+    [] Add Downstream dependency
 
 ========
 NEXT
 ========
-
-[] Side-panel dependencies
-    [] Add Upstream dependency
-    [] Add Downstream dependency
 
 [] Week Boundaries
     [] Add week boundaries markings
@@ -24,6 +16,7 @@ NEXT
 [] Create new Team
     [] Create new Epic when team has zero epics
 
+[] Create new Epic at the fist position when there are other epics
 
 [] Add Epic Duration to Estimated Size
     [] Update the epic size based on the estimated size
@@ -53,25 +46,41 @@ NEXT
 
 [] Delete Team
 [] Delete Epic
-[] Delete Side-panel dependencies
-    [] Delete Upstream dependency
-    [] Delete Downstream dependency
-
+[] Side-panel dependencies
+    [] Remove Upstream dependency
+    [] Remove Downstream dependency
 
 [] Cancel Edit Name changes with Esc key
     [] Team name
     [] Epic Name
 
-[] Fix lines to be pretty
+[] FIX: Put dependency connections on top of the epics after new epic created
+
+[] Add annotations (e.g. conflict/accepted) to epics (the Red/Green stars)
 
 [] Explore addition of excel fields
 
-[] Explore Decision log
+[] Explore Decision/Action log
+
+[] Explore Risk log
+
+[] Explore Summary Report based on Epic clashes
+
+[] Expore adding projects to Epic and view of the projects
+
 
 
 ========
  DONE
 ========
+
+[X] Create new Epic
+    [X] In team with existing epic
+        [X] at the last position
+        [X] middle
+    [X] relayout the add-epic button when an epic's size changes
+
+[X] FIX: Make lines to be pretty
 
 [X] Edit Names
     [X] Team Name
