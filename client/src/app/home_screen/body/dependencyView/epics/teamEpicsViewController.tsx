@@ -4,7 +4,7 @@ import { IView } from "../../../../../core/lib";
 import * as dataStore from "../../../../data/dataStore";
 
 import { Epic, OSubjectDataStoreReady, PathInfo, SVGContainerID, Team, TeamEpics, XYOnly } from "../../../_defs";
-import { EpicsViewController } from "./epicsViewController";
+import { EpicsViewController, ShapeYOffset } from "./epicsViewController";
 
 /** @jsx gtap.$jsx */
 
@@ -164,7 +164,7 @@ export class TeamEpicsViewController extends lib.BaseViewController {
 
         return {
             x: startRect?.x + startRect?.width,
-            y: startRect?.y + 20
+            y: startRect?.y + ShapeYOffset
         };
     }
 
@@ -173,7 +173,7 @@ export class TeamEpicsViewController extends lib.BaseViewController {
 
         return {
             x: endRect?.x,
-            y: endRect?.y + 20
+            y: endRect?.y + ShapeYOffset
         };
     }
 

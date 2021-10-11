@@ -22,9 +22,10 @@ svg rect.epic {
     fill: #fff;
     stroke: #eae7e7;
     stroke-width: 1px;
-    border-radius: 10px;
+    /* border-radius: 5px; */
 }
 
 svg text.epic-name {
     pointer-events: none;
+    font-size: 10px;
 }

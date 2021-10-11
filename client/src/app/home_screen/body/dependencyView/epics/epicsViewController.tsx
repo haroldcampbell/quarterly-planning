@@ -10,9 +10,11 @@ import "./epicsView.css"
 import { OSubjectTeamEpicsScrollContainerResized } from "./teamEpicsViewController";
 
 const colGap = 25;
-const shapeEornerRadius = 10;
-const shapeHeight = 40;
+const shapeHeight = 20;
 const rowPadding = 20; /** The space at the start and end of the row */
+const shapeEornerRadius = 5;
+
+export const ShapeYOffset = 10;
 
 type EpicViewSVGNode = {
     svgRectNode: any;
@@ -115,10 +117,10 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
 
     sizeSVGNodes(svgNodes: EpicViewSVGNode) {
         const x = this.xOffset
-        const y = 12 + this.lastRowIndex * 64;
+        const y = 2 + this.lastRowIndex * 64;
 
         svgNodes.svgRectNode.$x(x);
-        svgNodes.svgRectNode.$y(y);
+        svgNodes.svgRectNode.$y(y + ShapeYOffset);
 
         svgNodes.svgRectNode.$width(40);
         svgNodes.svgRectNode.$height(shapeHeight);
