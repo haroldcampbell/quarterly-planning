@@ -100,8 +100,8 @@ export function getEpicsByTeamID(teamID: string): Epic[] {
     return _epicsByTeamID.get(teamID)!;
 }
 
-export function addNewEpic(epic: Epic) {
-    _epicsByTeamID.get(epic.TeamID)!.push(epic);
+export function addNewEpicAtIndex(epic: Epic, insertionIndex: number) {
+    _epicsByTeamID.get(epic.TeamID)!.splice(insertionIndex, 0, epic);
     _epicsByID.set(epic.ID, epic);
 }
 

@@ -56,7 +56,7 @@ export class DependencyViewController extends lib.BaseViewController implements 
     loadData() {
         this.teams = dataStore.getTeams();
 
-        this.teams.forEach((t, index) => {
+        this.teams.forEach((t) => {
             let epics = dataStore.getEpicsByTeamID(t.ID);
             const teamEpic = { Team: t, Epics: epics };
             this.teamEpics.push(teamEpic);
@@ -73,16 +73,16 @@ export class DependencyViewController extends lib.BaseViewController implements 
                 break;
             }
             case OSubjectCreateNewEpic: {
-                const { epic, epicController } = state.value;
-                this.onCreateNewEpic(epic, epicController);
+                const { epic, epicController, insertionIndex } = state.value;
+                this.onCreateNewEpic(epic, epicController, insertionIndex);
                 break;
             }
         }
     }
 
-    onCreateNewEpic(epic: Epic, epicController: EpicsViewController) {
-        dataStore.addNewEpic(epic);
-        epicController.createEpic(epic);
+    onCreateNewEpic(epic: Epic, epicController: EpicsViewController, insertionIndex: number) {
+        dataStore.addNewEpicAtIndex(epic, insertionIndex + 1);
+        epicController.createEpicAtIndex(epic);
         this.teamEpicsViewController.bindEpicToController(epic, epicController);
     }
 }

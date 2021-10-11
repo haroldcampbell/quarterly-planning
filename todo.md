@@ -1,10 +1,10 @@
 
 [] Create new Epic
-    [] When team has zero epics
     [] In team with existing epic
         [] at the fist position
-        [] at the last position
-        [] middle
+        [X] at the last position
+        [X] middle
+    [X] relayout the add-epic button when an epic's size changes
 
 ========
 NEXT
@@ -22,6 +22,8 @@ NEXT
         [] Highlight conflicts between epics that start after upstream dependency
 
 [] Create new Team
+    [] Create new Epic when team has zero epics
+
 
 [] Add Epic Duration to Estimated Size
     [] Update the epic size based on the estimated size

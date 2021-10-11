@@ -1,9 +1,8 @@
 import * as gtap from "../../../../../../www/dist/js/gtap";
 import * as lib from "../../../../../core/lib";
-import { IView } from "../../../../../core/lib";
 import * as dataStore from "../../../../data/dataStore";
 
-import { Epic, OSubjectDataStoreReady, PathInfo, SVGContainerID, Team, TeamEpics, XYOnly } from "../../../_defs";
+import { Epic, PathInfo, SVGContainerID, TeamEpics, XYOnly } from "../../../_defs";
 import { EpicsViewController, ShapeYOffset } from "./epicsViewController";
 
 /** @jsx gtap.$jsx */
@@ -131,26 +130,22 @@ export class TeamEpicsViewController extends lib.BaseViewController {
         const epics = dataStore.getEpicsByTeamID(didUpdateTeamId);
 
         epics.forEach((epic => {
+            const controller = this.epicControllerDictionary.get(epic.ID)!;
+            const targetSVGNode = controller.getEpicSVGRectNode(epic.ID);
+
             if (this.upstreamConnectionMap.has(epic.ID)) {
                 const startPaths = this.upstreamConnectionMap.get(epic.ID);
 
                 startPaths?.forEach((pInfo) => {
-                    const controller = this.epicControllerDictionary.get(epic.ID)!;
-                    const targetSVGNode = controller.getEpicSVGRectNode(epic.ID);
-
                     pInfo.start = this.calcUpstreamStart(targetSVGNode);
                     orienPath(pInfo.p, pInfo.start, pInfo.end);
                 });
             }
 
-
             if (this.downstreamConnectionMap.has(epic.ID)) {
                 const endPaths = this.downstreamConnectionMap.get(epic.ID);
 
                 endPaths?.forEach((pInfo) => {
-                    const controller = this.epicControllerDictionary.get(epic.ID)!;
-                    const targetSVGNode = controller.getEpicSVGRectNode(epic.ID);
-
                     pInfo.end = this.calcDownstreamEnd(targetSVGNode);
                     orienPath(pInfo.p, pInfo.start, pInfo.end);
                 });
