@@ -2,9 +2,9 @@
     [] Add Upstream dependency
         [X] Create Dialog
         [X] Dismiss Dialog
-        [] Load data to dialog
-        [] Toggle highlighting epics
-        [] Show selected count
+        [X] Load data to dialog
+        [X] Toggle highlighting epics
+        [X] Show selected count
         [] Save dependencies
     [] Add Downstream dependency
     [] Filtering
