@@ -14,7 +14,7 @@ class UpstreamDependencyDialogView extends lib.BaseView {
     DownstreamEpic!: Epic;
     Dependencies!: Map<string, TeamEpicDependency>;
 
-    onEpicClickedCallback!: (e: Epic, rowNode: HTMLElement) => void;
+    onEpicClickedCallback!: (e: Epic, rowNode: GTapElement) => void;
 
     viewContent() {
         return this.content;
@@ -105,7 +105,7 @@ export class UpstreamDependencyDialogController extends lib.BaseViewController {
     initView() {
         this.view.DownstreamEpic = this.DownstreamEpic;
         this.view.Dependencies = this.Dependencies;
-        this.view.onEpicClickedCallback = (e: Epic, rowNode: HTMLElement) => { this.onEpicClicked(e, rowNode); }
+        this.view.onEpicClickedCallback = (e: Epic, rowNode: GTapElement) => { this.onEpicClicked(e, rowNode); }
         this.view.initView();
 
         this.fetchEpics();
