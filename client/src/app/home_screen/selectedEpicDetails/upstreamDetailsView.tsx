@@ -2,8 +2,9 @@ import * as gtap from "../../../../www/dist/js/gtap";
 import * as lib from "../../../core/lib";
 import * as dataStore from "../../data/dataStore";
 
-import { Epic } from "../_defs";
+import { Epic, TeamEpicDependency } from "../_defs";
 import { DependencyTableView } from "./dependencyTableView";
+import { OSubjectViewUpstreamDependencyDialog, UpstreamDependencyDialogController } from "./upstreamDependencyDialogController";
 
 /** @jsx gtap.$jsx */
 
@@ -12,6 +13,7 @@ export class UpstreamDetailsView extends lib.BaseView {
 
     private dependencyCountElm = <h3></h3>;
     private dependencyWrapper = <div className="dependency-wrapper-container"></div>;
+    private button = <button className="flat-btn add-upstream-dep">+</button>
 
     private content = <div className='selected-epic-details-container__upstream rows' >
         <div className="row-cell">
@@ -24,7 +26,7 @@ export class UpstreamDetailsView extends lib.BaseView {
                             <label><span>UPSTERAM</span><br /><span>DEPENDENCIES</span></label>
                         </div>
                         <div className="cell-right">
-                            <button className="flat-btn add-upstream-dep">+</button>
+                            {this.button}
                         </div>
                     </div>
                 </div>
@@ -37,6 +39,9 @@ export class UpstreamDetailsView extends lib.BaseView {
             </div>
         </div>
     </div>;
+
+    private selectedEpic!: Epic;
+    private upstreamTeamDetails = new Map<string, TeamEpicDependency>();
 
     viewContent() {
         return this.content;
@@ -53,11 +58,24 @@ export class UpstreamDetailsView extends lib.BaseView {
             {this.dependencyTableView.viewContent()}
         </div>)
 
+        this.button.onclick = () => { this.onShowDependencyDialog() };
         super.initView();
+    }
+
+    onShowDependencyDialog() {
+        lib.Observable.notify(OSubjectViewUpstreamDependencyDialog, {
+            source: this,
+            value: {
+                selectedEpic: this.selectedEpic,
+                dependencies: this.upstreamTeamDetails,
+            }
+        });
     }
 
     onEpicSelected(epic: Epic) {
         this.dependencyTableView.clearTableRows();
+        this.selectedEpic = epic;
+        this.upstreamTeamDetails = new Map<string, TeamEpicDependency>();
 
         if (epic.Upstreams === undefined) {
             this.dependencyCountElm.innerText = 0;
@@ -69,6 +87,11 @@ export class UpstreamDetailsView extends lib.BaseView {
         epic.Upstreams!.forEach((epicID) => {
             const upstreamEpic = dataStore.getEpicByID(epicID)!;
             const upstreamTeam = dataStore.getTeamByID(upstreamEpic!.TeamID);
+
+            this.upstreamTeamDetails.set(upstreamEpic.ID, {
+                Team: upstreamTeam,
+                Epic: upstreamEpic
+            });
 
             this.dependencyTableView.addTableRows(true, upstreamTeam.Name, upstreamEpic.Name)
         })

@@ -7,10 +7,15 @@ import "./homeScreen.css"
 import { ScreenNavController } from "./nav/screenNavController";
 import { BodyController } from "./body/bodyController";
 import { SelectedEpicDetailsController } from "./selectedEpicDetails/selectedEpicDetailsViewController";
+import { OSubjectViewUpstreamDependencyDialog, UpstreamDependencyDialogController } from "./selectedEpicDetails/upstreamDependencyDialogController";
+import { Epic, TeamEpicDependency } from "./_defs";
 
 class MainPanelView extends lib.BaseView {
+    private content = <div className='screen-main-panel-container' />
+
     viewContent() {
-        return <div className='screen-main-panel-container' />;
+        /** So that a new Instance is not created each time viewContent is called */
+        return this.content;
     }
 
     loadSubviews(viewContent: any) {
@@ -30,8 +35,11 @@ class MainPanelView extends lib.BaseView {
 }
 
 class DetailsPanelView extends lib.BaseView {
+    private content = <div className='screen-details-panel-container' />;
+
     viewContent() {
-        return <div className='screen-details-panel-container' />;
+        /** So that a new Instance is not created each time viewContent is called */
+        return this.content;
     }
 
     loadSubviews(viewContent: any) {
@@ -45,8 +53,11 @@ class DetailsPanelView extends lib.BaseView {
 }
 
 class HomeScreen extends lib.BaseScreen {
+    private content = <div className='home-screen' />;
+
     screenContent() {
-        return <div className='home-screen' />;
+        /** So that a new Instance is not created each time viewContent is called */
+        return this.content;
     }
 
     loadSubviews(viewContent: any) {
@@ -59,7 +70,7 @@ class HomeScreen extends lib.BaseScreen {
     }
 }
 
-export class HomeScreenController extends lib.BaseScreenController {
+export class HomeScreenController extends lib.BaseScreenController implements lib.IObserver {
     protected _screen: lib.IScreen = new HomeScreen(this);
 
     private screenNavController = new ScreenNavController(this);
@@ -81,10 +92,32 @@ export class HomeScreenController extends lib.BaseScreenController {
         this._screen.addView(detailsPanelView);
 
         super.initScreen();
+
+        lib.Observable.subscribe(OSubjectViewUpstreamDependencyDialog, this);
     }
 
     initController() {
         window.history.pushState({}, "", "/");
         super.initController();
     }
+
+    onUpdate(subject: string, state: lib.ObserverState): void {
+        switch (subject) {
+            case OSubjectViewUpstreamDependencyDialog: {
+                const { selectedEpic, dependencies } = state.value;
+                this.onShowDependencyDialog(selectedEpic, dependencies);
+                break;
+            }
+        }
+    }
+
+    onShowDependencyDialog(selectedEpic: Epic, dependencies: Map<string, TeamEpicDependency>) {
+        const detailsController = new UpstreamDependencyDialogController(this);
+
+        detailsController.DownstreamEpic = selectedEpic;
+        detailsController.Dependencies = dependencies;
+        detailsController.initController();
+        detailsController.showDialog();
+    }
+
 }

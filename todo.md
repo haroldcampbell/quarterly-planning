@@ -1,6 +1,15 @@
 [] Side-panel dependencies
     [] Add Upstream dependency
+        [X] Create Dialog
+        [X] Dismiss Dialog
+        [] Load data to dialog
+        [] Toggle highlighting epics
+        [] Show selected count
+        [] Save dependencies
     [] Add Downstream dependency
+    [] Filtering
+        [] Filter epics by Team Name
+        [] Filter epics by Epic Name
 
 ========
 NEXT
@@ -57,6 +66,19 @@ NEXT
 [] FIX: Put dependency connections on top of the epics after new epic created
 
 [] Add annotations (e.g. conflict/accepted) to epics (the Red/Green stars)
+
+========
+ OPPORTUNITIES
+========
+
+[] Eplore capturing snapshots/version of the plan
+    [] Show deviations to the plan
+
+[] Filter Analysis
+    [] By Epic - Show me all the work impacting this epic
+    [] By Epic - Show me the impact of changing this epic
+    [] By Project - Show me all the work impacting this project
+    [] By Team dependencies - Show me all the projects that this team is impacting
 
 [] Explore addition of excel fields
 

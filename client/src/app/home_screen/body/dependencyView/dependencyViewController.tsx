@@ -1,7 +1,8 @@
 import * as gtap from "../../../../../www/dist/js/gtap";
 import * as lib from "../../../../core/lib";
 import * as dataStore from "../../../data/dataStore";
-import { Team, TeamEpics, Epic, OSubjectDataStoreReady, OSubjectCreateNewEpic } from "../../_defs";
+import { OSubjectViewUpstreamDependencyDialog } from "../../selectedEpicDetails/upstreamDependencyDialogController";
+import { Team, TeamEpics, Epic, OSubjectDataStoreReady, OSubjectCreateNewEpic, TeamEpicDependency } from "../../_defs";
 
 /** @jsx gtap.$jsx */
 
@@ -18,6 +19,7 @@ class DependencyView extends lib.BaseView {
     }
 
     loadSubviews(viewContent: any) {
+        //  TODO: Replace code below with this call -> lib.LoadSubviews(viewContent);
         this.views.forEach((v) => {
             const vContent = v.viewContent();
 
@@ -64,6 +66,27 @@ export class DependencyViewController extends lib.BaseViewController implements 
 
         this.teamNamesController.initData(this.teams);
         this.teamEpicsViewController.initData(this.teamEpics);
+
+        // TODO: DELETE ME. AID FOR DEVELOPING DIALOG
+        const lastEpic: Epic = dataStore.getEpicByID("26")!;
+        const upstreamTeamDetails = new Map<string, TeamEpicDependency>();
+
+        lastEpic!.Upstreams?.forEach((epicID) => {
+            const upstreamEpic = dataStore.getEpicByID(epicID)!;
+            const upstreamTeam = dataStore.getTeamByID(upstreamEpic!.TeamID);
+
+            upstreamTeamDetails.set(upstreamEpic.ID, {
+                Team: upstreamTeam,
+                Epic: upstreamEpic
+            });
+        })
+        lib.Observable.notify(OSubjectViewUpstreamDependencyDialog, {
+            source: this,
+            value: {
+                selectedEpic: lastEpic!,
+                dependencies: upstreamTeamDetails
+            }
+        });
     }
 
     onUpdate(subject: string, state: lib.ObserverState): void {

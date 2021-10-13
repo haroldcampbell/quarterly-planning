@@ -66,7 +66,7 @@ const _epicsByTeamID = new Map<string, Epic[]>([
         { ID: "25", TeamID: "A7", Name: "Epic ACO4" },
     ]],
     ["A8", [
-        { ID: "26", TeamID: "A8", Name: "Epic CN1" },
+        { ID: "26", TeamID: "A8", Name: "Epic CN1", Upstreams: ["11", "15"] },
         { ID: "27", TeamID: "A8", Name: "Epic CN2" },
     ]],
 ]);
@@ -107,6 +107,20 @@ export function addNewEpicAtIndex(epic: Epic, insertionIndex: number) {
 
 export function getEpicByID(epicID: string): Epic | undefined {
     return _epicsByID.get(epicID);
+}
+
+export function getEpics(): Epic[] {
+    let epics: Epic[] = [];
+
+    _teamIDs.forEach((teamID) => {
+        const teamEpics = _epicsByTeamID.get(teamID);
+
+        if (teamEpics !== undefined) {
+            epics = epics.concat(teamEpics);
+        }
+    });
+
+    return epics;
 }
 
 /** Returns an array of downstream epicIDs for the specified epic */

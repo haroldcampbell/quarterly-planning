@@ -24,4 +24,14 @@
     /* border: solid 1px red; */
 }
 
+/* .cols {
+    display: grid;
+    grid-template-columns: max-content;
+    min-content;
+    grid-auto-flow: column dense;
+    col-gap: 15px;
+} */
 
+.col-cell-no-wrap {
+    white-space: nowrap;
+}
