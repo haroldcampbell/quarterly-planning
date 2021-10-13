@@ -149,6 +149,7 @@ export class UpstreamDependencyDialogController extends lib.BaseViewController {
     }
 
     onCreateEpicDependencies() {
+        dataStore.updateUpstreamEpics(this.DownstreamEpic, this.selectedEpics);
 
     }
 }
