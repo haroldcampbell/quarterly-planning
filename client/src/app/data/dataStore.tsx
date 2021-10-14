@@ -28,7 +28,7 @@ const _teamIDs: string[] = [
 const _epicsByTeamID = new Map<string, Epic[]>([
     ["A1", [
         { ID: "1", TeamID: "A1", Name: "Epic IL1" },
-        { ID: "2", TeamID: "A1", Name: "Epic IL2", Upstreams: ["1"] },
+        // { ID: "2", TeamID: "A1", Name: "Epic IL2", Upstreams: ["1"] },
         { ID: "3", TeamID: "A1", Name: "Epic IL3" },
         { ID: "4", TeamID: "A1", Name: "Epic IL4" },
     ]],
@@ -39,7 +39,7 @@ const _epicsByTeamID = new Map<string, Epic[]>([
     ["A3", [
         { ID: "7", TeamID: "A3", Name: "Epic SME1" },
         { ID: "8", TeamID: "A3", Name: "Epic SME2" },
-        { ID: "9", TeamID: "A3", Name: "Epic SME3", Upstreams: ["2", "6", "18", "22", "23"] },
+        // { ID: "9", TeamID: "A3", Name: "Epic SME3", Upstreams: ["2", "6", "18", "22", "23"] },
         { ID: "10", TeamID: "A3", Name: "Epic SME4" },
     ]],
     ["A4", [
@@ -53,20 +53,20 @@ const _epicsByTeamID = new Map<string, Epic[]>([
     ["A6", [
         { ID: "15", TeamID: "A6", Name: "Epic CRM1" },
         { ID: "16", TeamID: "A6", Name: "Epic CRM2" },
-        { ID: "17", TeamID: "A6", Name: "Epic CRM3", Upstreams: ["6"] },
+        // { ID: "17", TeamID: "A6", Name: "Epic CRM3", Upstreams: ["6"] },
         { ID: "18", TeamID: "A6", Name: "Epic CMR4" },
         { ID: "19", TeamID: "A6", Name: "Epic CRM5" },
         { ID: "20", TeamID: "A6", Name: "Epic CRM6" },
-        { ID: "21", TeamID: "A6", Name: "Epic CRM7", Upstreams: ["9"] },
+        // { ID: "21", TeamID: "A6", Name: "Epic CRM7", Upstreams: ["9"] },
     ]],
     ["A7", [
         { ID: "22", TeamID: "A7", Name: "Epic ACO1" },
-        { ID: "23", TeamID: "A7", Name: "Epic ACO2", Upstreams: ["11", "15"] },
+        // { ID: "23", TeamID: "A7", Name: "Epic ACO2", Upstreams: ["11", "15"] },
         { ID: "24", TeamID: "A7", Name: "Epic ACO3" },
         { ID: "25", TeamID: "A7", Name: "Epic ACO4" },
     ]],
     ["A8", [
-        { ID: "26", TeamID: "A8", Name: "Epic CN1", Upstreams: ["11", "15"] },
+        // { ID: "26", TeamID: "A8", Name: "Epic CN1", Upstreams: ["11", "15"] },
         { ID: "27", TeamID: "A8", Name: "Epic CN2" },
     ]],
 ]);
@@ -128,13 +128,14 @@ export function getDownstreamEpicsByID(upstreamEpicID: EpicID): EpicID[] | undef
     return _downStreamsByEpicID.get(upstreamEpicID);
 }
 
-/** Add depdenecy on upstream epics */
+/** Add depdency on upstream epics */
 export function updateUpstreamEpics(downstreamEpic: Epic, upstreamEpics: Epic[]) {
 
     if (downstreamEpic.Upstreams === undefined) {
         downstreamEpic.Upstreams = [];
     }
 
+    /** Remove the existing downstreams that contain them as its upstream */
     downstreamEpic.Upstreams?.forEach((epicID) => {
         const downstreamEpicIDs = getDownstreamEpicsByID(epicID);
         const index = downstreamEpicIDs?.indexOf(downstreamEpic.ID);
@@ -148,6 +149,35 @@ export function updateUpstreamEpics(downstreamEpic: Epic, upstreamEpics: Epic[])
         downstreamEpic.Upstreams!.push(epic.ID);
         //
         addDownstreamEpic(_downStreamsByEpicID, epic.ID, downstreamEpic.ID);
+    });
+}
+
+/** Add dependency from downstream epics */
+export function updateDownstreamEpics(upstreamEpic: Epic, downstreamEpics: Epic[]) {
+    // _downStreamsByEpicID.clear();
+    for (let e of _epicsByID.values()) {
+        if (e.Upstreams === undefined) {
+            continue;
+        }
+
+        const index = e.Upstreams.indexOf(upstreamEpic.ID);
+
+        if (index != -1) {
+            e.Upstreams?.splice(index!, 1);
+        }
+    }
+
+    downstreamEpics.forEach((downstreamEpic) => {
+        if (downstreamEpic.Upstreams === undefined) {
+            downstreamEpic.Upstreams = [];
+        }
+
+        if (downstreamEpic.Upstreams.indexOf(upstreamEpic.ID) != -1) {
+            return;
+        }
+
+        downstreamEpic.Upstreams.push(upstreamEpic.ID);
+        addDownstreamEpic(_downStreamsByEpicID, upstreamEpic.ID, downstreamEpic.ID);
     });
 }
 

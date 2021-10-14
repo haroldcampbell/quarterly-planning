@@ -7,8 +7,9 @@ import "./homeScreen.css"
 import { ScreenNavController } from "./nav/screenNavController";
 import { BodyController } from "./body/bodyController";
 import { SelectedEpicDetailsController } from "./selectedEpicDetails/selectedEpicDetailsViewController";
-import { OSubjectViewUpstreamDependencyDialog, UpstreamDependencyDialogController } from "./selectedEpicDetails/upstreamDependencyDialogController";
-import { Epic, TeamEpicDependency } from "./_defs";
+import { UpstreamDependencyDialogController } from "./selectedEpicDetails/upstreamDependencyDialogController";
+import { Epic, EpicID, TeamEpicDependency } from "./_defs";
+import { AddDependencyDialogController, OSubjectViewAddDependencyDialog } from "./selectedEpicDetails/addDependencyDialogController";
 
 class MainPanelView extends lib.BaseView {
     private content = <div className='screen-main-panel-container' />
@@ -93,7 +94,7 @@ export class HomeScreenController extends lib.BaseScreenController implements li
 
         super.initScreen();
 
-        lib.Observable.subscribe(OSubjectViewUpstreamDependencyDialog, this);
+        lib.Observable.subscribe(OSubjectViewAddDependencyDialog, this);
     }
 
     initController() {
@@ -103,19 +104,20 @@ export class HomeScreenController extends lib.BaseScreenController implements li
 
     onUpdate(subject: string, state: lib.ObserverState): void {
         switch (subject) {
-            case OSubjectViewUpstreamDependencyDialog: {
-                const { selectedEpic, dependencies } = state.value;
-                this.onShowDependencyDialog(selectedEpic, dependencies);
+            case OSubjectViewAddDependencyDialog: {
+                const { selectedEpic, upstreamEpics, downstreamEpics } = state.value;
+                this.onShowDependencyDialog(selectedEpic, upstreamEpics, downstreamEpics);
                 break;
             }
         }
     }
 
-    onShowDependencyDialog(selectedEpic: Epic, dependencies: Map<string, TeamEpicDependency>) {
-        const detailsController = new UpstreamDependencyDialogController(this);
+    onShowDependencyDialog(selectedEpic: Epic, upstreamEpics: Map<EpicID, TeamEpicDependency>, downstreamEpics: Map<EpicID, TeamEpicDependency>) {
+        const detailsController = new AddDependencyDialogController(this);
 
         detailsController.DownstreamEpic = selectedEpic;
-        detailsController.Dependencies = dependencies;
+        detailsController.ExistingUpstreamDetails = upstreamEpics;
+        detailsController.ExistingDownstreamDetails = downstreamEpics;
         detailsController.initController();
         detailsController.showDialog();
     }

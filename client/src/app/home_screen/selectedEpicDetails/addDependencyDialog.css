@@ -1,0 +1,146 @@
+.home-screen .add-dependency-dialog {
+    width: 600px;
+    height: 380px;
+}
+
+/* Header styles  */
+.add-dependency-dialog .title-view-container {
+    position: relative;
+    display: grid;
+    grid-template-rows: 1fr;
+}
+.add-dependency-dialog .title-view-container h2 {
+    font-size: 24px;
+    font-weight: 100;
+    color: #707070;
+    text-align: center;
+    display: block;
+    grid-row: 1;
+}
+
+.add-dependency-dialog .add-dependency-dialog-view-container {
+    border-top: solid 5px #eae7e7;
+    /* padding-top: 15px; */
+    height: 100%;
+}
+
+/* .add-dependency-dialog .tiny-dialog-field-caption {
+    color: #9f9f9f;
+}
+
+.add-dependency-dialog .title-view-container .epic-name {
+    font-size: 18px;
+    color: #707070;
+} */
+
+/* .add-dependency-dialog .depdencies-body-container {
+    margin-top: 30px;
+    color: #707070;
+} */
+
+/* .upstream-downstreams-wrapper-view {
+}
+
+.upstream-downstreams-container-view {
+} */
+
+.add-dependency-dialog .dependencies-details-container {
+    /* color: red; */
+    margin: 20px 0;
+}
+
+/* Tab controls */
+.add-dependency-dialog .dialog-buttons .btn {
+    border-radius: 40px;
+}
+
+.add-dependency-dialog .tab-item-button {
+    font-size: 12px;
+    border: none;
+    background-color: #f8f8f8;
+    color: #9f9f9f;
+}
+
+.add-dependency-dialog .active-tab-item-button {
+    border: none;
+    background-color: #707070;
+    color: #f8f8f8;
+}
+
+.add-dependency-dialog .tab-view-tab-buttons-container {
+    border-bottom: solid 1px #707070;
+    padding-left: 5px;
+}
+
+.add-dependency-dialog .tab-item-body {
+    height: auto;
+}
+
+/* Epics in tab body */
+.add-dependency-dialog .dependency-epics-container {
+    overflow: auto;
+    height: 160px;
+    /* margin-top: 10px; */
+    border-bottom: solid 5px #eae7e7;
+    font-size: 12px;
+    line-height: 26px;
+    display: grid;
+    grid-template-rows: min-content;
+    grid-auto-flow: row dense;
+    row-gap: 0px;
+}
+
+.add-dependency-dialog .header {
+    border-bottom: solid 1px #707070;
+    position: sticky;
+    top: 0;
+    background-color: #f8f8f8;
+}
+.add-dependency-dialog .header * {
+    line-height: 26px;
+}
+
+.add-dependency-dialog .row-container {
+    display: grid;
+    grid-template-columns: 105px 150px 1fr;
+    margin-bottom: 1px;
+}
+
+.add-dependency-dialog .row-container > div {
+    display: inline-block;
+}
+
+.add-dependency-dialog .row-container .dependency-epic-period,
+.add-dependency-dialog .row-container .dependency-team-name,
+.add-dependency-dialog .row-container .dependency-epic-name {
+    padding-left: 5px;
+}
+
+.add-dependency-dialog .data-items {
+    transition: 0.4s all ease;
+    /* background-color: red; */
+}
+
+.add-dependency-dialog .data-items:hover {
+    background-color: #eae7e7;
+    color: #707070;
+    cursor: pointer;
+    padding-left: 10px;
+    transition: 0.4s all ease;
+}
+
+.add-dependency-dialog .selected-data-item {
+    background-color: #707070;
+    color: #eae7e7;
+}
+
+.add-dependency-dialog .selected-data-item:hover {
+    background-color: #707070;
+    color: #fff;
+}
+
+/* .add-dependency-dialog .depdencies-body-container .dependency-epics-counter {
+    font-size: 10px;
+    color: #9f9f9f;
+    margin-left: 5px;
+} */

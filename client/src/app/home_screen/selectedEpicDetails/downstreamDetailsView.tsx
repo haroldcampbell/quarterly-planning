@@ -2,7 +2,7 @@ import * as gtap from "../../../../www/dist/js/gtap";
 import * as lib from "../../../core/lib";
 import * as dataStore from "../../data/dataStore";
 
-import { Epic } from "../_defs";
+import { Epic, EpicID, TeamEpicDependency } from "../_defs";
 import { DependencyTableView } from "./dependencyTableView";
 
 /** @jsx gtap.$jsx */
@@ -12,6 +12,7 @@ export class DownstreamDetailsView extends lib.BaseView {
 
     private dependencyCountElm = <h3></h3>;
     private dependencyWrapper = <div className="dependency-wrapper-container"></div>;
+    private button = <button className="flat-btn add-downstream-dep">+</button>
 
     private content = <div className='selected-epic-details-container__downstream rows' >
         <div className="row-cell">
@@ -23,7 +24,7 @@ export class DownstreamDetailsView extends lib.BaseView {
                             <label><span>DOWNSTREAM</span><br /><span>DEPENDENCIES</span></label>
                         </div>
                         <div className="cell-right">
-                            <button className="flat-btn add-downstream-dep">+</button>
+                            {this.button}
                         </div>
                     </div>
                 </div>
@@ -35,6 +36,9 @@ export class DownstreamDetailsView extends lib.BaseView {
             </div>
         </div>
     </div>;
+
+    onShowDependencyDialogCallback?: () => void;
+
 
     loadSubviews(viewContent: any) {
         lib.LoadSubviews(this.views, viewContent);
@@ -51,17 +55,19 @@ export class DownstreamDetailsView extends lib.BaseView {
             {this.dependencyTableView.viewContent()}
         </div>)
 
+        this.button.onclick = () => { this.onShowDependencyDialogCallback!() };
         super.initView();
     }
 
-    onEpicSelected(epic: Epic) {
+    onEpicSelected(epic: Epic): Map<EpicID, TeamEpicDependency> {
         const downstreamEpicIDs = dataStore.getDownstreamEpicsByID(epic.ID);
+        const downstreamTeamDetails = new Map<EpicID, TeamEpicDependency>();
 
         this.dependencyTableView.clearTableRows();
 
         if (downstreamEpicIDs === undefined) {
             this.dependencyCountElm.innerText = 0;
-            return
+            return downstreamTeamDetails;
         }
 
         this.dependencyCountElm.innerText = downstreamEpicIDs!.length;
@@ -71,10 +77,17 @@ export class DownstreamDetailsView extends lib.BaseView {
             const downstreamTeam = dataStore.getTeamByID(downstreamEpic!.TeamID);
 
             this.dependencyTableView.addTableRows(true, downstreamTeam.Name, downstreamEpic.Name)
+
+            downstreamTeamDetails.set(epicID, {
+                Team: downstreamTeam,
+                Epic: downstreamEpic
+            })
         })
 
         this.dependencyWrapper.appendChild(<div>
             {this.dependencyTableView.viewContent()}
         </div>)
+
+        return downstreamTeamDetails;
     }
 }

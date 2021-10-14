@@ -7,13 +7,14 @@ import { EpicDetailsView } from "./epicDetailsView";
 import { TeamNameDetailsView } from "./teamNameDetailsView";
 import { UpstreamDetailsView } from "./upstreamDetailsView";
 
-import { Epic, InputChangeCallback, SelectedEpicDetailsDataOptions } from "../_defs";
+import { Epic, EpicID, InputChangeCallback, SelectedEpicDetailsDataOptions, TeamEpicDependency } from "../_defs";
 
 /** @jsx gtap.$jsx */
 
 import "./layoutGrid.css"
 import "./selectedEpicDetailsView.css"
 import { OSubjectRedrawDependencyConnections } from "../body/dependencyView/epics/teamEpicsViewController";
+import { OSubjectViewAddDependencyDialog } from "./addDependencyDialogController";
 
 export const OSubjectViewEpicDetails = "view-epic-details";
 export const OSubjectHideEpicDetails = "hide-epic-details";
@@ -25,6 +26,8 @@ class SelectedEpicDetailsView extends lib.BaseView {
     private epicDetailsView = new EpicDetailsView(this.parentController);
     private upstreamView = new UpstreamDetailsView(this.parentController);
     private downstreamView = new DownstreamDetailsView(this.parentController);
+
+    private selectedEpic!: Epic;
 
     viewContent() {
         return this.content;
@@ -44,12 +47,28 @@ class SelectedEpicDetailsView extends lib.BaseView {
     }
 
     showEpicDetails(epic: Epic) {
+        this.selectedEpic = epic;
         this.teamView.onEpicSelected(epic);
         this.epicDetailsView.onEpicSelected(epic);
-        this.upstreamView.onEpicSelected(epic);
-        this.downstreamView.onEpicSelected(epic);
+        const existingUpstreamEpics = this.upstreamView.onEpicSelected(epic);
+        const existingDownstreamEpics = this.downstreamView.onEpicSelected(epic);
+
+        this.upstreamView.onShowDependencyDialogCallback = () => {
+            this.showDependencyDialog(existingUpstreamEpics, existingDownstreamEpics);
+        }
 
         this.content.classList.remove("hide-epic-details");
+    }
+
+    showDependencyDialog(existingUpstreamEpics: Map<EpicID, TeamEpicDependency>, existingDownstreamEpics: Map<EpicID, TeamEpicDependency>) {
+        lib.Observable.notify(OSubjectViewAddDependencyDialog, {
+            source: this,
+            value: {
+                selectedEpic: this.selectedEpic,
+                upstreamEpics: existingUpstreamEpics,
+                downstreamEpics: existingDownstreamEpics,
+            }
+        });
     }
 
     wireOnInputChanged(callback: InputChangeCallback) {

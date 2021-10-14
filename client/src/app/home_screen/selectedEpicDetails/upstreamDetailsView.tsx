@@ -2,9 +2,9 @@ import * as gtap from "../../../../www/dist/js/gtap";
 import * as lib from "../../../core/lib";
 import * as dataStore from "../../data/dataStore";
 
-import { Epic, TeamEpicDependency } from "../_defs";
+import { Epic, EpicID, TeamEpicDependency } from "../_defs";
+import { OSubjectViewAddDependencyDialog } from "./addDependencyDialogController";
 import { DependencyTableView } from "./dependencyTableView";
-import { OSubjectViewUpstreamDependencyDialog, UpstreamDependencyDialogController } from "./upstreamDependencyDialogController";
 
 /** @jsx gtap.$jsx */
 
@@ -40,8 +40,8 @@ export class UpstreamDetailsView extends lib.BaseView {
         </div>
     </div>;
 
-    private selectedEpic!: Epic;
-    private upstreamTeamDetails = new Map<string, TeamEpicDependency>();
+    // private upstreamTeamDetails = new Map<EpicID, TeamEpicDependency>();
+    onShowDependencyDialogCallback?: () => void;
 
     viewContent() {
         return this.content;
@@ -58,28 +58,18 @@ export class UpstreamDetailsView extends lib.BaseView {
             {this.dependencyTableView.viewContent()}
         </div>)
 
-        this.button.onclick = () => { this.onShowDependencyDialog() };
+        this.button.onclick = () => { this.onShowDependencyDialogCallback!() };
         super.initView();
     }
 
-    onShowDependencyDialog() {
-        lib.Observable.notify(OSubjectViewUpstreamDependencyDialog, {
-            source: this,
-            value: {
-                selectedEpic: this.selectedEpic,
-                dependencies: this.upstreamTeamDetails,
-            }
-        });
-    }
+    onEpicSelected(epic: Epic): Map<EpicID, TeamEpicDependency> {
+        const upstreamTeamDetails = new Map<EpicID, TeamEpicDependency>();
 
-    onEpicSelected(epic: Epic) {
         this.dependencyTableView.clearTableRows();
-        this.selectedEpic = epic;
-        this.upstreamTeamDetails = new Map<string, TeamEpicDependency>();
 
         if (epic.Upstreams === undefined) {
             this.dependencyCountElm.innerText = 0;
-            return;
+            return upstreamTeamDetails;
         }
 
         this.dependencyCountElm.innerText = epic.Upstreams!.length;
@@ -88,7 +78,7 @@ export class UpstreamDetailsView extends lib.BaseView {
             const upstreamEpic = dataStore.getEpicByID(epicID)!;
             const upstreamTeam = dataStore.getTeamByID(upstreamEpic!.TeamID);
 
-            this.upstreamTeamDetails.set(upstreamEpic.ID, {
+            upstreamTeamDetails.set(upstreamEpic.ID, {
                 Team: upstreamTeam,
                 Epic: upstreamEpic
             });
@@ -100,8 +90,6 @@ export class UpstreamDetailsView extends lib.BaseView {
             {this.dependencyTableView.viewContent()}
         </div>)
 
-        // TODO: This doesn't include the indirect upstreams
-        // create a function to walk the graph, marking visited nodes
-        // as the graph is traversed
+        return upstreamTeamDetails;
     }
 }

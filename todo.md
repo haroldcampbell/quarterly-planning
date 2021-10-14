@@ -8,7 +8,7 @@
         [X] Save dependencies
         [X] Bug Fix
             [X] Filter the downstream epic from the list of epics so that it can't be added to itself
-    [] Add Downstream dependency
+    [X] Add Downstream dependency
     [] Filtering
         [] Filter epics by Team Name
         [] Filter epics by Epic Name

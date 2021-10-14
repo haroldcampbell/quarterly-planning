@@ -112,9 +112,11 @@ export class TeamEpicsViewController extends lib.BaseViewController {
     }
 
     redrawDependencyConnections() {
+        console.log(">>this.dependencyConnections:", this.dependencyConnections);
         this.dependencyConnections.forEach(pathInfo => {
             pathInfo.p.remove();
-        })
+        });
+        this.dependencyConnections = [];
 
         this.onTeamEpicsAdded();
     }

@@ -1,0 +1,23 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="128"
+  height="30"
+  viewBox="0 0 128 30"
+><g transform="translate(-1099 -387)"><rect
+      width="128"
+      height="30"
+      rx="10"
+      transform="translate(1099 387)"
+      fill="#eae7e7"
+    /><g transform="translate(11 -12)"><text
+        transform="translate(1147 418)"
+        fill="#9f9f9f"
+        font-size="12"
+        font-family="Roboto-Regular, Roboto"
+      ><tspan x="-28.641" y="0">Needed By</tspan></text><text
+        transform="translate(1184 418)"
+        fill="#707070"
+        font-size="12"
+        font-family="Roboto-Black, Roboto Black"
+        font-weight="800"
+      ><tspan x="-3.475" y="0">7</tspan></text></g></g></svg>
