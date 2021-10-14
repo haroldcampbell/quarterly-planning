@@ -130,11 +130,18 @@ export class UpstreamDependencyDialogController extends lib.BaseViewController {
     }
 
     async fetchEpics() {
-        const epics = await dataStore.getEpics();
+        let epics = await dataStore.getEpics();
 
         for (let teamEpic of this.Dependencies.values()) {
             this.selectedEpics.set(teamEpic.Epic.ID, teamEpic.Epic);
         };
+
+        /** Remove downstream epic from the list */
+        epics = Array.from(epics);
+        const index = epics.indexOf(this.DownstreamEpic);
+        epics.splice(index, 1);
+
+        /** Add the rest of the epics */
         this.view.onDataReady(epics, this.Dependencies);
     }
 
