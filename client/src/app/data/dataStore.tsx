@@ -1,5 +1,5 @@
 import * as lib from "../../core/lib";
-import { Epic, OSubjectDataStoreReady, OSubjectWillUpdateEpicName, OSubjectWillUpdateTeamName, Team } from "../home_screen/_defs";
+import { Epic, EpicID, OSubjectDataStoreReady, OSubjectWillUpdateEpicName, OSubjectWillUpdateTeamName, Team } from "../home_screen/_defs";
 
 const _teamsMap: { [key: string]: Team } = {
     // "A0": { ID: "A0", Name: "Team 0" },
@@ -93,9 +93,6 @@ export function getTeamByID(teamID: string): Team {
 /** Contains epicID -> Epic mapping */
 let _epicsByID: Map<string, Epic>;
 
-/** Contains a map of epicID to array of downstream epicIDs */
-let _downStreamsByEpicID: Map<string, string[]>;
-
 export function getEpicsByTeamID(teamID: string): Epic[] {
     return _epicsByTeamID.get(teamID)!;
 }
@@ -123,9 +120,35 @@ export function getEpics(): Epic[] {
     return epics;
 }
 
-/** Returns an array of downstream epicIDs for the specified epic */
-export function getDownstreamEpicsByID(epicID: string): string[] | undefined {
-    return _downStreamsByEpicID.get(epicID);
+/** Contains a map of epicID to array of downstream epicIDs */
+let _downStreamsByEpicID: Map<EpicID, EpicID[]>;
+
+/** Returns an array of downstream epicIDs for the specified upstream epic */
+export function getDownstreamEpicsByID(upstreamEpicID: EpicID): EpicID[] | undefined {
+    return _downStreamsByEpicID.get(upstreamEpicID);
+}
+
+/** Add depdenecy on upstream epics */
+export function updateUpstreamEpics(downstreamEpic: Epic, upstreamEpics: Epic[]) {
+
+    if (downstreamEpic.Upstreams === undefined) {
+        downstreamEpic.Upstreams = [];
+    }
+
+    downstreamEpic.Upstreams?.forEach((epicID) => {
+        const downstreamEpicIDs = getDownstreamEpicsByID(epicID);
+        const index = downstreamEpicIDs?.indexOf(downstreamEpic.ID);
+        if (index != -1) {
+            downstreamEpicIDs?.splice(index!, 1);
+        }
+    })
+
+    downstreamEpic.Upstreams = [];
+    upstreamEpics.forEach((epic) => {
+        downstreamEpic.Upstreams!.push(epic.ID);
+        //
+        addDownstreamEpic(_downStreamsByEpicID, epic.ID, downstreamEpic.ID);
+    });
 }
 
 export function UpdateTeamName(teamID: string, value: string) {
@@ -161,20 +184,25 @@ function processTeamEpics(): Map<string, Epic> {
 }
 
 /** Builds the downstream epics by walking the epic.upstreams  */
-function processDownstreamEpics(): Map<string, string[]> {
-    const addDownstreamEpic = (map: Map<string, string[]>, epicID: string, downstreamEpic: Epic) => {
-        if (!map.has(epicID)) {
-            map.set(epicID, []);
-        }
-        map.get(epicID)?.push(downstreamEpic.ID);
+function addDownstreamEpic(map: Map<EpicID, EpicID[]>, upstreamEpicID: EpicID, downstreamEpicID: EpicID) {
+    if (!map.has(upstreamEpicID)) {
+        map.set(upstreamEpicID, []);
     }
+    const downstreamEpics = map.get(upstreamEpicID)!
+    if (downstreamEpics.indexOf(downstreamEpicID) != -1) {
+        console.log(">>addDownstreamEpic: Attempted to add duplicated downstream epic", `${upstreamEpicID}<-${downstreamEpicID}`);
+        return;
+    }
+    downstreamEpics.push(downstreamEpicID);
+}
 
-    const downStreamsEpicIDsMap = new Map<string, string[]>();
+function processDownstreamEpics(): Map<EpicID, EpicID[]> {
+    const downStreamsEpicIDsMap = new Map<EpicID, EpicID[]>();
 
-    for (let epic of _epicsByID.values()) {
-        if (epic.Upstreams) {
-            epic.Upstreams?.forEach((upstreamEpicID) => {
-                addDownstreamEpic(downStreamsEpicIDsMap, upstreamEpicID, epic);
+    for (let downstreamEpic of _epicsByID.values()) {
+        if (downstreamEpic.Upstreams) {
+            downstreamEpic.Upstreams?.forEach((upstreamEpicID) => {
+                addDownstreamEpic(downStreamsEpicIDsMap, upstreamEpicID, downstreamEpic.ID);
             });
         }
     }

@@ -8,7 +8,7 @@ import { Team, TeamEpics, Epic, OSubjectDataStoreReady, OSubjectCreateNewEpic, T
 
 import "./dependencyView.css"
 import { EpicsViewController } from "./epics/epicsViewController";
-import { TeamEpicsViewController } from "./epics/teamEpicsViewController";
+import { OSubjectRedrawDependencyConnections, TeamEpicsViewController } from "./epics/teamEpicsViewController";
 import { TeamsNamesViewController } from "./teams/teamNamesController";
 
 class DependencyView extends lib.BaseView {
@@ -51,6 +51,7 @@ export class DependencyViewController extends lib.BaseViewController implements 
 
         lib.Observable.subscribe(OSubjectDataStoreReady, this);
         lib.Observable.subscribe(OSubjectCreateNewEpic, this);
+        lib.Observable.subscribe(OSubjectRedrawDependencyConnections, this);
 
         super.initView();
     }
@@ -98,6 +99,10 @@ export class DependencyViewController extends lib.BaseViewController implements 
             case OSubjectCreateNewEpic: {
                 const { epic, epicController, insertionIndex } = state.value;
                 this.onCreateNewEpic(epic, epicController, insertionIndex);
+                break;
+            }
+            case OSubjectRedrawDependencyConnections: {
+                this.teamEpicsViewController.redrawDependencyConnections();
                 break;
             }
         }

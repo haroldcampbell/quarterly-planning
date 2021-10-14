@@ -2,7 +2,7 @@ import * as gtap from "../../../../../../www/dist/js/gtap";
 import * as lib from "../../../../../core/lib";
 import * as dataStore from "../../../../data/dataStore";
 
-import { Epic, PathInfo, SVGContainerID, TeamEpics, XYOnly } from "../../../_defs";
+import { Epic, EpicID, PathInfo, SVGContainerID, TeamEpics, TeamID, XYOnly } from "../../../_defs";
 import { EpicsViewController, ShapeYOffset } from "./epicsViewController";
 
 /** @jsx gtap.$jsx */
@@ -10,7 +10,7 @@ import { EpicsViewController, ShapeYOffset } from "./epicsViewController";
 import "./teamEpics.css"
 
 export const OSubjectTeamEpicsScrollContainerResized = "team-epics-scroll-container-resized";
-
+export const OSubjectRedrawDependencyConnections = "redraw-dependency-connections";
 class TeamEpicsView extends lib.BaseView {
     private content = <div className='team-epics-container-wrapper' />;
     private scrollContainer = <div className="team-epics-scroll-container" />;
@@ -96,7 +96,7 @@ export class TeamEpicsViewController extends lib.BaseViewController {
         this.epicControllerDictionary.set(epic.ID, epicController);
     }
 
-    onTeamEpicsAdded() {
+    private onTeamEpicsAdded() {
         this.epicControllerDictionary.forEach((controller, epicID) => {
             const epic = dataStore.getEpicByID(epicID);
 
@@ -111,13 +111,21 @@ export class TeamEpicsViewController extends lib.BaseViewController {
         })
     }
 
+    redrawDependencyConnections() {
+        this.dependencyConnections.forEach(pathInfo => {
+            pathInfo.p.remove();
+        })
+
+        this.onTeamEpicsAdded();
+    }
+
     /** Updates the lastRowIndex with the number of rows added by the  epicController */
     onEpicRowAdded(rowsAdded: number, maxXBounds: number) {
         this.lastRowIndex += rowsAdded;
         this.onLayoutNeeded(maxXBounds);
     }
 
-    onLayoutNeeded(maxXBounds: number, didUpdateTeamId?: string) {
+    onLayoutNeeded(maxXBounds: number, didUpdateTeamId?: TeamID) {
         if (maxXBounds > this.maxRowWidth) {
             this.maxRowWidth = maxXBounds;
             this.ctx.domContainer.$style(`width:${this.maxRowWidth}px; height:100%;position:absolute;`);
@@ -127,31 +135,18 @@ export class TeamEpicsViewController extends lib.BaseViewController {
             return;
         }
 
-        const epics = dataStore.getEpicsByTeamID(didUpdateTeamId);
+        this.dependencyConnections.forEach(pathInfo => {
+            const upstreamController = this.epicControllerDictionary.get(pathInfo.upstreamEpicID)!;
+            const upstreamSVGNode = upstreamController.getEpicSVGRectNode(pathInfo.upstreamEpicID);
 
-        epics.forEach((epic => {
-            const controller = this.epicControllerDictionary.get(epic.ID)!;
-            const targetSVGNode = controller.getEpicSVGRectNode(epic.ID);
+            const downstreamController = this.epicControllerDictionary.get(pathInfo.downstreamEpicID)!;
+            const downstreamSVGNode = downstreamController.getEpicSVGRectNode(pathInfo.downstreamEpicID);
 
-            if (this.upstreamConnectionMap.has(epic.ID)) {
-                const startPaths = this.upstreamConnectionMap.get(epic.ID);
+            pathInfo.start = this.calcUpstreamStart(upstreamSVGNode);
+            pathInfo.end = this.calcDownstreamEnd(downstreamSVGNode);
 
-                startPaths?.forEach((pInfo) => {
-                    pInfo.start = this.calcUpstreamStart(targetSVGNode);
-                    orienPath(pInfo.p, pInfo.start, pInfo.end);
-                });
-            }
-
-            if (this.downstreamConnectionMap.has(epic.ID)) {
-                const endPaths = this.downstreamConnectionMap.get(epic.ID);
-
-                endPaths?.forEach((pInfo) => {
-                    pInfo.end = this.calcDownstreamEnd(targetSVGNode);
-                    orienPath(pInfo.p, pInfo.start, pInfo.end);
-                });
-            }
-        }));
-
+            orienPath(pathInfo.p, pathInfo.start, pathInfo.end);
+        });
     }
 
     calcUpstreamStart(upstreamSVGNode: any): XYOnly {
@@ -179,37 +174,31 @@ export class TeamEpicsViewController extends lib.BaseViewController {
         return { start: start, end: end };
     }
 
-    private upstreamConnectionMap = new Map<string, PathInfo[]>();
-    private downstreamConnectionMap = new Map<string, PathInfo[]>();
+    private dependencyConnections: PathInfo[] = [];
 
-    wireUpstreams(sourceID: string, targetUpstreams: any[], sourceSVGNode: any) {
-        let counter: number = 0;
-
+    wireUpstreams(sourceID: EpicID, targetUpstreams: any[], sourceSVGNode: any) {
         targetUpstreams.forEach((upstreamEpicID) => {
             if (!this.epicControllerDictionary.has(upstreamEpicID)) {
                 console.log(`wireUpstreams: unable to find wireUpstreams dependency id(${upstreamEpicID}) <- ${sourceID}`);
                 return;
             }
 
-            const controller = this.epicControllerDictionary.get(upstreamEpicID)!;
-            const targetSVGNode = controller.getEpicSVGRectNode(upstreamEpicID);
-            const { start, end } = this.calcDependencyConnection(targetSVGNode, sourceSVGNode);
-
-            const p = gtap.path(SVGContainerID, `connection[${counter++}][${upstreamEpicID}-${sourceID}]`);
-            orienPath(p, start, end);
-            p.$appendCSS("connection");
-
-            const pathInfo = { p, start, end };
-            if (!this.upstreamConnectionMap.has(upstreamEpicID)) {
-                this.upstreamConnectionMap.set(upstreamEpicID, []);
-            }
-            this.upstreamConnectionMap.get(upstreamEpicID)?.push(pathInfo);
-
-            if (!this.downstreamConnectionMap.has(sourceID)) {
-                this.downstreamConnectionMap.set(sourceID, []);
-            }
-            this.downstreamConnectionMap.get(sourceID)?.push(pathInfo);
+            this.makeDependencyConnection(sourceSVGNode, upstreamEpicID, sourceID);
         })
+    }
+
+    makeDependencyConnection(sourceSVGNode: any, upstreamEpicID: EpicID, downstreamEpicID: EpicID) {
+        const controller = this.epicControllerDictionary.get(upstreamEpicID)!;
+        const targetSVGNode = controller.getEpicSVGRectNode(upstreamEpicID);
+        const { start, end } = this.calcDependencyConnection(targetSVGNode, sourceSVGNode);
+
+        const timestamp = Date.now();
+        const p = gtap.path(SVGContainerID, `connection[${timestamp}][${upstreamEpicID}-${downstreamEpicID}]`);
+        orienPath(p, start, end);
+        p.$appendCSS("connection");
+
+        const pathInfo = { p, start, end, upstreamEpicID, downstreamEpicID };
+        this.dependencyConnections.push(pathInfo);
     }
 }
 

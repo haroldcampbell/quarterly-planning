@@ -89,10 +89,16 @@
     padding-left: 5px;
 }
 
+.upstream-dependency-dialog .depdencies-body-container .data-items {
+    transition: 0.4s all ease;
+}
+
 .upstream-dependency-dialog .depdencies-body-container .data-items:hover {
     background-color: #eae7e7;
     color: #707070;
     cursor: pointer;
+    padding-left: 10px;
+    transition: 0.4s all ease;
 }
 
 .upstream-dependency-dialog .depdencies-body-container .selected {
@@ -110,6 +116,5 @@
     .dependency-epics-counter {
     font-size: 10px;
     color: #9f9f9f;
-    /* text-align: right; */
     margin-left: 5px;
 }

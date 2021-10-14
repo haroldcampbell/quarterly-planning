@@ -13,6 +13,7 @@ import { Epic, InputChangeCallback, SelectedEpicDetailsDataOptions } from "../_d
 
 import "./layoutGrid.css"
 import "./selectedEpicDetailsView.css"
+import { OSubjectRedrawDependencyConnections } from "../body/dependencyView/epics/teamEpicsViewController";
 
 export const OSubjectViewEpicDetails = "view-epic-details";
 export const OSubjectHideEpicDetails = "hide-epic-details";
@@ -74,6 +75,7 @@ export class SelectedEpicDetailsController extends lib.BaseViewController implem
     initController() {
         lib.Observable.subscribe(OSubjectViewEpicDetails, this);
         lib.Observable.subscribe(OSubjectHideEpicDetails, this);
+        lib.Observable.subscribe(OSubjectRedrawDependencyConnections, this);
 
         this.detailsView.wireOnInputChanged((e: Event, dataOptionKey: string) => this.onInputChanged(e, dataOptionKey));
 
@@ -92,6 +94,12 @@ export class SelectedEpicDetailsController extends lib.BaseViewController implem
             }
             case OSubjectHideEpicDetails: {
                 this.onHideEpicDetails();
+                break;
+            }
+            case OSubjectRedrawDependencyConnections: {
+                const { downstreamEpic } = state.value;
+                this.onEpicSelected(downstreamEpic);
+                break;
             }
         }
     }

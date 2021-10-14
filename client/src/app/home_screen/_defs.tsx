@@ -2,8 +2,17 @@ export interface GTapElement extends HTMLElement {
     $appendCSS(className: string): void;
     $removeCSS(className: string): void;
 }
+
+export type EpicID = string;
+export type TeamID = string;
 export type XYOnly = { x: number, y: number };
-export type PathInfo = { p: any, start: XYOnly, end: XYOnly };
+export type PathInfo = {
+    p: any,
+    start: XYOnly,
+    end: XYOnly,
+    upstreamEpicID: EpicID,
+    downstreamEpicID: EpicID,
+};
 
 export type Epic = {
     ID: string;

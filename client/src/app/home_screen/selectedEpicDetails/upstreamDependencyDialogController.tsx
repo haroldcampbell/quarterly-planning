@@ -2,6 +2,7 @@ import * as gtap from "../../../../www/dist/js/gtap";
 import { DialogController } from "../../../core/components/dialogController";
 import * as lib from "../../../core/lib";
 import * as dataStore from "../../data/dataStore";
+import { OSubjectRedrawDependencyConnections } from "../body/dependencyView/epics/teamEpicsViewController";
 import { Epic, GTapElement, TeamEpicDependency } from "../_defs";
 
 import "./upstreamDependencyDialog.css"
@@ -149,7 +150,10 @@ export class UpstreamDependencyDialogController extends lib.BaseViewController {
     }
 
     onCreateEpicDependencies() {
-        dataStore.updateUpstreamEpics(this.DownstreamEpic, this.selectedEpics);
-
+        dataStore.updateUpstreamEpics(this.DownstreamEpic, Array.from(this.selectedEpics.values()));
+        lib.Observable.notify(OSubjectRedrawDependencyConnections, {
+            source: this,
+            value: { downstreamEpic: this.DownstreamEpic }
+        });
     }
 }

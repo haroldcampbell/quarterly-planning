@@ -1,11 +1,11 @@
 [] Side-panel dependencies
-    [] Add Upstream dependency
+    [X] Add Upstream dependency
         [X] Create Dialog
         [X] Dismiss Dialog
         [X] Load data to dialog
         [X] Toggle highlighting epics
         [X] Show selected count
-        [] Save dependencies
+        [X] Save dependencies
     [] Add Downstream dependency
     [] Filtering
         [] Filter epics by Team Name
