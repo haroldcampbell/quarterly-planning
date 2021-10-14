@@ -57,6 +57,10 @@ class SelectedEpicDetailsView extends lib.BaseView {
             this.showDependencyDialog(existingUpstreamEpics, existingDownstreamEpics);
         }
 
+        this.downstreamView.onShowDependencyDialogCallback = () => {
+            this.showDependencyDialog(existingUpstreamEpics, existingDownstreamEpics);
+        }
+
         this.content.classList.remove("hide-epic-details");
     }
 
