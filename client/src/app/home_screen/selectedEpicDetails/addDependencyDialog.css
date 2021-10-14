@@ -20,32 +20,19 @@
 
 .add-dependency-dialog .add-dependency-dialog-view-container {
     border-top: solid 5px #eae7e7;
-    /* padding-top: 15px; */
     height: 100%;
 }
 
-/* .add-dependency-dialog .tiny-dialog-field-caption {
+.add-dependency-dialog .tiny-dialog-field-caption {
     color: #9f9f9f;
 }
 
 .add-dependency-dialog .title-view-container .epic-name {
     font-size: 18px;
     color: #707070;
-} */
-
-/* .add-dependency-dialog .depdencies-body-container {
-    margin-top: 30px;
-    color: #707070;
-} */
-
-/* .upstream-downstreams-wrapper-view {
 }
 
-.upstream-downstreams-container-view {
-} */
-
 .add-dependency-dialog .dependencies-details-container {
-    /* color: red; */
     margin: 20px 0;
 }
 
@@ -80,7 +67,6 @@
 .add-dependency-dialog .dependency-epics-container {
     overflow: auto;
     height: 160px;
-    /* margin-top: 10px; */
     border-bottom: solid 5px #eae7e7;
     font-size: 12px;
     line-height: 26px;
@@ -138,9 +124,3 @@
     background-color: #707070;
     color: #fff;
 }
-
-/* .add-dependency-dialog .depdencies-body-container .dependency-epics-counter {
-    font-size: 10px;
-    color: #9f9f9f;
-    margin-left: 5px;
-} */
