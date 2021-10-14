@@ -1,27 +1,13 @@
-[] Side-panel dependencies
-    [X] Add Upstream dependency
-        [X] Create Dialog
-        [X] Dismiss Dialog
-        [X] Load data to dialog
-        [X] Toggle highlighting epics
-        [X] Show selected count
-        [X] Save dependencies
-        [X] Bug Fix
-            [X] Filter the downstream epic from the list of epics so that it can't be added to itself
-    [X] Add Downstream dependency
-    [] Filtering
-        [] Filter epics by Team Name
-        [] Filter epics by Epic Name
-========
-NEXT
-========
-
 [] Week Boundaries
     [] Add week boundaries markings
     [] Align the epics based on week boundary
     [] Edit expected start week
         [] Sync-epic to new week boundary location
         [] Highlight conflicts between epics that start after upstream dependency
+
+========
+NEXT
+========
 
 [] Create new Team
     [] Create new Epic when team has zero epics
@@ -64,6 +50,11 @@ NEXT
     [] Team name
     [] Epic Name
 
+[] Add filtering to the Dependency Dialog
+    [] Filter epics by Team Name
+    [] Filter epics by Epic Name
+
+
 [] FIX: Put dependency connections on top of the epics after new epic created
 
 [] Add annotations (e.g. conflict/accepted) to epics (the Red/Green stars)
@@ -96,6 +87,18 @@ NEXT
 ========
  DONE
 ========
+
+[X] Side-panel dependencies
+    [X] Add Upstream dependency
+        [X] Create Dialog
+        [X] Dismiss Dialog
+        [X] Load data to dialog
+        [X] Toggle highlighting epics
+        [X] Show selected count
+        [X] Save dependencies
+        [X] Bug Fix
+            [X] Filter the downstream epic from the list of epics so that it can't be added to itself
+    [X] Add Downstream dependency
 
 [X] Create new Epic
     [X] In team with existing epic

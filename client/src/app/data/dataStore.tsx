@@ -154,7 +154,6 @@ export function updateUpstreamEpics(downstreamEpic: Epic, upstreamEpics: Epic[])
 
 /** Add dependency from downstream epics */
 export function updateDownstreamEpics(upstreamEpic: Epic, downstreamEpics: Epic[]) {
-    // _downStreamsByEpicID.clear();
     for (let e of _epicsByID.values()) {
         if (e.Upstreams === undefined) {
             continue;
