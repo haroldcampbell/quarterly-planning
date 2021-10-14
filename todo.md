@@ -1,7 +1,8 @@
 [] Week Boundaries
     [] Add week boundaries markings
     [] Align the epics based on week boundary
-    [] Edit expected start week
+
+[] Edit expected start week
         [] Sync-epic to new week boundary location
         [] Highlight conflicts between epics that start after upstream dependency
 
@@ -40,28 +41,49 @@ NEXT
 
 [] Migrate to MongoDB
 
-[] Delete Team
-[] Delete Epic
-[] Side-panel dependencies
-    [] Remove Upstream dependency
-    [] Remove Downstream dependency
-
-[] Cancel Edit Name changes with Esc key
-    [] Team name
-    [] Epic Name
-
-[] Add filtering to the Dependency Dialog
-    [] Filter epics by Team Name
-    [] Filter epics by Epic Name
-
-
 [] FIX: Put dependency connections on top of the epics after new epic created
 
 [] Add annotations (e.g. conflict/accepted) to epics (the Red/Green stars)
 
+[] Delete Team
+[] Delete Epic
+
+[] Capture Quarterly Planning info
+    [] Learning
+    [] Conflicts/Resolved (Treat this like a task list with owners and target dates)
+    [] Decisions
+    [] Simplified Roadmap (condensed)
+    [] Release plan-view
+
+[] Side-pandel dependencies
+    [] UI: single button for showing the Add Dependency Dialog
+
 ========
  OPPORTUNITIES
 ========
+
+[] Start a Quarterly Planning Event
+    [] Define period
+    [] Load Teams
+        [] From Previous planning events
+    [] Load Epics from
+
+[] Side-panel dependencies
+    [] Remove Upstream dependency
+    [] Remove Downstream dependency
+
+[] Explore Progress Dashboard?
+
+[] Esc key
+    [] Cancel Edit Name changes
+        [] Team name
+        [] Epic Name
+    [] Dismiss Add Dependency dialog
+    [] Dismiss Side-panel dependencies
+
+[] Add filtering to the Dependency Dialog
+    [] Filter epics by Team Name
+    [] Filter epics by Epic Name
 
 [] Eplore capturing snapshots/version of the plan
     [] Show deviations to the plan
