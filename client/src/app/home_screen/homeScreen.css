@@ -2,7 +2,8 @@
     display: grid;
     height: 100%;
 
-    background-color: #f3f5f4;
+    /* background-color: #f3f5f4; */
+    /* background-color: #e4e4e4; */
     grid-template-columns: auto max-content;
 }
 
@@ -11,7 +12,8 @@
     display: grid;
     height: 100%;
 
-    background-color: #f3f5f4;
+    /* background-color: #f3f5f4; */
+    background-color: #e4e4e4;
 }
 
 /** Container for the selected epic, etc.*/

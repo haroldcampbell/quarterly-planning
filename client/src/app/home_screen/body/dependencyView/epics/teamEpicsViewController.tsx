@@ -2,7 +2,7 @@ import * as gtap from "../../../../../../www/dist/js/gtap";
 import * as lib from "../../../../../core/lib";
 import * as dataStore from "../../../../data/dataStore";
 
-import { Epic, EpicID, PathInfo, SVGContainerID, TeamEpics, TeamID, XYOnly } from "../../../_defs";
+import { Epic, EpicID, GTapElement, PathInfo, SVGContainerID, TeamEpics, TeamID, XYOnly } from "../../../_defs";
 import { EpicsViewController, ShapeYOffset } from "./epicsViewController";
 
 /** @jsx gtap.$jsx */
@@ -11,12 +11,114 @@ import "./teamEpics.css"
 
 export const OSubjectTeamEpicsScrollContainerResized = "team-epics-scroll-container-resized";
 export const OSubjectRedrawDependencyConnections = "redraw-dependency-connections";
+
+type WeekDetail = {
+    weekIndex: number;
+    startDate: Date;
+    endDate: Date;
+}
+
+type DateMonthPeriod = {
+    startMonth: Date;
+    endMonth: Date;
+    weekDetails: WeekDetail[];
+}
+
+const milliSecondsInDay = 86400000; //24 * 60 * 60 * 1000
+
+function createMonthDatePeriod(startDate: Date, dayOffset: number = 0): DateMonthPeriod {
+    const month1 = new Date(startDate.getTime() + dayOffset * milliSecondsInDay);
+    const month2 = new Date(startDate.getTime());
+
+    // month1.setMonth(startDate.getMonth() + offset);
+    month2.setMonth(month1.getMonth() + 1);
+
+    const monthPeriod = {
+        startMonth: month1,
+        endMonth: month2,
+        weekDetails: calcWeekSpan(month2, month1),
+    };
+
+    monthPeriod.endMonth = monthPeriod.weekDetails[3].endDate; /** Update the endMonth to account for weekends, etc. */
+
+    return monthPeriod;
+}
+
+function calcWeekSpan(endMonth: Date, startMonth: Date): WeekDetail[] {
+    const numDays = (endMonth.getTime() - startMonth.getTime()) / milliSecondsInDay;
+
+    let weeks = [];
+    let weekIndex = 0;
+    const weekDetails: WeekDetail[] = [];
+
+    for (let offset = 0; offset < numDays; offset++) {
+        const day = new Date(startMonth.getTime() + offset * milliSecondsInDay);
+
+        if (day.getDay() == 0 || day.getDay() == 6) {
+            continue;
+        }
+
+        weeks.push(day);
+
+        if (weeks.length == 5) {
+            weekDetails.push({
+                weekIndex: weekIndex,
+                startDate: weeks[0],
+                endDate: weeks[4],
+            });
+            weeks = [];
+            weekIndex++;
+        }
+    }
+
+    return weekDetails;
+}
+
 class TeamEpicsView extends lib.BaseView {
     private content = <div className='team-epics-container-wrapper' />;
     private scrollContainer = <div className="team-epics-scroll-container" />;
+    private datePeriodsContainerNode = <div className="date-periods-container"></div>
+
+    QuarterStartDate!: Date;
+    private periods: DateMonthPeriod[] = [];
 
     viewContent() {
         return this.content;
+    }
+
+    initWeeklyViews() {
+        this.periods.push(createMonthDatePeriod(this.QuarterStartDate));
+        this.periods.push(createMonthDatePeriod(this.periods[0].weekDetails[3].endDate, 1));
+        this.periods.push(createMonthDatePeriod(this.periods[1].weekDetails[3].endDate, 1));
+
+        this.periods.forEach((period) => {
+            const periodNode = <div className="period-container"></div>
+            this.addPeriodView(periodNode, period);
+            this.datePeriodsContainerNode.appendChild(periodNode);
+        });
+
+        this.scrollContainer.appendChild(this.datePeriodsContainerNode);
+    }
+
+    addPeriodView(datePeriodsContainerNode: GTapElement, period: DateMonthPeriod) {
+        const monthNameNode = <div className="month-name-container"><span>{period.startMonth.toLocaleString('default', { month: 'short' })}</span></div>
+        const weeksContainerNode = <div className="week-detail-container"></div>
+        // const milestoneContainerNode =
+
+        // <span>
+        //     {`  ${wd.startDate.toLocaleDateString()}-${wd.endDate.toLocaleDateString()}`}
+        // </span>
+        period.weekDetails.forEach((wd) => {
+            const weekDetail = <div className="week">
+                <div className="week-info"><span>W</span><span>{wd.weekIndex + 1}</span></div>
+                <div className="milestones-container"></div>
+            </div>
+
+            weeksContainerNode.appendChild(weekDetail);
+        });
+
+        datePeriodsContainerNode.appendChild(monthNameNode)
+        datePeriodsContainerNode.appendChild(weeksContainerNode)
     }
 
     loadSubviews(viewContent: any) {
@@ -32,6 +134,7 @@ class TeamEpicsView extends lib.BaseView {
     initView() {
         this.content.appendChild(this.scrollContainer);
 
+        this.initWeeklyViews();
         // Get the size of the scrollContainer.
         // I'm doing this cause I can't get the fucking clientWidth or
         // getBoundingClientRect to report the correct width.
@@ -50,6 +153,8 @@ class TeamEpicsView extends lib.BaseView {
     addEpicView(viewNode: HTMLElement) {
         this.scrollContainer.appendChild(viewNode);
     }
+
+
 }
 
 export class TeamEpicsViewController extends lib.BaseViewController {
@@ -64,6 +169,7 @@ export class TeamEpicsViewController extends lib.BaseViewController {
     private maxRowWidth = 0; /** Used to adjust the svg element size */
 
     initView() {
+        this.teamEpicsView.QuarterStartDate = new Date("Oct 27 2021");
         super.initView();
     }
 
@@ -77,7 +183,7 @@ export class TeamEpicsViewController extends lib.BaseViewController {
         this.onTeamEpicsAdded();
     }
 
-    initTeamEpics(epics: TeamEpics) {
+    private initTeamEpics(epics: TeamEpics) {
         let epicController = new EpicsViewController(this, this.lastRowIndex, epics);
 
         epicController.onEpicCreated = (epic) => { this.bindEpicToController(epic, epicController); }

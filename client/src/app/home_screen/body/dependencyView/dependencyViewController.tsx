@@ -69,26 +69,26 @@ export class DependencyViewController extends lib.BaseViewController implements 
         this.teamEpicsViewController.initData(this.teamEpics);
 
         // TODO: DELETE ME. AID FOR DEVELOPING DIALOG
-        const lastEpic: Epic = dataStore.getEpicByID("6")!;
-        const upstreamTeamDetails = new Map<EpicID, TeamEpicDependency>();
+        // const lastEpic: Epic = dataStore.getEpicByID("6")!;
+        // const upstreamTeamDetails = new Map<EpicID, TeamEpicDependency>();
 
-        lastEpic!.Upstreams?.forEach((epicID) => {
-            const upstreamEpic = dataStore.getEpicByID(epicID)!;
-            const upstreamTeam = dataStore.getTeamByID(upstreamEpic!.TeamID);
+        // lastEpic!.Upstreams?.forEach((epicID) => {
+        //     const upstreamEpic = dataStore.getEpicByID(epicID)!;
+        //     const upstreamTeam = dataStore.getTeamByID(upstreamEpic!.TeamID);
 
-            upstreamTeamDetails.set(upstreamEpic.ID, {
-                Team: upstreamTeam,
-                Epic: upstreamEpic
-            });
-        })
-        lib.Observable.notify(OSubjectViewAddDependencyDialog, {
-            source: this,
-            value: {
-                selectedEpic: lastEpic!,
-                upstreamEpics: upstreamTeamDetails,
-                downstreamEpics: upstreamTeamDetails,
-            }
-        });
+        //     upstreamTeamDetails.set(upstreamEpic.ID, {
+        //         Team: upstreamTeam,
+        //         Epic: upstreamEpic
+        //     });
+        // })
+        // lib.Observable.notify(OSubjectViewAddDependencyDialog, {
+        //     source: this,
+        //     value: {
+        //         selectedEpic: lastEpic!,
+        //         upstreamEpics: upstreamTeamDetails,
+        //         downstreamEpics: upstreamTeamDetails,
+        //     }
+        // });
     }
 
     onUpdate(subject: string, state: lib.ObserverState): void {

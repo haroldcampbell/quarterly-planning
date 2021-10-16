@@ -1,4 +1,5 @@
 [] Week Boundaries
+    [X] Update UX/UI design to incorporate week boundaries
     [] Add week boundaries markings
     [] Align the epics based on week boundary
 
