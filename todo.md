@@ -1,9 +1,3 @@
-[] Week Boundaries
-    [X] Update UX/UI design to incorporate week boundaries
-    [X] Add week boundaries markings
-    [X] Align the epics based on week boundary
-    [X] Truncate Epic Name to fit SVG shape
-
 [] Edit expected start week
     [] Sync-epic to new week boundary location
     [] Highlight conflicts between epics that start after upstream dependency
@@ -112,6 +106,12 @@ NEXT
 ========
  DONE
 ========
+
+[X] Week Boundaries
+    [X] Update UX/UI design to incorporate week boundaries
+    [X] Add week boundaries markings
+    [X] Align the epics based on week boundary
+    [X] Truncate Epic Name to fit SVG shape
 
 [X] Side-panel dependencies
     [X] Add Upstream dependency
