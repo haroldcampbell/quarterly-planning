@@ -14,10 +14,19 @@ export type PathInfo = {
     downstreamEpicID: EpicID,
 };
 
+export enum EpicSizes {
+    XSmall = 0.5, // 1/2 Sprint
+    Small = 1, // 1 Sprint
+    Medium = 2, // 2 Sprints
+    Large = 3, // 3 Sprints
+    XLarge = 5, // 5 Sprints
+    Unknown = 11 // More than 5 Sprints
+}
 export type Epic = {
     ID: string;
     TeamID: string;
     Name: string;
+    Size: EpicSizes;
     Upstreams?: string[];
 }
 

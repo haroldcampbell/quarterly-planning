@@ -2,17 +2,26 @@ import * as gtap from "../../../../../../www/dist/js/gtap";
 import * as lib from "../../../../../core/lib";
 import { IViewController, IScreenController } from "../../../../../core/lib";
 import { OSubjectViewEpicDetails } from "../../../selectedEpicDetails/selectedEpicDetailsViewController";
-import { Epic, OSubjectCreateNewEpic, OSubjectWillUpdateEpicName, SVGContainerID, TeamEpics } from "../../../_defs";
+import { Epic, EpicSizes, OSubjectCreateNewEpic, OSubjectWillUpdateEpicName, SVGContainerID, TeamEpics } from "../../../_defs";
 
 /** @jsx gtap.$jsx */
 
 import "./epicsView.css"
 import { OSubjectTeamEpicsScrollContainerResized } from "./teamEpicsViewController";
 
-const colGap = 25;
+// const colGap = 25;
+const colGap = 1;
 const shapeHeight = 20;
-const rowPadding = 20; /** The space at the start and end of the row */
+// const rowPadding = 20; /** The space at the start and end of the row */
+const rowPadding = 12; /** The space at the start and end of the row */
 const shapeEornerRadius = 5;
+
+/**
+ * WARNING:
+ * This should have the same width as .team-epics-scroll-container .week-detail-container .week
+ * in the teamEpics.css
+*/
+const minWeekCellWidth = 100;
 
 export const ShapeYOffset = 10;
 
@@ -29,45 +38,45 @@ class NewEpicButton {
     private t: any;
 
     constructor() {
-        this.rCon = gtap.rect(SVGContainerID);
-        this.rCon.$class("new-epic-btn-container");
+        // this.rCon = gtap.rect(SVGContainerID);
+        // this.rCon.$class("new-epic-btn-container");
 
-        this.r = gtap.rect(SVGContainerID);
-        this.r.$class("new-epic-btn-head");
+        // this.r = gtap.rect(SVGContainerID);
+        // this.r.$class("new-epic-btn-head");
 
-        this.l = gtap.vLine(SVGContainerID);
-        this.l.$class("new-epic-btn-line");
+        // this.l = gtap.vLine(SVGContainerID);
+        // this.l.$class("new-epic-btn-line");
 
-        this.t = gtap.text(SVGContainerID);
-        this.t.$class("new-epic-btn-text")
-        this.t.$text("+");
+        // this.t = gtap.text(SVGContainerID);
+        // this.t.$class("new-epic-btn-text")
+        // this.t.$text("+");
     }
 
     positionButton(svgNodesY: number, lastSVGNodes?: EpicViewSVGNode) {
-        const x = lastSVGNodes?.svgRectNode.$x() + lastSVGNodes?.svgRectNode.$width();
+        // const x = lastSVGNodes?.svgRectNode.$x() + lastSVGNodes?.svgRectNode.$width();
 
-        this.rCon.$width(15);
-        this.rCon.$height(30);
-        this.rCon.$x(x + 5);
-        this.rCon.$y(svgNodesY - 2);
+        // this.rCon.$width(15);
+        // this.rCon.$height(30);
+        // this.rCon.$x(x + 5);
+        // this.rCon.$y(svgNodesY - 2);
 
-        this.r.$width(15);
-        this.r.$height(10);
-        this.r.$x(x + 5);
-        this.r.$y(svgNodesY - 2);
+        // this.r.$width(15);
+        // this.r.$height(10);
+        // this.r.$x(x + 5);
+        // this.r.$y(svgNodesY - 2);
 
-        this.l.$x(x + colGap / 2 - .5);
-        this.l.$y(svgNodesY + 9);
-        this.l.$height(20);
+        // this.l.$x(x + colGap / 2 - .5);
+        // this.l.$y(svgNodesY + 9);
+        // this.l.$height(20);
 
-        this.t.$x(x + 9);
-        this.t.$y(svgNodesY + 7);
+        // this.t.$x(x + 9);
+        // this.t.$y(svgNodesY + 7);
     }
 
     addHandler(newEpicCallback: () => void) {
-        this.rCon.onclick = () => {
-            newEpicCallback();
-        }
+        // this.rCon.onclick = () => {
+        //     newEpicCallback();
+        // }
     }
 }
 class EpicsView extends lib.BaseView {
@@ -131,10 +140,12 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
 
     initController() {
         this.xOffset = rowPadding;
+
+        this.initEpicSizeMappings();
+
         this.teamEpics.Epics?.forEach((epic) => {
             this.createEpic(epic);
             this.layoutEpic(epic);
-
         });
 
         this.onCompleted?.(1, this.maxXBounds);
@@ -145,6 +156,16 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
         super.initController();
     }
 
+    private epicSizeMap = new Map<EpicSizes, number>()
+    initEpicSizeMappings() {
+        const rP2 = rowPadding * 2.0;
+        this.epicSizeMap.set(EpicSizes.XSmall, minWeekCellWidth / 2.0 - rP2);
+        this.epicSizeMap.set(EpicSizes.Small, minWeekCellWidth - rP2);
+        this.epicSizeMap.set(EpicSizes.Medium, minWeekCellWidth * 2.0 - rP2);
+        this.epicSizeMap.set(EpicSizes.Large, minWeekCellWidth * 4 - rP2);
+        this.epicSizeMap.set(EpicSizes.XLarge, minWeekCellWidth * 8 - rP2);
+        this.epicSizeMap.set(EpicSizes.Unknown, minWeekCellWidth * 12 - rP2);
+    }
     createEpic(epic: Epic) {
         let epicsView = this.view as EpicsView
         const svgNodes = epicsView.addEpic(epic);
@@ -171,7 +192,7 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
             return;
         }
 
-        this.sizeSVGNodes(svgNodes);
+        this.sizeSVGNodes(epic.Size, svgNodes);
         this.updateRowBounds(svgNodes);
 
         svgNodes.btn!.positionButton(this.getSVGNodeY(), svgNodes);
@@ -195,6 +216,7 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
             ID: `epic-${Date.now()}`,
             TeamID: teamID,
             Name: "New Epic",
+            Size: EpicSizes.Small,
         }
 
         const index = previousEpic === undefined ? 0 : this.teamEpics.Epics?.indexOf(previousEpic);
@@ -228,25 +250,34 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
         return 2 + this.lastRowIndex * 64;
     }
 
-    sizeSVGNodes(svgNodes: EpicViewSVGNode) {
+    sizeSVGNodes(epicSize: EpicSizes, svgNodes: EpicViewSVGNode) {
         const x = this.xOffset
         const y = this.getSVGNodeY();
 
         svgNodes.svgRectNode.$x(x);
         svgNodes.svgRectNode.$y(y + ShapeYOffset);
 
-        svgNodes.svgRectNode.$width(40);
+        // minWeekCellWidth
+
+        // svgNodes.svgRectNode.$width(40);
+        // svgNodes.svgRectNode.$width(100);
         svgNodes.svgRectNode.$height(shapeHeight);
         svgNodes.svgRectNode.$rxy(shapeEornerRadius);
 
-        svgNodes.svgTextNode.$xy(x + 10, y + 23);
+        // svgNodes.svgTextNode.$xy(x + 10, y + 23);
 
-        const textWidth = svgNodes.svgTextNode.$textBoundingBox().width + 20;
-        const width = textWidth < 40 ? 40 : textWidth;
+        const width = this.epicSizeMap.get(epicSize)!
+
+        placeTextWithEllipsis(svgNodes.svgTextNode, "Epic IL4", width)
+
+        const textXOffset = (width - svgNodes.svgTextNode.$textBoundingBox().width) / 2.0;
+        svgNodes.svgTextNode.$xy(x + textXOffset, y + 23);
+        // const width = 100 - rowPadding * 2;//textWidth < 40 ? 40 : textWidth;
 
         svgNodes.svgRectNode.$width(width);
 
-        this.xOffset += width + colGap;
+        // this.xOffset += width + colGap;
+        this.xOffset += width + colGap + rowPadding * 2;
     }
 
     updateRowBounds(svgNodes: EpicViewSVGNode) {
@@ -288,4 +319,25 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
 
         return svgNodes?.svgRectNode
     }
+}
+
+/**
+ * Adds an ellipsis if text can't fit in width
+ * Based on https://stackoverflow.com/questions/9241315/trimming-text-to-a-given-pixel-width-in-svg
+ */
+function placeTextWithEllipsis(textObj: any, textString: string, width: number) {
+    if (textObj.$textBoundingBox().width < width) {
+        return;
+    }
+
+    //ellipsis is needed
+    for (var x = textString.length; x > 0; x -= 1) {
+        textObj.$text(textString.substring(0, x) + "...");
+
+        if (textObj.$textBoundingBox().width <= width) {
+            textObj.textContent = textString.substring(0, x) + "...";
+            return;
+        }
+    }
+    textObj.textContent = "..."; //can't place at all
 }

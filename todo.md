@@ -1,11 +1,12 @@
 [] Week Boundaries
     [X] Update UX/UI design to incorporate week boundaries
-    [] Add week boundaries markings
-    [] Align the epics based on week boundary
+    [X] Add week boundaries markings
+    [X] Align the epics based on week boundary
+    [X] Truncate Epic Name to fit SVG shape
 
 [] Edit expected start week
-        [] Sync-epic to new week boundary location
-        [] Highlight conflicts between epics that start after upstream dependency
+    [] Sync-epic to new week boundary location
+    [] Highlight conflicts between epics that start after upstream dependency
 
 ========
 NEXT
@@ -17,6 +18,7 @@ NEXT
 [] Create new Epic at the fist position when there are other epics
 
 [] Add Epic Duration to Estimated Size
+    [] Show the epic week in side-panel
     [] Update the epic size based on the estimated size
     [] Update Projected End field
 

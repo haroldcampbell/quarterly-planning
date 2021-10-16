@@ -78,9 +78,12 @@ class TeamEpicsView extends lib.BaseView {
     private content = <div className='team-epics-container-wrapper' />;
     private scrollContainer = <div className="team-epics-scroll-container" />;
     private datePeriodsContainerNode = <div className="date-periods-container"></div>
+    private spillOverNode = <div className="spill-over-period"></div>;
 
     QuarterStartDate!: Date;
     private periods: DateMonthPeriod[] = [];
+
+    private periodNodes: GTapElement[] = [];
 
     viewContent() {
         return this.content;
@@ -94,10 +97,26 @@ class TeamEpicsView extends lib.BaseView {
         this.periods.forEach((period) => {
             const periodNode = <div className="period-container"></div>
             this.addPeriodView(periodNode, period);
+            this.periodNodes.push(periodNode);
             this.datePeriodsContainerNode.appendChild(periodNode);
         });
+        this.datePeriodsContainerNode.appendChild(this.spillOverNode);
 
         this.scrollContainer.appendChild(this.datePeriodsContainerNode);
+    }
+
+    setSpillOverWidth(width: number) {
+        this.spillOverNode.style.width = `${width}px`;
+    }
+
+    getPeriodNodeLength(): number {
+        let width = 0;
+
+        this.periodNodes.forEach(node => {
+            width += node.getBoundingClientRect().width;
+        });
+
+        return width;
     }
 
     addPeriodView(datePeriodsContainerNode: GTapElement, period: DateMonthPeriod) {
@@ -106,7 +125,7 @@ class TeamEpicsView extends lib.BaseView {
         // const milestoneContainerNode =
 
         // <span>
-        //     {`  ${wd.startDate.toLocaleDateString()}-${wd.endDate.toLocaleDateString()}`}
+        //     {`  ${ wd.startDate.toLocaleDateString() } -${ wd.endDate.toLocaleDateString() } `}
         // </span>
         period.weekDetails.forEach((wd) => {
             const weekDetail = <div className="week">
@@ -212,6 +231,15 @@ export class TeamEpicsViewController extends lib.BaseViewController {
             }
         })
 
+        /** Show the spill over when the epic extend beyond the quarter */
+        const periodNodesWidth = this.teamEpicsView.getPeriodNodeLength();
+        if (periodNodesWidth < this.maxRowWidth) {
+            let diffWidth = this.maxRowWidth - periodNodesWidth;
+            diffWidth = diffWidth < 100 ? 100 : diffWidth; // Enforce a min width
+            this.teamEpicsView.setSpillOverWidth(diffWidth);
+            console.log(">>onTeamEpicsAdded this.maxRowWidth", this.maxRowWidth, this.teamEpicsView.getPeriodNodeLength());
+        }
+
         this.epicControllers.forEach((controller) => {
             controller.setMaxRowWidth(this.maxRowWidth);
         })
@@ -236,7 +264,7 @@ export class TeamEpicsViewController extends lib.BaseViewController {
     onLayoutNeeded(maxXBounds: number, didUpdateTeamId?: TeamID) {
         if (maxXBounds > this.maxRowWidth) {
             this.maxRowWidth = maxXBounds;
-            this.ctx.domContainer.$style(`width:${this.maxRowWidth}px; height:100%;position:absolute;`);
+            this.ctx.domContainer.$style(`width:${this.maxRowWidth}px; height: 100%; position: absolute; `);
         }
 
         if (didUpdateTeamId === undefined) {
@@ -287,7 +315,7 @@ export class TeamEpicsViewController extends lib.BaseViewController {
     wireUpstreams(sourceID: EpicID, targetUpstreams: any[], sourceSVGNode: any) {
         targetUpstreams.forEach((upstreamEpicID) => {
             if (!this.epicControllerDictionary.has(upstreamEpicID)) {
-                console.log(`wireUpstreams: unable to find wireUpstreams dependency id(${upstreamEpicID}) <- ${sourceID}`);
+                console.log(`wireUpstreams: unable to find wireUpstreams dependency id(${upstreamEpicID}) < - ${sourceID} `);
                 return;
             }
 
@@ -301,7 +329,7 @@ export class TeamEpicsViewController extends lib.BaseViewController {
         const { start, end } = this.calcDependencyConnection(targetSVGNode, sourceSVGNode);
 
         const timestamp = Date.now();
-        const p = gtap.path(SVGContainerID, `connection[${timestamp}][${upstreamEpicID}-${downstreamEpicID}]`);
+        const p = gtap.path(SVGContainerID, `connection[${timestamp}][${upstreamEpicID} - ${downstreamEpicID}]`);
         orienPath(p, start, end);
         p.$appendCSS("connection");
 

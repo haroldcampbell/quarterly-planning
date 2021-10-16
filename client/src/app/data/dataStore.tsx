@@ -1,5 +1,5 @@
 import * as lib from "../../core/lib";
-import { Epic, EpicID, OSubjectDataStoreReady, OSubjectWillUpdateEpicName, OSubjectWillUpdateTeamName, Team } from "../home_screen/_defs";
+import { Epic, EpicID, EpicSizes, OSubjectDataStoreReady, OSubjectWillUpdateEpicName, OSubjectWillUpdateTeamName, Team } from "../home_screen/_defs";
 
 const _teamsMap: { [key: string]: Team } = {
     // "A0": { ID: "A0", Name: "Team 0" },
@@ -27,47 +27,48 @@ const _teamIDs: string[] = [
 
 const _epicsByTeamID = new Map<string, Epic[]>([
     ["A1", [
-        { ID: "1", TeamID: "A1", Name: "Epic IL1" },
+        { ID: "1", TeamID: "A1", Name: "Epic IL1", Size: EpicSizes.XSmall },
         // { ID: "2", TeamID: "A1", Name: "Epic IL2", Upstreams: ["1"] },
-        { ID: "3", TeamID: "A1", Name: "Epic IL3" },
-        { ID: "4", TeamID: "A1", Name: "Epic IL4" },
+        { ID: "3", TeamID: "A1", Name: "Epic IL3", Size: EpicSizes.XSmall },
+        { ID: "4", TeamID: "A1", Name: "Epic IL4", Size: EpicSizes.Small },
     ]],
     ["A2", [
-        { ID: "5", TeamID: "A2", Name: "Epic P1" },
-        { ID: "6", TeamID: "A2", Name: "Epic P2" },
+        { ID: "5", TeamID: "A2", Name: "Epic P1", Size: EpicSizes.Small },
+        { ID: "6", TeamID: "A2", Name: "Epic P2", Size: EpicSizes.Medium },
     ]],
     ["A3", [
-        { ID: "7", TeamID: "A3", Name: "Epic SME1" },
-        { ID: "8", TeamID: "A3", Name: "Epic SME2" },
+        { ID: "7", TeamID: "A3", Name: "Epic SME1", Size: EpicSizes.Small },
+        { ID: "8", TeamID: "A3", Name: "Epic SME2", Size: EpicSizes.Small },
         // { ID: "9", TeamID: "A3", Name: "Epic SME3", Upstreams: ["2", "6", "18", "22", "23"] },
-        { ID: "10", TeamID: "A3", Name: "Epic SME4" },
+        { ID: "10", TeamID: "A3", Name: "Epic SME4", Size: EpicSizes.Small },
     ]],
     ["A4", [
-        { ID: "11", TeamID: "A4", Name: "Epic M1" },
-        { ID: "12", TeamID: "A4", Name: "Epic M2" },
-        { ID: "13", TeamID: "A4", Name: "Epic M3" },
+        { ID: "11", TeamID: "A4", Name: "Epic M1", Size: EpicSizes.Small },
+        { ID: "12", TeamID: "A4", Name: "Epic M2", Size: EpicSizes.Unknown },
+        { ID: "13", TeamID: "A4", Name: "Epic M3", Size: EpicSizes.Small },
     ]],
     ["A5", [
-        { ID: "14", TeamID: "A5", Name: "Epic DW1" },
+        { ID: "14", TeamID: "A5", Name: "Epic DW1", Size: EpicSizes.XLarge },
     ]],
     ["A6", [
-        { ID: "15", TeamID: "A6", Name: "Epic CRM1" },
-        { ID: "16", TeamID: "A6", Name: "Epic CRM2" },
+        { ID: "15", TeamID: "A6", Name: "Epic CRM1", Size: EpicSizes.Large },
+        { ID: "16", TeamID: "A6", Name: "Epic CRM2", Size: EpicSizes.Small },
         // { ID: "17", TeamID: "A6", Name: "Epic CRM3", Upstreams: ["6"] },
-        { ID: "18", TeamID: "A6", Name: "Epic CMR4" },
-        { ID: "19", TeamID: "A6", Name: "Epic CRM5" },
-        { ID: "20", TeamID: "A6", Name: "Epic CRM6" },
+        { ID: "18", TeamID: "A6", Name: "Epic CMR4", Size: EpicSizes.Medium },
+        { ID: "19", TeamID: "A6", Name: "Epic CRM5", Size: EpicSizes.Small },
+        { ID: "20", TeamID: "A6", Name: "Epic CRM6", Size: EpicSizes.Small },
+        { ID: "20", TeamID: "A6", Name: "Epic CRM6", Size: EpicSizes.Small },
         // { ID: "21", TeamID: "A6", Name: "Epic CRM7", Upstreams: ["9"] },
     ]],
     ["A7", [
-        { ID: "22", TeamID: "A7", Name: "Epic ACO1" },
+        { ID: "22", TeamID: "A7", Name: "Epic ACO1", Size: EpicSizes.Small },
         // { ID: "23", TeamID: "A7", Name: "Epic ACO2", Upstreams: ["11", "15"] },
-        { ID: "24", TeamID: "A7", Name: "Epic ACO3" },
-        { ID: "25", TeamID: "A7", Name: "Epic ACO4" },
+        { ID: "24", TeamID: "A7", Name: "Epic ACO3", Size: EpicSizes.Small },
+        { ID: "25", TeamID: "A7", Name: "Epic ACO4", Size: EpicSizes.Small },
     ]],
     ["A8", [
         // { ID: "26", TeamID: "A8", Name: "Epic CN1", Upstreams: ["11", "15"] },
-        { ID: "27", TeamID: "A8", Name: "Epic CN2" },
+        { ID: "27", TeamID: "A8", Name: "Epic CN2", Size: EpicSizes.Small },
     ]],
 ]);
 
