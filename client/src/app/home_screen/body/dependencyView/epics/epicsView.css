@@ -6,9 +6,13 @@
     display: block;
 }
 
+/* .epics-container-wrapper:nth-of-type(0) {
+    border: solid 1px blue;
+}
 .epics-container-wrapper:first-of-type {
     border-top: none;
-}
+    margin-top: 20px;
+} */
 
 .epics-container {
     display: block;

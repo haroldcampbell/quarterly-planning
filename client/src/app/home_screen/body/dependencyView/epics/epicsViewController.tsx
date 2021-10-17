@@ -15,6 +15,7 @@ const shapeHeight = 20;
 // const rowPadding = 20; /** The space at the start and end of the row */
 const rowPadding = 12; /** The space at the start and end of the row */
 const shapeEornerRadius = 5;
+// const borderWidth = 1;
 
 /**
  * WARNING:
@@ -131,6 +132,11 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
     private epicsViewSVGMap = new Map<string, EpicViewSVGNode>();
     private xOffset!: number;
 
+    /**
+     * Precalculated table for pixel-sizes based on epic-sizes.
+     */
+    private epicSizeMap = new Map<EpicSizes, number>();
+
     constructor(parentController: IViewController | IScreenController, lastRowIndex: number, teamEpics: TeamEpics) {
         super(parentController);
 
@@ -156,7 +162,6 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
         super.initController();
     }
 
-    private epicSizeMap = new Map<EpicSizes, number>()
     initEpicSizeMappings() {
         const rP2 = rowPadding * 2.0;
         this.epicSizeMap.set(EpicSizes.XSmall, minWeekCellWidth / 2.0 - rP2);
@@ -166,6 +171,7 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
         this.epicSizeMap.set(EpicSizes.XLarge, minWeekCellWidth * 8 - rP2);
         this.epicSizeMap.set(EpicSizes.Unknown, minWeekCellWidth * 12 - rP2);
     }
+
     createEpic(epic: Epic) {
         let epicsView = this.view as EpicsView
         const svgNodes = epicsView.addEpic(epic);
@@ -186,16 +192,17 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
     }
 
     layoutEpic(epic: Epic) {
-        const svgNodes = this.epicsViewSVGMap.get(epic.ID);
+        const svgEpicNode = this.epicsViewSVGMap.get(epic.ID);
 
-        if (svgNodes === undefined) {
+        if (svgEpicNode === undefined) {
             return;
         }
 
-        this.sizeSVGNodes(epic.Size, svgNodes);
-        this.updateRowBounds(svgNodes);
+        this.sizeSVGNodes(epic, svgEpicNode);
+        this.positionSVGNodesByWeek(epic, svgEpicNode);
+        this.updateRowBounds(svgEpicNode);
 
-        svgNodes.btn!.positionButton(this.getSVGNodeY(), svgNodes);
+        svgEpicNode.btn!.positionButton(this.getSVGNodeY(), svgEpicNode);
     }
 
     layoutAllEpics() {
@@ -250,34 +257,39 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
         return 2 + this.lastRowIndex * 64;
     }
 
-    sizeSVGNodes(epicSize: EpicSizes, svgNodes: EpicViewSVGNode) {
-        const x = this.xOffset
+    sizeSVGNodes(epic: Epic, svgEpicNode: EpicViewSVGNode) {
+        const width = this.epicSizeMap.get(epic.Size)!
+
+        svgEpicNode.svgRectNode.$height(shapeHeight);
+        svgEpicNode.svgRectNode.$rxy(shapeEornerRadius);
+
+        placeTextWithEllipsis(svgEpicNode.svgTextNode, epic.Name, width);
+
+        svgEpicNode.svgRectNode.$width(width);
+    }
+
+    positionSVGNodesByWeek(epic: Epic, svgEpicNode: EpicViewSVGNode) {
+        let x: number;
+
+        if (epic.ExpectedStartPeriod === undefined) {
+            /** Position the element based on the position of the last epic */
+            x = this.xOffset;
+        } else {
+            /** Calculate the position from the  ExpectedStartPeriod */
+            const weekIndex = epic.ExpectedStartPeriod - 1; /** Convert to zero-based index */
+            x = rowPadding + weekIndex * (minWeekCellWidth + colGap);
+        }
+
         const y = this.getSVGNodeY();
+        const width = this.epicSizeMap.get(epic.Size)!
 
-        svgNodes.svgRectNode.$x(x);
-        svgNodes.svgRectNode.$y(y + ShapeYOffset);
+        svgEpicNode.svgRectNode.$x(x);
+        svgEpicNode.svgRectNode.$y(y + ShapeYOffset);
 
-        // minWeekCellWidth
+        const textXOffset = (width - svgEpicNode.svgTextNode.$textBoundingBox().width) / 2.0;
+        svgEpicNode.svgTextNode.$xy(x + textXOffset, y + 23);
 
-        // svgNodes.svgRectNode.$width(40);
-        // svgNodes.svgRectNode.$width(100);
-        svgNodes.svgRectNode.$height(shapeHeight);
-        svgNodes.svgRectNode.$rxy(shapeEornerRadius);
-
-        // svgNodes.svgTextNode.$xy(x + 10, y + 23);
-
-        const width = this.epicSizeMap.get(epicSize)!
-
-        placeTextWithEllipsis(svgNodes.svgTextNode, "Epic IL4", width)
-
-        const textXOffset = (width - svgNodes.svgTextNode.$textBoundingBox().width) / 2.0;
-        svgNodes.svgTextNode.$xy(x + textXOffset, y + 23);
-        // const width = 100 - rowPadding * 2;//textWidth < 40 ? 40 : textWidth;
-
-        svgNodes.svgRectNode.$width(width);
-
-        // this.xOffset += width + colGap;
-        this.xOffset += width + colGap + rowPadding * 2;
+        this.xOffset = x + width + colGap * 2 + rowPadding * 2;
     }
 
     updateRowBounds(svgNodes: EpicViewSVGNode) {

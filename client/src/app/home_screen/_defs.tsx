@@ -27,6 +27,13 @@ export type Epic = {
     TeamID: string;
     Name: string;
     Size: EpicSizes;
+    /**
+     * ExpectedStartPeriod: Week-based increment, with half increment resolution.
+     * Valid input:
+     *  - Undefined (system decides based on flow)
+     *  - 1, 1.5, 2, 2.5, etc...
+     * */
+    ExpectedStartPeriod?: number;
     Upstreams?: string[];
 }
 
