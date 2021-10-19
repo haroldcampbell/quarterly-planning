@@ -21,7 +21,7 @@ export interface IView {
     readonly parentController: IViewController | IScreenController;
 
     initView(): void;
-    viewContent(): HTMLElement;
+    viewContent(): HTMLElement | undefined;
     addView(subView: IView): void;
     loadSubviews(viewContent: any): void;
 }

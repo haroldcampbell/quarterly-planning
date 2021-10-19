@@ -27,19 +27,20 @@ const _teamIDs: string[] = [
 
 const _epicsByTeamID = new Map<string, Epic[]>([
     ["A1", [
-        { ID: "1", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 1, Size: EpicSizes.XSmall },
+        { ID: "1-1", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 1, Size: EpicSizes.Small },
+        { ID: "1-2", TeamID: "A1", Name: "Epic IL10", ExpectedStartPeriod: 1, Size: EpicSizes.XSmall },
         // { ID: "2", TeamID: "A1", Name: "Epic IL2", Upstreams: ["1"] },
-        { ID: "3", TeamID: "A1", Name: "Epic IL3", ExpectedStartPeriod: 2.5, Size: EpicSizes.XSmall },
-        { ID: "4", TeamID: "A1", Name: "Epic IL4", ExpectedStartPeriod: 1.5, Size: EpicSizes.Small },
-        { ID: "4", TeamID: "A1", Name: "Epic IL5", ExpectedStartPeriod: 4, Size: EpicSizes.Small },
-        { ID: "4", TeamID: "A1", Name: "Epic IL6", Size: EpicSizes.Small },
-        { ID: "4", TeamID: "A1", Name: "Epic IL7", Size: EpicSizes.Medium },
-        { ID: "4", TeamID: "A1", Name: "Epic IL8", Size: EpicSizes.Medium },
-        { ID: "4", TeamID: "A1", Name: "Epic IL9", ExpectedStartPeriod: 11, Size: EpicSizes.Medium },
+        { ID: "3", TeamID: "A1", Name: "Epic IL3", ExpectedStartPeriod: 1, Size: EpicSizes.XSmall },
+        { ID: "40", TeamID: "A1", Name: "Epic IL4", ExpectedStartPeriod: 1, Size: EpicSizes.Small },
+        { ID: "41", TeamID: "A1", Name: "Epic IL5", ExpectedStartPeriod: 1, Size: EpicSizes.Small },
+        { ID: "42", TeamID: "A1", Name: "Epic IL6", Size: EpicSizes.Small },
+        { ID: "43", TeamID: "A1", Name: "Epic IL7", ExpectedStartPeriod: 1, Size: EpicSizes.Medium },
+        { ID: "44", TeamID: "A1", Name: "Epic IL8", Size: EpicSizes.Medium },
+        { ID: "45", TeamID: "A1", Name: "Epic IL9", ExpectedStartPeriod: 11, Size: EpicSizes.Medium },
     ]],
     ["A2", [
-        { ID: "5", TeamID: "A2", Name: "Epic P1", Size: EpicSizes.Small },
-        { ID: "6", TeamID: "A2", Name: "Epic P2", Size: EpicSizes.Medium },
+        { ID: "5", TeamID: "A2", Name: "Epic P1", ExpectedStartPeriod: 1, Size: EpicSizes.Small },
+        { ID: "6", TeamID: "A2", Name: "Epic P2", ExpectedStartPeriod: 1, Size: EpicSizes.Medium },
     ]],
     ["A3", [
         { ID: "7", TeamID: "A3", Name: "Epic SME1", Size: EpicSizes.Small },

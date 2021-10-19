@@ -3,7 +3,7 @@ import * as lib from "../../../../../core/lib";
 import * as dataStore from "../../../../data/dataStore";
 
 import { Epic, EpicID, GTapElement, PathInfo, SVGContainerID, TeamEpics, TeamID, XYOnly } from "../../../_defs";
-import { EpicsViewController, ShapeYOffset } from "./epicsViewController";
+import { EpicControllerBounds, EpicsViewController, ShapeYOffset } from "./epicsViewController";
 
 /** @jsx gtap.$jsx */
 
@@ -82,7 +82,6 @@ class TeamEpicsView extends lib.BaseView {
 
     QuarterStartDate!: Date;
     private periods: DateMonthPeriod[] = [];
-
     private periodNodes: GTapElement[] = [];
 
     viewContent() {
@@ -120,13 +119,13 @@ class TeamEpicsView extends lib.BaseView {
     }
 
     addPeriodView(datePeriodsContainerNode: GTapElement, period: DateMonthPeriod) {
-        const monthNameNode = <div className="month-name-container"><span>{period.startMonth.toLocaleString('default', { month: 'short' })}</span></div>
-        const weeksContainerNode = <div className="week-detail-container"></div>
-        // const milestoneContainerNode =
+        const MonthName = period.weekDetails[1].startDate.toLocaleString('default', { month: 'short' }); // use the Month name from the second week
+        const fromDate = period.startMonth.toLocaleString('default', { month: 'short', day: '2-digit' });
+        const toDate = period.endMonth.toLocaleString('default', { month: 'short', day: '2-digit' });
 
-        // <span>
-        //     {`  ${ wd.startDate.toLocaleDateString() } -${ wd.endDate.toLocaleDateString() } `}
-        // </span>
+        const monthNameNode = <div className="month-name-container"><span className="month-name">{MonthName}</span><span className="month-name-period">{`${fromDate} － ${toDate}`}</span></div>
+        const weeksContainerNode = <div className="week-detail-container"></div>
+
         period.weekDetails.forEach((wd) => {
             const weekDetail = <div className="week">
                 <div className="week-info"><span>W</span><span>{wd.weekIndex + 1}</span></div>
@@ -141,13 +140,13 @@ class TeamEpicsView extends lib.BaseView {
     }
 
     loadSubviews(viewContent: any) {
-        this.views.forEach((v) => {
-            const vContent = v.viewContent();
+        // this.views.forEach((v) => {
+        //     const vContent = v.viewContent();
 
-            v.loadSubviews(vContent);
-            this.scrollContainer.appendChild(vContent);
-        });
-        viewContent.appendChild(this.scrollContainer);
+        //     v.loadSubviews(vContent);
+        //     this.scrollContainer.appendChild(vContent);
+        // });
+        // viewContent.appendChild(this.scrollContainer);
     }
 
     initView() {
@@ -184,11 +183,13 @@ export class TeamEpicsViewController extends lib.BaseViewController {
     private epicControllers: EpicsViewController[] = [];
     private epicControllerDictionary = new Map<string, EpicsViewController>();
 
-    private lastRowIndex = 0;
+    // private lastRowIndex = 0;
+    private lastControllerBounds?: EpicControllerBounds;
     private maxRowWidth = 0; /** Used to adjust the svg element size */
 
     initView() {
-        this.teamEpicsView.QuarterStartDate = new Date("Oct 27 2021");
+        this.teamEpicsView.QuarterStartDate = new Date("Oct 1 2021");
+        // this.teamEpicsView.QuarterStartDate = new Date("Oct 27 2021");
         super.initView();
     }
 
@@ -203,15 +204,14 @@ export class TeamEpicsViewController extends lib.BaseViewController {
     }
 
     private initTeamEpics(epics: TeamEpics) {
-        let epicController = new EpicsViewController(this, this.lastRowIndex, epics);
+        let epicController = new EpicsViewController(this, this.lastControllerBounds, epics);
 
         epicController.onEpicCreated = (epic) => { this.bindEpicToController(epic, epicController); }
-        epicController.onCompleted = (rowsCompleted, maxXBounds) => { this.onEpicRowAdded(rowsCompleted, maxXBounds); }
+        epicController.onCompleted = (conrollerBounds: EpicControllerBounds) => { this.onEpicRowAdded(conrollerBounds); }
         epicController.onLayoutNeeded = (maxXBounds, didUpdateTeamId) => { this.onLayoutNeeded(maxXBounds, didUpdateTeamId); }
         epicController.initController();
 
         this.epicControllers.push(epicController);
-        this.teamEpicsView.addEpicView(epicController.view.viewContent());
     }
 
     bindEpicToController(epic: Epic, epicController: EpicsViewController) {
@@ -237,7 +237,6 @@ export class TeamEpicsViewController extends lib.BaseViewController {
             let diffWidth = this.maxRowWidth - periodNodesWidth;
             diffWidth = diffWidth < 100 ? 100 : diffWidth; // Enforce a min width
             this.teamEpicsView.setSpillOverWidth(diffWidth);
-            console.log(">>onTeamEpicsAdded this.maxRowWidth", this.maxRowWidth, this.teamEpicsView.getPeriodNodeLength());
         }
 
         this.epicControllers.forEach((controller) => {
@@ -256,9 +255,9 @@ export class TeamEpicsViewController extends lib.BaseViewController {
     }
 
     /** Updates the lastRowIndex with the number of rows added by the  epicController */
-    onEpicRowAdded(rowsAdded: number, maxXBounds: number) {
-        this.lastRowIndex += rowsAdded;
-        this.onLayoutNeeded(maxXBounds);
+    onEpicRowAdded(conrollerBounds: EpicControllerBounds) {
+        this.lastControllerBounds = conrollerBounds;
+        this.onLayoutNeeded(this.lastControllerBounds.size.width);
     }
 
     onLayoutNeeded(maxXBounds: number, didUpdateTeamId?: TeamID) {

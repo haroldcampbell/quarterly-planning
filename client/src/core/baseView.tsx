@@ -18,7 +18,7 @@ export abstract class BaseView implements IView {
         });
     }
 
-    viewContent(): HTMLElement {
+    viewContent(): HTMLElement | undefined {
         return <div className=''> </div>;
     }
 

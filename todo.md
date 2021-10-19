@@ -1,13 +1,11 @@
-[] Edit expected start week
+[X] Edit expected start week
     [X] Sync epic to week boundary location
-    [] Epics in multiple rows
-        [] Use multiple rows for epics with the same week as others
-        [] Use multiple rows when epics over-lap
+    [X] Epics in multiple rows: Use multiple rows for epics with the same week as others
+
+[X] Change week boundary to use the calendar week
 ========
 NEXT
 ========
-
-[] Change week boundary to use the calendar week
 
 [] Add Epic Duration to Estimated Size
     [] Show the epic week in side-panel
@@ -50,6 +48,8 @@ NEXT
 
 [] Migrate to MongoDB
 
+[] Use multiple rows when epics over-lap
+
 [] FIX: Put dependency connections on top of the epics after new epic created
 
 [] Add annotations (e.g. conflict/accepted) to epics (the Red/Green stars)
@@ -70,7 +70,7 @@ NEXT
  OPPORTUNITIES
 ========
 
-[] Draggin epics
+[] Dragging epics
     [] Move epics to new week
     [] Extend epics by dragging end
     [] Move epics to different teams
