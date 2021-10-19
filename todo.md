@@ -1,8 +1,3 @@
-[X] Edit expected start week
-    [X] Sync epic to week boundary location
-    [X] Epics in multiple rows: Use multiple rows for epics with the same week as others
-
-[X] Change week boundary to use the calendar week
 ========
 NEXT
 ========
@@ -12,10 +7,6 @@ NEXT
     [] Update the epic size based on the estimated size
     [] Update Projected End field
 
-[] Edit Projected End field
-    [] Sync-epic size to align with week boundary
-    [] Highlight conflicts between epics that end after upstream start dependency
-
 [] Create epics
     [] Update UX to allow adding epics based on the new design
     [] Create new Epic at the fist position when there are other epics
@@ -24,8 +15,6 @@ NEXT
     [] Update Team UI to match new design
     [] Create new team
     [] Create new Epic when team has zero epics
-    [] Collapse team side-panel
-        [] Sticky team name
 
 [] Highlight selected epic
     [] Highlight Upstream dependencies
@@ -34,7 +23,6 @@ NEXT
         [] Hide Upstream dependency
         [] Hide Downstream dependency
     [] Hide Teams that are not a dependency
-    [] Highlight conflicts between epics that start after upstream dependency
 
 [] Migrate client-site in-memory data to server-side in-memory
     [] Identify APIs
@@ -48,9 +36,18 @@ NEXT
 
 [] Migrate to MongoDB
 
-[] Use multiple rows when epics over-lap
+[] Projected End Date field
+    [] Edit Projected End field
+    [] Sync-epic size to align with week boundary
+
+[] Dependency conflicts
+    [] Highlight conflicts between epics that end after upstream start dependency
+    [] Highlight conflicts between epics that start after upstream dependency
+    [] Use multiple rows when epics over-lap
 
 [] FIX: Put dependency connections on top of the epics after new epic created
+
+[] FIX: Scrollbars
 
 [] Add annotations (e.g. conflict/accepted) to epics (the Red/Green stars)
 
@@ -62,13 +59,23 @@ NEXT
     [] Release plan-view
 
 [] Side-pandel dependencies
-    [] UI: single button for showing the Add Dependency Dialog
+    [] Update UI to single button for showing the Add Dependency Dialog
 
 [] Mouse-over epic shows full-details (useful for when epic's name is truncated)
 
 ========
  OPPORTUNITIES
 ========
+
+[] Read Team Epics from JIRA
+
+[] Write Team Epic changes to JIRA
+
+[] Sync change with JIRA
+
+[] Side-Panels
+    [] Collapse Team side-panel
+    [] Add Sticky Team name
 
 [] Dragging epics
     [] Move epics to new week
@@ -126,6 +133,13 @@ NEXT
 ========
  DONE
 ========
+
+[X] Edit expected start week
+    [X] Sync epic to week boundary location
+    [X] Epics in multiple rows: Use multiple rows for epics with the same week as others
+
+[X] Change week boundary to use the calendar week
+
 
 [X] Week Boundaries
     [X] Update UX/UI design to incorporate week boundaries
