@@ -1,16 +1,12 @@
-[X] Add Epic Duration to Estimated Size
-    [X] Update the epic size based on the estimated size
-    [X] Show the epic week in side-panel
-    [X] Update Projected End field
-    [X] BUG: Fix border offset bug for epics
+[] Create epics
+    [] Update UX to allow adding epics based on the new design
+    [] Create new Epic at the fist position when there are other epics
+
+
 
 ========
 NEXT
 ========
-
-[] Create epics
-    [] Update UX to allow adding epics based on the new design
-    [] Create new Epic at the fist position when there are other epics
 
 [] Create new Team
     [] Update Team UI to match new design
@@ -139,6 +135,12 @@ NEXT
 ========
  DONE
 ========
+
+[X] Add Epic Duration to Estimated Size
+    [X] Update the epic size based on the estimated size
+    [X] Show the epic week in side-panel
+    [X] Update Projected End field
+    [X] BUG: Fix border offset bug for epics
 
 [X] Edit expected start week
     [X] Sync epic to week boundary location
