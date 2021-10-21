@@ -6,6 +6,11 @@ export interface GTapElement extends HTMLElement {
 export type EpicID = string;
 export type TeamID = string;
 export type XYOnly = { x: number, y: number };
+export type SizeOnly = {
+    width: number;
+    height: number;
+}
+
 export type PathInfo = {
     p: any,
     start: XYOnly,
@@ -15,13 +20,14 @@ export type PathInfo = {
 };
 
 export enum EpicSizes {
-    XSmall = 0.5, // 1/2 Sprint
-    Small = 1, // 1 Sprint
-    Medium = 2, // 2 Sprints
-    Large = 3, // 3 Sprints
-    XLarge = 5, // 5 Sprints
-    Unknown = 11 // More than 5 Sprints
+    XSmall = 0.5, // 1/4 Sprint, 2-ish Days?
+    Small = 1, // 1/2 Sprint, 5 Days
+    Medium = 2, // 1 Sprint, 10 Days
+    Large = 3, // 2 Sprints, 20 Days
+    XLarge = 5, // 4 Sprints, 40 Days
+    Unknown = 11 // at least Sprints, 60 Days
 }
+
 export type Epic = {
     ID: string;
     TeamID: string;
@@ -30,10 +36,9 @@ export type Epic = {
     /**
      * ExpectedStartPeriod: Week-based increment, with half increment resolution.
      * Valid input:
-     *  - Undefined (system decides based on flow)
      *  - 1, 1.5, 2, 2.5, etc...
      * */
-    ExpectedStartPeriod?: number;
+    ExpectedStartPeriod: number;
     Upstreams?: string[];
 }
 
@@ -59,6 +64,27 @@ export type InputChangeCallback = (e: Event, dataOptionKey: string) => void;
 export enum SelectedEpicDetailsDataOptions {
     TeamName = "selected-epic-details[team-name]",
     EpicName = "selected-epic-details[epic-name]",
+}
+
+export type WeekDetail = {
+    weekIndex: number;
+    startDate: Date;
+    endDate: Date;
+}
+
+export type DateMonthPeriod = {
+    startMonth: Date;
+    endMonth: Date;
+    weekDetails: WeekDetail[];
+}
+
+/**
+ * Used in the SelectedEpicDetails side pandel
+ */
+export type EpicDateInfo = {
+    date: Date;
+    quarterWeekIndex: number;
+    text: string;
 }
 
 /** The data has been fetched and processed */

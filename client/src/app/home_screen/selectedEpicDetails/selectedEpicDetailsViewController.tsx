@@ -7,7 +7,7 @@ import { EpicDetailsView } from "./epicDetailsView";
 import { TeamNameDetailsView } from "./teamNameDetailsView";
 import { UpstreamDetailsView } from "./upstreamDetailsView";
 
-import { Epic, EpicID, InputChangeCallback, SelectedEpicDetailsDataOptions, TeamEpicDependency } from "../_defs";
+import { DateMonthPeriod, Epic, EpicID, InputChangeCallback, SelectedEpicDetailsDataOptions, TeamEpicDependency } from "../_defs";
 
 /** @jsx gtap.$jsx */
 
@@ -46,10 +46,10 @@ class SelectedEpicDetailsView extends lib.BaseView {
         super.initView();
     }
 
-    showEpicDetails(epic: Epic) {
+    showEpicDetails(epic: Epic, activePeriods: DateMonthPeriod[]) {
         this.selectedEpic = epic;
         this.teamView.onEpicSelected(epic);
-        this.epicDetailsView.onEpicSelected(epic);
+        this.epicDetailsView.onEpicSelected(epic, activePeriods);
         const existingUpstreamEpics = this.upstreamView.onEpicSelected(epic);
         const existingDownstreamEpics = this.downstreamView.onEpicSelected(epic);
 
@@ -111,25 +111,25 @@ export class SelectedEpicDetailsController extends lib.BaseViewController implem
     onUpdate(subject: string, state: lib.ObserverState): void {
         switch (subject) {
             case OSubjectViewEpicDetails: {
-                const { epic } = state.value;
-                this.onEpicSelected(epic);
+                const { epic, activePeriods } = state.value;
+                this.onEpicSelected(epic, activePeriods);
                 break;
             }
             case OSubjectHideEpicDetails: {
                 this.onHideEpicDetails();
                 break;
             }
-            case OSubjectRedrawDependencyConnections: {
-                const { downstreamEpic } = state.value;
-                this.onEpicSelected(downstreamEpic);
-                break;
-            }
+            // case OSubjectRedrawDependencyConnections: {
+            //     const { downstreamEpic } = state.value;
+            //     this.onEpicSelected(downstreamEpic);
+            //     break;
+            // }
         }
     }
 
-    onEpicSelected(epic: Epic) {
+    onEpicSelected(epic: Epic, activePeriods: DateMonthPeriod[]) {
         this.selectedEpic = epic;
-        this.detailsView.showEpicDetails(epic);
+        this.detailsView.showEpicDetails(epic, activePeriods);
     }
 
     onHideEpicDetails() {

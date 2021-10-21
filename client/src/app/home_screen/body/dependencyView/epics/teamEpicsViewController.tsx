@@ -1,9 +1,10 @@
 import * as gtap from "../../../../../../www/dist/js/gtap";
 import * as lib from "../../../../../core/lib";
+import { EpicControllerBounds, MilliSecondsInDay, MinWeekCellWidth, ShapeYOffset, SVGMaxContextWidth } from "../../../../common/nodePositions";
 import * as dataStore from "../../../../data/dataStore";
 
-import { Epic, EpicID, GTapElement, PathInfo, SVGContainerID, TeamEpics, TeamID, XYOnly } from "../../../_defs";
-import { EpicControllerBounds, EpicsViewController, ShapeYOffset } from "./epicsViewController";
+import { DateMonthPeriod, Epic, EpicID, GTapElement, PathInfo, SVGContainerID, TeamEpics, TeamID, WeekDetail, XYOnly } from "../../../_defs";
+import { EpicsViewController } from "./epicsViewController";
 
 /** @jsx gtap.$jsx */
 
@@ -11,23 +12,10 @@ import "./teamEpics.css"
 
 export const OSubjectTeamEpicsScrollContainerResized = "team-epics-scroll-container-resized";
 export const OSubjectRedrawDependencyConnections = "redraw-dependency-connections";
-
-type WeekDetail = {
-    weekIndex: number;
-    startDate: Date;
-    endDate: Date;
-}
-
-type DateMonthPeriod = {
-    startMonth: Date;
-    endMonth: Date;
-    weekDetails: WeekDetail[];
-}
-
-const milliSecondsInDay = 86400000; //24 * 60 * 60 * 1000
+// export const OSubjectGetTeamEpicsActivePeriod = "team-epics-active-periods";
 
 function createMonthDatePeriod(startDate: Date, dayOffset: number = 0): DateMonthPeriod {
-    const month1 = new Date(startDate.getTime() + dayOffset * milliSecondsInDay);
+    const month1 = new Date(startDate.getTime() + dayOffset * MilliSecondsInDay);
     const month2 = new Date(startDate.getTime());
 
     // month1.setMonth(startDate.getMonth() + offset);
@@ -45,14 +33,14 @@ function createMonthDatePeriod(startDate: Date, dayOffset: number = 0): DateMont
 }
 
 function calcWeekSpan(endMonth: Date, startMonth: Date): WeekDetail[] {
-    const numDays = (endMonth.getTime() - startMonth.getTime()) / milliSecondsInDay;
+    const numDays = (endMonth.getTime() - startMonth.getTime()) / MilliSecondsInDay;
 
     let weeks = [];
     let weekIndex = 0;
     const weekDetails: WeekDetail[] = [];
 
     for (let offset = 0; offset < numDays; offset++) {
-        const day = new Date(startMonth.getTime() + offset * milliSecondsInDay);
+        const day = new Date(startMonth.getTime() + offset * MilliSecondsInDay);
 
         if (day.getDay() == 0 || day.getDay() == 6) {
             continue;
@@ -81,27 +69,26 @@ class TeamEpicsView extends lib.BaseView {
     private spillOverNode = <div className="spill-over-period"></div>;
 
     QuarterStartDate!: Date;
-    private periods: DateMonthPeriod[] = [];
     private periodNodes: GTapElement[] = [];
+    private activePeriods!: DateMonthPeriod[];
 
     viewContent() {
         return this.content;
     }
 
     initWeeklyViews() {
-        this.periods.push(createMonthDatePeriod(this.QuarterStartDate));
-        this.periods.push(createMonthDatePeriod(this.periods[0].weekDetails[3].endDate, 1));
-        this.periods.push(createMonthDatePeriod(this.periods[1].weekDetails[3].endDate, 1));
-
-        this.periods.forEach((period) => {
+        this.activePeriods.forEach((period, index) => {
             const periodNode = <div className="period-container"></div>
-            this.addPeriodView(periodNode, period);
+            this.addPeriodView(periodNode, period, index);
             this.periodNodes.push(periodNode);
             this.datePeriodsContainerNode.appendChild(periodNode);
         });
         this.datePeriodsContainerNode.appendChild(this.spillOverNode);
-
         this.scrollContainer.appendChild(this.datePeriodsContainerNode);
+    }
+
+    setActivePeriods(periods: DateMonthPeriod[]) {
+        this.activePeriods = periods;
     }
 
     setSpillOverWidth(width: number) {
@@ -118,7 +105,7 @@ class TeamEpicsView extends lib.BaseView {
         return width;
     }
 
-    addPeriodView(datePeriodsContainerNode: GTapElement, period: DateMonthPeriod) {
+    addPeriodView(datePeriodsContainerNode: GTapElement, period: DateMonthPeriod, periodIndex: number) {
         const MonthName = period.weekDetails[1].startDate.toLocaleString('default', { month: 'short' }); // use the Month name from the second week
         const fromDate = period.startMonth.toLocaleString('default', { month: 'short', day: '2-digit' });
         const toDate = period.endMonth.toLocaleString('default', { month: 'short', day: '2-digit' });
@@ -126,9 +113,11 @@ class TeamEpicsView extends lib.BaseView {
         const monthNameNode = <div className="month-name-container"><span className="month-name">{MonthName}</span><span className="month-name-period">{`${fromDate} － ${toDate}`}</span></div>
         const weeksContainerNode = <div className="week-detail-container"></div>
 
+
         period.weekDetails.forEach((wd) => {
             const weekDetail = <div className="week">
-                <div className="week-info"><span>W</span><span>{wd.weekIndex + 1}</span></div>
+                <div className="week-info"><span>W</span><span>{periodIndex * 4 + wd.weekIndex + 1}</span></div>
+                {/* <div className="week-info"><span>W</span><span>{wd.weekIndex + 1}</span></div> */}
                 <div className="milestones-container"></div>
             </div>
 
@@ -157,6 +146,8 @@ class TeamEpicsView extends lib.BaseView {
         // I'm doing this cause I can't get the fucking clientWidth or
         // getBoundingClientRect to report the correct width.
         const resizeObserver = new ResizeObserver(entries => {
+            console.log(">> resizing: entries[0].contentRect ", entries[0].contentRect);
+
             lib.Observable.notify(OSubjectTeamEpicsScrollContainerResized, {
                 source: this,
                 value: { contentWidth: entries[0].contentRect },
@@ -171,11 +162,11 @@ class TeamEpicsView extends lib.BaseView {
     addEpicView(viewNode: HTMLElement) {
         this.scrollContainer.appendChild(viewNode);
     }
-
-
 }
 
-export class TeamEpicsViewController extends lib.BaseViewController {
+export class TeamEpicsViewController extends lib.BaseViewController
+// implements lib.IObserver
+{
     protected _view: lib.IView = new TeamEpicsView(this);
 
     private teamEpicsView = this._view as TeamEpicsView;
@@ -183,18 +174,32 @@ export class TeamEpicsViewController extends lib.BaseViewController {
     private epicControllers: EpicsViewController[] = [];
     private epicControllerDictionary = new Map<string, EpicsViewController>();
 
+    QuarterStartDate!: Date;
+
     // private lastRowIndex = 0;
     private lastControllerBounds?: EpicControllerBounds;
     private maxRowWidth = 0; /** Used to adjust the svg element size */
+    private periods: DateMonthPeriod[] = [];
 
     initView() {
-        this.teamEpicsView.QuarterStartDate = new Date("Oct 1 2021");
+        this.QuarterStartDate = new Date("Oct 1 2021")
+
+        this.teamEpicsView.QuarterStartDate = this.QuarterStartDate;
+        this.teamEpicsView.setActivePeriods(this.periods);
         // this.teamEpicsView.QuarterStartDate = new Date("Oct 27 2021");
+
+        this.periods.push(createMonthDatePeriod(this.QuarterStartDate));
+        this.periods.push(createMonthDatePeriod(this.periods[0].weekDetails[3].endDate, 1));
+        this.periods.push(createMonthDatePeriod(this.periods[1].weekDetails[3].endDate, 1));
+
+        // lib.Observable.subscribe(OSubjectGetTeamEpicsActivePeriod, this);
+
         super.initView();
     }
 
     initData(teamEpics?: TeamEpics[]) {
         const svgHostElm = gtap.$class("team-epics-scroll-container")[0];
+
         this.ctx = gtap.container(SVGContainerID, svgHostElm, "width: 200%; height:100%; position:absolute");
 
         teamEpics?.forEach((epics) => {
@@ -203,9 +208,25 @@ export class TeamEpicsViewController extends lib.BaseViewController {
         this.onTeamEpicsAdded();
     }
 
-    private initTeamEpics(epics: TeamEpics) {
-        let epicController = new EpicsViewController(this, this.lastControllerBounds, epics);
+    // onUpdate(subject: string, state: lib.ObserverState): void {
+    //     switch (subject) {
+    //         case OSubjectGetTeamEpicsActivePeriod: {
+    //             const { contentWidth } = state.value;
+    //             this.onTeamEpicsScrollContainerResized(contentWidth);
+    //             break;
+    //         }
+    //         // case OSubjectWillUpdateEpicName: {
+    //         //     const { epic } = state.value;
+    //         //     this.onEpicNameUpdated(epic);
+    //         //     break;
+    //         // }
+    //     }
+    // }
 
+    private initTeamEpics(epics: TeamEpics) {
+        let epicController = new EpicsViewController(this, epics, this.lastControllerBounds);
+
+        epicController.setActivePeriods(this.periods);
         epicController.onEpicCreated = (epic) => { this.bindEpicToController(epic, epicController); }
         epicController.onCompleted = (conrollerBounds: EpicControllerBounds) => { this.onEpicRowAdded(conrollerBounds); }
         epicController.onLayoutNeeded = (maxXBounds, didUpdateTeamId) => { this.onLayoutNeeded(maxXBounds, didUpdateTeamId); }
@@ -245,7 +266,6 @@ export class TeamEpicsViewController extends lib.BaseViewController {
     }
 
     redrawDependencyConnections() {
-        console.log(">>this.dependencyConnections:", this.dependencyConnections);
         this.dependencyConnections.forEach(pathInfo => {
             pathInfo.p.remove();
         });
@@ -263,7 +283,7 @@ export class TeamEpicsViewController extends lib.BaseViewController {
     onLayoutNeeded(maxXBounds: number, didUpdateTeamId?: TeamID) {
         if (maxXBounds > this.maxRowWidth) {
             this.maxRowWidth = maxXBounds;
-            this.ctx.domContainer.$style(`width:${this.maxRowWidth}px; height: 100%; position: absolute; `);
+            this.ctx.domContainer.$style(`width:${Math.max(SVGMaxContextWidth, this.maxRowWidth)}px; height: 100%; position: absolute; `);
         }
 
         if (didUpdateTeamId === undefined) {

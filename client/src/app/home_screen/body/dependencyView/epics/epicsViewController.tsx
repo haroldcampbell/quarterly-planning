@@ -1,38 +1,19 @@
 import * as gtap from "../../../../../../www/dist/js/gtap";
 import * as lib from "../../../../../core/lib";
 import { IViewController, IScreenController } from "../../../../../core/lib";
+import { calcSVGNodesXYForWeek, EpicControllerBounds, epicSizeToWidth, MinWeekCellWidth, placeTextWithEllipsis, RowPadding, ShapeYOffset, SVGMaxContextWidth, TextShapeYGap } from "../../../../common/nodePositions";
 import { OSubjectViewEpicDetails } from "../../../selectedEpicDetails/selectedEpicDetailsViewController";
-import { Epic, EpicSizes, OSubjectCreateNewEpic, OSubjectWillUpdateEpicName, SVGContainerID, TeamEpics, XYOnly } from "../../../_defs";
+import { DateMonthPeriod, Epic, EpicSizes, OSubjectCreateNewEpic, OSubjectWillUpdateEpicName, SVGContainerID, TeamEpics, XYOnly } from "../../../_defs";
 
 /** @jsx gtap.$jsx */
 
 import "./epicsView.css"
 import { OSubjectTeamEpicsScrollContainerResized } from "./teamEpicsViewController";
+// import { OSubjectTeamEpicsScrollContainerResized } from "./teamEpicsViewController";
 
-// const colGap = 25;
-const colGap = 1;
 const shapeHeight = 20;
-// const rowPadding = 20; /** The space at the start and end of the row */
-const rowPadding = 12; /** The space at the start and end of the row */
 const shapeEornerRadius = 5;
-
 export const interRowGap = 10; /** The horizontal space between epics for the same team */
-export const ShapeYOffset = 20;
-export const TextYOffset = 33;
-
-/**
- * Quick way to align the text visually instead of using
- * textBoundingBox() and the Rect's BBox() to vertically align the text in the shape.
- */
-export const TextShapeYGap = TextYOffset - ShapeYOffset;
-
-/**
- * WARNING:
- * This should have the same width as .team-epics-scroll-container .week-detail-container .week
- * in the teamEpics.css
-*/
-const minWeekCellWidth = 100;
-
 
 type EpicViewSVGNode = {
     svgRectNode: any;
@@ -90,12 +71,15 @@ class NewEpicButton {
     }
 }
 class EpicsView extends lib.BaseView {
-    // private content = <div className='epics-container-wrapper' ></div>;
-
     private epicsContainerSVGNode = gtap.rect(SVGContainerID);
     private epicsDivderSVGNode = gtap.line(SVGContainerID);
-
     private topPosition!: number;
+    private activePeriods!: DateMonthPeriod[];
+
+    setActivePeriods(periods: DateMonthPeriod[]) {
+        this.activePeriods = periods;
+    }
+
     viewContent() {
         return undefined;//this.epicsContainerSVGNode;
     }
@@ -103,13 +87,17 @@ class EpicsView extends lib.BaseView {
     initView() {
         this.epicsContainerSVGNode.$class("epics-container");
         this.epicsDivderSVGNode.$class("epics-container-divider");
+        this.updateViewWidth(SVGMaxContextWidth);
         super.initView();
     }
 
     updateViewWidth(width: number) {
+        // MinWeekCellWidth
+        // this.epicsContainerSVGNode.$width(width);
         this.epicsContainerSVGNode.$width(width);
         this.epicsDivderSVGNode.$x1(0);
         this.epicsDivderSVGNode.$x2(width);
+        // this.epicsDivderSVGNode.$x2(width);
     }
 
     setEpicsContainerSVGNodeY(y: number) {
@@ -145,20 +133,10 @@ class EpicsView extends lib.BaseView {
     onEpicSelected(epic: Epic) {
         lib.Observable.notify(OSubjectViewEpicDetails, {
             source: this,
-            value: { epic: epic },
+            value: { epic: epic, activePeriods: this.activePeriods },
         });
     }
 }
-
-export type SizeOnly = {
-    width: number;
-    height: number;
-}
-
-export type EpicControllerBounds = {
-    position: XYOnly;
-    size: SizeOnly;
-};
 
 export class EpicsViewController extends lib.BaseViewController implements lib.IObserver {
     protected _view: lib.IView = new EpicsView(this);
@@ -181,16 +159,16 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
     private possibleEpicSlots = new Map<string, boolean>();
     private maxNumberOfRows: number = 1;
 
-    /**
-     * Precalculated table for pixel-sizes based on epic-sizes.
-     */
-    private epicSizeMap = new Map<EpicSizes, number>();
-
     private get epicsView(): EpicsView {
         return (this.view as unknown) as EpicsView
     }
 
-    constructor(parentController: IViewController | IScreenController, previousControllerBounds?: EpicControllerBounds, teamEpics: TeamEpics) {
+    setActivePeriods(periods: DateMonthPeriod[]) {
+        this.epicsView.setActivePeriods(periods);
+    }
+
+
+    constructor(parentController: IViewController | IScreenController, teamEpics: TeamEpics, previousControllerBounds?: EpicControllerBounds) {
         super(parentController);
 
         this.teamEpics = teamEpics;
@@ -218,11 +196,9 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
     }
 
     initController() {
-        this.xOffset = rowPadding;
+        this.xOffset = RowPadding;
 
         this.epicsView.setEpicsContainerSVGNodeY(this.getSVGNodeY());
-
-        this.initEpicSizeMappings();
 
         this.teamEpics.Epics?.forEach((epic) => {
             this.createEpic(epic);
@@ -249,15 +225,6 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
         super.initView();
     }
 
-    initEpicSizeMappings() {
-        const rP2 = rowPadding * 2.0;
-        this.epicSizeMap.set(EpicSizes.XSmall, minWeekCellWidth / 2.0 - rP2);
-        this.epicSizeMap.set(EpicSizes.Small, minWeekCellWidth - rP2);
-        this.epicSizeMap.set(EpicSizes.Medium, minWeekCellWidth * 2.0 - rP2);
-        this.epicSizeMap.set(EpicSizes.Large, minWeekCellWidth * 4 - rP2);
-        this.epicSizeMap.set(EpicSizes.XLarge, minWeekCellWidth * 8 - rP2);
-        this.epicSizeMap.set(EpicSizes.Unknown, minWeekCellWidth * 12 - rP2);
-    }
 
     createEpic(epic: Epic) {
         let epicsView = this.view as EpicsView
@@ -293,7 +260,7 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
     }
 
     layoutAllEpics() {
-        this.xOffset = rowPadding;
+        this.xOffset = RowPadding;
         this.teamEpics.Epics?.forEach((e) => {
             this.layoutEpic(e);
         });
@@ -311,6 +278,7 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
             TeamID: teamID,
             Name: "New Epic",
             Size: EpicSizes.Small,
+            ExpectedStartPeriod: 1, // TODO: Specify the week
         }
 
         const index = previousEpic === undefined ? 0 : this.teamEpics.Epics?.indexOf(previousEpic);
@@ -345,7 +313,7 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
     }
 
     sizeSVGNodes(epic: Epic, svgEpicNode: EpicViewSVGNode) {
-        const width = this.epicSizeMap.get(epic.Size)!
+        const width = epicSizeToWidth(epic.Size)!
 
         svgEpicNode.svgRectNode.$height(shapeHeight);
         svgEpicNode.svgRectNode.$rxy(shapeEornerRadius);
@@ -356,10 +324,10 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
     }
 
     positionSVGNodesByWeek(epic: Epic, svgEpicNode: EpicViewSVGNode) {
-        const positionInfo = calcSVGNodesXYForWeek(epic,
+        const positionInfo = calcSVGNodesXYForWeek(epic.ExpectedStartPeriod,
             this.xOffset,
             this.getSVGNodeY(),
-            this.epicSizeMap.get(epic.Size)!,
+            epicSizeToWidth(epic.Size)!,
             svgEpicNode.svgTextNode.$textBoundingBox().width);
 
         svgEpicNode.svgRectNode.$y(positionInfo.rectPostion.y);
@@ -391,13 +359,11 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
 
         svgEpicNode.svgRectNode.$x(positionInfo.rectPostion.x)
         svgEpicNode.svgTextNode.$x(positionInfo.textPosition.x)
-
-        this.xOffset = positionInfo.newXOffset;
     }
 
     updateRowBounds(svgNodes: EpicViewSVGNode) {
         const svgRectNode = svgNodes.svgRectNode;
-        const xbounds = svgRectNode.$x() + svgRectNode.$width() + rowPadding;
+        const xbounds = svgRectNode.$x() + svgRectNode.$width() + RowPadding;
         this.bounds.size.width = Math.max(xbounds, this.bounds.size.width);
     }
 
@@ -406,10 +372,12 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
     }
 
     private updateViewWidth(width: number) {
-        this.epicsView.updateViewWidth(width);
+        console.log(">>epicsViewController: width", width)
+        this.epicsView.updateViewWidth(Math.max(SVGMaxContextWidth, width));
     }
 
     onTeamEpicsScrollContainerResized(contentWidth: DOMRectReadOnly) {
+        console.log(">>this.maxRowWidth", this.maxRowWidth)
         if (contentWidth.width > this.maxRowWidth) {
             this.updateViewWidth(contentWidth.width);
         } else {
@@ -436,53 +404,3 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
     }
 }
 
-type EpicWeekPosition = { rectPostion: XYOnly, textPosition: XYOnly, newXOffset: number };
-
-export function calcSVGNodesXYForWeek(epic: Epic, xOffset: number, svgNodeY: number, epicNodeWidth: number, svgTextNodeWidth: number): EpicWeekPosition {
-    let x: number;
-
-    if (epic.ExpectedStartPeriod === undefined) {
-        /** Position the element based on the position of the last epic */
-        x = xOffset;
-    } else {
-        /** Calculate the position from the  ExpectedStartPeriod */
-        const weekIndex = epic.ExpectedStartPeriod - 1; /** Convert to zero-based index */
-        x = rowPadding + weekIndex * (minWeekCellWidth + colGap);
-    }
-
-    const y = svgNodeY;
-    const textXOffset = (epicNodeWidth - svgTextNodeWidth) / 2.0;
-    const newXOffset = x + epicNodeWidth + colGap * 2 + rowPadding * 2;
-
-    return {
-        rectPostion: {
-            x: x,
-            y: y + ShapeYOffset
-        },
-        textPosition: {
-            x: x + textXOffset,
-            y: y + TextYOffset
-        },
-        newXOffset
-    }
-}
-/**
- * Adds an ellipsis if text can't fit in width
- * Based on https://stackoverflow.com/questions/9241315/trimming-text-to-a-given-pixel-width-in-svg
- */
-function placeTextWithEllipsis(textObj: any, textString: string, width: number) {
-    if (textObj.$textBoundingBox().width < width) {
-        return;
-    }
-
-    //ellipsis is needed
-    for (var x = textString.length; x > 0; x -= 1) {
-        textObj.$text(textString.substring(0, x) + "...");
-
-        if (textObj.$textBoundingBox().width <= width) {
-            textObj.textContent = textString.substring(0, x) + "...";
-            return;
-        }
-    }
-    textObj.textContent = "..."; //can't place at all
-}

@@ -1,11 +1,12 @@
+[X] Add Epic Duration to Estimated Size
+    [X] Update the epic size based on the estimated size
+    [X] Show the epic week in side-panel
+    [X] Update Projected End field
+    [X] BUG: Fix border offset bug for epics
+
 ========
 NEXT
 ========
-
-[] Add Epic Duration to Estimated Size
-    [] Show the epic week in side-panel
-    [] Update the epic size based on the estimated size
-    [] Update Projected End field
 
 [] Create epics
     [] Update UX to allow adding epics based on the new design
@@ -24,6 +25,8 @@ NEXT
         [] Hide Downstream dependency
     [] Hide Teams that are not a dependency
 
+--
+
 [] Migrate client-site in-memory data to server-side in-memory
     [] Identify APIs
         [] CRUD Team
@@ -36,10 +39,6 @@ NEXT
 
 [] Migrate to MongoDB
 
-[] Projected End Date field
-    [] Edit Projected End field
-    [] Sync-epic size to align with week boundary
-
 [] Dependency conflicts
     [] Highlight conflicts between epics that end after upstream start dependency
     [] Highlight conflicts between epics that start after upstream dependency
@@ -49,7 +48,7 @@ NEXT
 
 [] FIX: Scrollbars
 
-[] Add annotations (e.g. conflict/accepted) to epics (the Red/Green stars)
+--
 
 [] Capture Quarterly Planning info
     [] Learning
@@ -58,11 +57,14 @@ NEXT
     [] Simplified Roadmap (condensed)
     [] Release plan-view
 
+[] Add annotations (e.g. conflict/accepted) to epics (the Red/Green stars)
+
 [] Side-pandel dependencies
     [] Update UI to single button for showing the Add Dependency Dialog
 
 [] Mouse-over epic shows full-details (useful for when epic's name is truncated)
 
+[] BUG: Line separator doesn't span all the months when there are few epics in one month
 ========
  OPPORTUNITIES
 ========
@@ -76,6 +78,10 @@ NEXT
 [] Side-Panels
     [] Collapse Team side-panel
     [] Add Sticky Team name
+
+[] Projected End Date field
+    [] Edit Projected End field
+    [] Sync-epic size to align with week boundary
 
 [] Dragging epics
     [] Move epics to new week

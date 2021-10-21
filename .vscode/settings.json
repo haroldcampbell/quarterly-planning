@@ -1,0 +1,5 @@
+{
+    "jest.jestCommandLine": "jest --config=./jest.config.js",
+    "jest.showCoverageOnLoad": true,
+    "jest.rootPath": "./client/src"
+}

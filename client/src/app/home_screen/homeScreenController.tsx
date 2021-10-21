@@ -7,7 +7,6 @@ import "./homeScreen.css"
 import { ScreenNavController } from "./nav/screenNavController";
 import { BodyController } from "./body/bodyController";
 import { SelectedEpicDetailsController } from "./selectedEpicDetails/selectedEpicDetailsViewController";
-import { UpstreamDependencyDialogController } from "./selectedEpicDetails/upstreamDependencyDialogController";
 import { Epic, EpicID, TeamEpicDependency } from "./_defs";
 import { AddDependencyDialogController, OSubjectViewAddDependencyDialog } from "./selectedEpicDetails/addDependencyDialogController";
 
