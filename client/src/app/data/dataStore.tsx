@@ -27,91 +27,76 @@ const _teamIDs: string[] = [
 ];
 
 const _epicsByTeamID = new Map<string, Epic[]>([
-    ["A1", [
-        { ID: "1-1", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 1, Size: EpicSizes.XSmall },
-        { ID: "1-1", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 1.5, Size: EpicSizes.XSmall },
-        { ID: "1-1", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 2, Size: EpicSizes.XSmall },
-        { ID: "1-1", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 2.5, Size: EpicSizes.XSmall },
-        { ID: "1-1", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 3, Size: EpicSizes.XSmall },
-        { ID: "1-1", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 3.5, Size: EpicSizes.XSmall },
-        { ID: "1-1", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 4, Size: EpicSizes.XSmall },
-        // { ID: "1-1", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 4.5, Size: EpicSizes.XSmall },
-        // { ID: "1-1", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 5, Size: EpicSizes.XSmall },
-        // { ID: "1-1", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 5.5, Size: EpicSizes.XSmall },
-        // { ID: "1-1", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 6, Size: EpicSizes.XSmall },
-        // { ID: "1-1", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 6.5, Size: EpicSizes.XSmall },
-        // { ID: "1-1", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 7, Size: EpicSizes.XSmall },
-        // { ID: "1-1", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 7.5, Size: EpicSizes.XSmall },
-        // { ID: "1-1", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 8, Size: EpicSizes.XSmall },
-        // { ID: "1-1", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 8.5, Size: EpicSizes.XSmall },
-        // { ID: "1-1", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 9, Size: EpicSizes.XSmall },
-        // { ID: "1-1", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 9.5, Size: EpicSizes.XSmall },
-        // { ID: "1-1", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 10, Size: EpicSizes.XSmall },
-        // { ID: "1-1", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 10.5, Size: EpicSizes.XSmall },
-        // { ID: "1-1", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 11, Size: EpicSizes.XSmall },
-        // { ID: "1-1", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 11.5, Size: EpicSizes.XSmall },
-        // { ID: "1-1", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 12, Size: EpicSizes.XSmall },
-        // { ID: "1-1", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 12.5, Size: EpicSizes.XSmall },
-
-        // { ID: "1-2", TeamID: "A1", Name: "Epic IL10", ExpectedStartPeriod: 2, Size: EpicSizes.XSmall },
-        // { ID: "3", TeamID: "A1", Name: "Epic IL3", Size: EpicSizes.XSmall },
-        // { ID: "40", TeamID: "A1", Name: "Epic IL4", Size: EpicSizes.XSmall },
-
-        // { ID: "1-A1", TeamID: "A1", Name: "Epic ILA1", ExpectedStartPeriod: 1.5, Size: EpicSizes.XSmall },
-        // { ID: "1-A2", TeamID: "A1", Name: "Epic ILA10", ExpectedStartPeriod: 1.5, Size: EpicSizes.Small },
-        // { ID: "3", TeamID: "A1", Name: "Epic ILA3", ExpectedStartPeriod: 3.5, Size: EpicSizes.XSmall },
-        // { ID: "40", TeamID: "A1", Name: "Epic ILA4", ExpectedStartPeriod: 2.5, Size: EpicSizes.Small },
-
-
-        // { ID: "41", TeamID: "A1", Name: "Epic IL5", ExpectedStartPeriod: 1, Size: EpicSizes.Small },
-        // { ID: "42", TeamID: "A1", Name: "Epic IL6", ExpectedStartPeriod: 2, Size: EpicSizes.Small },
-        // { ID: "43", TeamID: "A1", Name: "Epic IL7", ExpectedStartPeriod: 1, Size: EpicSizes.Medium },
-        // { ID: "44", TeamID: "A1", Name: "Epic IL8", ExpectedStartPeriod: 3, Size: EpicSizes.Small },
-        // { ID: "45", TeamID: "A1", Name: "Epic IL9", ExpectedStartPeriod: 4, Size: EpicSizes.Small },
-        // { ID: "2", TeamID: "A1", Name: "Epic IL2", Upstreams: ["1"] },
-    ]],
+    // ["A1", [
+    // { ID: "1-1", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 1, Size: EpicSizes.XSmall },
+    //     { ID: "1-2", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 1.5, Size: EpicSizes.XSmall },
+    //     { ID: "1-3", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 2, Size: EpicSizes.XSmall },
+    //     { ID: "1-4", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 2.5, Size: EpicSizes.XSmall },
+    //     { ID: "1-5", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 3, Size: EpicSizes.XSmall },
+    //     { ID: "1-6", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 3.5, Size: EpicSizes.XSmall },
+    //     { ID: "1-7", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 4, Size: EpicSizes.XSmall },
+    //     // { ID: "1-1", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 4.5, Size: EpicSizes.XSmall },
+    //     // { ID: "1-1", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 5, Size: EpicSizes.XSmall },
+    //     // { ID: "1-1", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 5.5, Size: EpicSizes.XSmall },
+    //     // { ID: "1-1", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 6, Size: EpicSizes.XSmall },
+    //     // { ID: "1-1", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 6.5, Size: EpicSizes.XSmall },
+    //     // { ID: "1-1", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 7, Size: EpicSizes.XSmall },
+    //     // { ID: "1-1", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 7.5, Size: EpicSizes.XSmall },
+    //     // { ID: "1-1", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 8, Size: EpicSizes.XSmall },
+    //     // { ID: "1-1", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 8.5, Size: EpicSizes.XSmall },
+    //     // { ID: "1-1", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 9, Size: EpicSizes.XSmall },
+    //     // { ID: "1-1", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 9.5, Size: EpicSizes.XSmall },
+    //     // { ID: "1-1", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 10, Size: EpicSizes.XSmall },
+    //     // { ID: "1-1", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 10.5, Size: EpicSizes.XSmall },
+    //     // { ID: "1-1", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 11, Size: EpicSizes.XSmall },
+    //     // { ID: "1-1", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 11.5, Size: EpicSizes.XSmall },
+    //     // { ID: "1-1", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 12, Size: EpicSizes.XSmall },
+    //     // { ID: "1-1", TeamID: "A1", Name: "Epic IL1", ExpectedStartPeriod: 12.5, Size: EpicSizes.XSmall },
+    // ]],
     ["A2", [
-        { ID: "5", TeamID: "A2", Name: "Epic P1", ExpectedStartPeriod: 1, Size: EpicSizes.XSmall },
-        { ID: "6", TeamID: "A2", Name: "Epic P2", ExpectedStartPeriod: 1, Size: EpicSizes.Small },
-        { ID: "6", TeamID: "A2", Name: "Epic P3", ExpectedStartPeriod: 1, Size: EpicSizes.Medium },
-        { ID: "6", TeamID: "A2", Name: "Epic P4", ExpectedStartPeriod: 1, Size: EpicSizes.Large },
-        { ID: "6", TeamID: "A2", Name: "Epic P5", ExpectedStartPeriod: 1, Size: EpicSizes.XLarge },
-        { ID: "6", TeamID: "A2", Name: "Epic P6", ExpectedStartPeriod: 1, Size: EpicSizes.Unknown },
+        { ID: "2", TeamID: "A2", Name: "Epic P1", ExpectedStartPeriod: 1, Size: EpicSizes.Small },
+        // { ID: "5", TeamID: "A2", Name: "Epic P1", ExpectedStartPeriod: 1, Size: EpicSizes.XSmall },
+        //     // { ID: "6-1", TeamID: "A2", Name: "Epic P2", ExpectedStartPeriod: 1, Size: EpicSizes.Small },
+        //     // { ID: "6-2", TeamID: "A2", Name: "Epic P3", ExpectedStartPeriod: 1, Size: EpicSizes.Medium },
+        //     // { ID: "6-3", TeamID: "A2", Name: "Epic P4", ExpectedStartPeriod: 1, Size: EpicSizes.Large },
+        //     // { ID: "6-4", TeamID: "A2", Name: "Epic P5", ExpectedStartPeriod: 1, Size: EpicSizes.XLarge },
+        // { ID: "6-5", TeamID: "A2", Name: "Epic P6", ExpectedStartPeriod: 1, Size: EpicSizes.Unknown },
+        { ID: "6", TeamID: "A2", Name: "Epic P6", ExpectedStartPeriod: 1, Size: EpicSizes.Small },
     ]],
     ["A3", [
-        { ID: "7", TeamID: "A3", Name: "Epic SME1", ExpectedStartPeriod: 1.5, Size: EpicSizes.Small },
-        { ID: "8", TeamID: "A3", Name: "Epic SME2", ExpectedStartPeriod: 1, Size: EpicSizes.Small },
-        // { ID: "9", TeamID: "A3", Name: "Epic SME3", Upstreams: ["2", "6", "18", "22", "23"] },
-        { ID: "10", TeamID: "A3", Name: "Epic SME4", ExpectedStartPeriod: 2.5, Size: EpicSizes.Small },
+        //     //     { ID: "7", TeamID: "A3", Name: "Epic SME1", ExpectedStartPeriod: 1.5, Size: EpicSizes.Small },
+        //     //     { ID: "8", TeamID: "A3", Name: "Epic SME2", ExpectedStartPeriod: 1, Size: EpicSizes.Small },
+        { ID: "9", TeamID: "A3", Name: "Epic SME3", ExpectedStartPeriod: 4, Size: EpicSizes.Small, Upstreams: ["2", "6"] },
+        //     { ID: "10", TeamID: "A3", Name: "Epic SME4", ExpectedStartPeriod: 2, Size: EpicSizes.Small },
     ]],
-    ["A4", [
-        { ID: "11", TeamID: "A4", Name: "Epic M1", ExpectedStartPeriod: 4, Size: EpicSizes.Small },
-        { ID: "12", TeamID: "A4", Name: "Epic M2", ExpectedStartPeriod: 6, Size: EpicSizes.Unknown },
-        { ID: "13", TeamID: "A4", Name: "Epic M3", ExpectedStartPeriod: 4, Size: EpicSizes.Small },
-    ]],
-    ["A5", [
-        { ID: "14", TeamID: "A5", Name: "Epic DW1", ExpectedStartPeriod: 4, Size: EpicSizes.XLarge },
-    ]],
-    ["A6", [
-        { ID: "15", TeamID: "A6", Name: "Epic CRM1", ExpectedStartPeriod: 4, Size: EpicSizes.Large },
-        { ID: "16", TeamID: "A6", Name: "Epic CRM2", ExpectedStartPeriod: 4, Size: EpicSizes.Small },
-        // { ID: "17", TeamID: "A6", Name: "Epic CRM3", Upstreams: ["6"] },
-        { ID: "18", TeamID: "A6", Name: "Epic CMR4", ExpectedStartPeriod: 4, Size: EpicSizes.Medium },
-        { ID: "19", TeamID: "A6", Name: "Epic CRM5", ExpectedStartPeriod: 4, Size: EpicSizes.Small },
-        { ID: "20", TeamID: "A6", Name: "Epic CRM6", ExpectedStartPeriod: 4, Size: EpicSizes.Small },
-        { ID: "20", TeamID: "A6", Name: "Epic CRM6", ExpectedStartPeriod: 4, Size: EpicSizes.Small },
-        // { ID: "21", TeamID: "A6", Name: "Epic CRM7", Upstreams: ["9"] },
-    ]],
-    ["A7", [
-        { ID: "22", TeamID: "A7", Name: "Epic ACO1", ExpectedStartPeriod: 4, Size: EpicSizes.Small },
-        // { ID: "23", TeamID: "A7", Name: "Epic ACO2", Upstreams: ["11", "15"] },
-        { ID: "24", TeamID: "A7", Name: "Epic ACO3", ExpectedStartPeriod: 4, Size: EpicSizes.Small },
-        { ID: "25", TeamID: "A7", Name: "Epic ACO4", ExpectedStartPeriod: 4, Size: EpicSizes.Small },
-    ]],
-    ["A8", [
-        // { ID: "26", TeamID: "A8", Name: "Epic CN1", Upstreams: ["11", "15"] },
-        { ID: "27", TeamID: "A8", Name: "Epic CN2", ExpectedStartPeriod: 4, Size: EpicSizes.Small },
-    ]],
+    // ["A4", [
+    //     { ID: "11", TeamID: "A4", Name: "Epic M1", ExpectedStartPeriod: 4, Size: EpicSizes.Small },
+    //     { ID: "12", TeamID: "A4", Name: "Epic M2", ExpectedStartPeriod: 6, Size: EpicSizes.Unknown },
+    //     { ID: "13", TeamID: "A4", Name: "Epic M3", ExpectedStartPeriod: 4, Size: EpicSizes.Small },
+    // ]],
+    // ["A5", [
+    //     { ID: "14", TeamID: "A5", Name: "Epic DW1", ExpectedStartPeriod: 4, Size: EpicSizes.XLarge },
+    // ]],
+    // ["A6", [
+    //     { ID: "15", TeamID: "A6", Name: "Epic CRM1", ExpectedStartPeriod: 4, Size: EpicSizes.Large },
+    //     { ID: "16", TeamID: "A6", Name: "Epic CRM2", ExpectedStartPeriod: 4, Size: EpicSizes.Small },
+    //     // { ID: "17", TeamID: "A6", Name: "Epic CRM3", Upstreams: ["6"] },
+    //     { ID: "18", TeamID: "A6", Name: "Epic CMR4", ExpectedStartPeriod: 4, Size: EpicSizes.Medium },
+    //     { ID: "19", TeamID: "A6", Name: "Epic CRM5", ExpectedStartPeriod: 4, Size: EpicSizes.Small },
+    //     { ID: "20", TeamID: "A6", Name: "Epic CRM6", ExpectedStartPeriod: 4, Size: EpicSizes.Small },
+    //     { ID: "20", TeamID: "A6", Name: "Epic CRM6", ExpectedStartPeriod: 4, Size: EpicSizes.Small },
+    //     // { ID: "21", TeamID: "A6", Name: "Epic CRM7", Upstreams: ["9"] },
+    // ]],
+    // ["A7", [
+    //     { ID: "22", TeamID: "A7", Name: "Epic ACO1", ExpectedStartPeriod: 4, Size: EpicSizes.Small },
+    //     // { ID: "23", TeamID: "A7", Name: "Epic ACO2", Upstreams: ["11", "15"] },
+    //     { ID: "24", TeamID: "A7", Name: "Epic ACO3", ExpectedStartPeriod: 4, Size: EpicSizes.Small },
+    //     { ID: "25", TeamID: "A7", Name: "Epic ACO4", ExpectedStartPeriod: 4, Size: EpicSizes.Small },
+    // ]],
+    // ["A8", [
+    //     // { ID: "26", TeamID: "A8", Name: "Epic CN1", Upstreams: ["11", "15"] },
+    //     { ID: "27", TeamID: "A8", Name: "Epic CN2", ExpectedStartPeriod: 4, Size: EpicSizes.Small },
+    // ]],
 ]);
 
 let _teams: Team[] | undefined = undefined;
@@ -136,13 +121,25 @@ export function getTeamByID(teamID: string): Team {
 /** Contains epicID -> Epic mapping */
 let _epicsByID: Map<string, Epic>;
 
-export function getEpicsByTeamID(teamID: string): Epic[] {
-    return _epicsByTeamID.get(teamID)!;
+export function getEpicsByTeamID(teamID: string): Epic[] | undefined {
+    return _epicsByTeamID.get(teamID);
 }
 
-export function addNewEpicAtIndex(epic: Epic, insertionIndex: number) {
-    _epicsByTeamID.get(epic.TeamID)!.splice(insertionIndex, 0, epic);
+export function initEpicsByTeamID(teamID: string): Epic[] {
+    const epics: Epic[] = []
+    _epicsByTeamID.set(teamID, epics);
+
+    return epics;
+}
+
+export function addNewEpicAtIndex(epic: Epic) {
+    if (!_epicsByTeamID.has(epic.TeamID)) {
+        _epicsByTeamID.set(epic.TeamID, []);
+    }
+
+    _epicsByTeamID.get(epic.TeamID)!.push(epic);
     _epicsByID.set(epic.ID, epic);
+    // _epicsByTeamID.get(epic.TeamID)!.splice(insertionIndex, 0, epic);
 }
 
 export function getEpicByID(epicID: string): Epic | undefined {

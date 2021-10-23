@@ -3,7 +3,7 @@ import { EpicSizes, SizeOnly, XYOnly } from "../home_screen/_defs";
 type EpicWeekPosition = { rectPostion: XYOnly, textPosition: XYOnly };
 
 export const RowPadding = 12; /** The space at the start and end of the row */
-const ColGap = 1;
+export const ColGap = 1;
 
 export const ShapeYOffset = 20;
 export const TextYOffset = 33;

@@ -1,6 +1,6 @@
-[] Create epics
-    [] Update UX to allow adding epics based on the new design
-    [] Create new Epic at the fist position when there are other epics
+[X] Create epics
+    [X] Update UX to allow adding epics based on the new design
+    [X] Create new Epic at the fist position when there are other epics
 
 
 

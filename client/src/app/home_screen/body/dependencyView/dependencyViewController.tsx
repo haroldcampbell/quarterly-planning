@@ -2,7 +2,7 @@ import * as gtap from "../../../../../www/dist/js/gtap";
 import * as lib from "../../../../core/lib";
 import * as dataStore from "../../../data/dataStore";
 import { OSubjectViewAddDependencyDialog } from "../../selectedEpicDetails/addDependencyDialogController";
-import { Team, TeamEpics, Epic, OSubjectDataStoreReady, OSubjectCreateNewEpic, TeamEpicDependency, EpicID } from "../../_defs";
+import { Team, TeamEpics, Epic, OSubjectDataStoreReady, OSubjectCreateNewEpicRequest, TeamEpicDependency, EpicID } from "../../_defs";
 
 /** @jsx gtap.$jsx */
 
@@ -50,7 +50,7 @@ export class DependencyViewController extends lib.BaseViewController implements 
         this.view.addView(this.teamEpicsViewController.view);
 
         lib.Observable.subscribe(OSubjectDataStoreReady, this);
-        lib.Observable.subscribe(OSubjectCreateNewEpic, this);
+        lib.Observable.subscribe(OSubjectCreateNewEpicRequest, this);
         lib.Observable.subscribe(OSubjectRedrawDependencyConnections, this);
 
         super.initView();
@@ -61,6 +61,11 @@ export class DependencyViewController extends lib.BaseViewController implements 
 
         this.teams.forEach((t) => {
             let epics = dataStore.getEpicsByTeamID(t.ID);
+
+            if (epics === undefined) {
+                epics = dataStore.initEpicsByTeamID(t.ID);
+            }
+
             const teamEpic = { Team: t, Epics: epics };
             this.teamEpics.push(teamEpic);
         })
@@ -97,9 +102,9 @@ export class DependencyViewController extends lib.BaseViewController implements 
                 this.loadData();
                 break;
             }
-            case OSubjectCreateNewEpic: {
-                const { epic, epicController, insertionIndex } = state.value;
-                this.onCreateNewEpic(epic, epicController, insertionIndex);
+            case OSubjectCreateNewEpicRequest: {
+                const { epic, epicController } = state.value;
+                this.onRequestCreateNewEpic(epic, epicController);
                 break;
             }
             case OSubjectRedrawDependencyConnections: {
@@ -109,9 +114,10 @@ export class DependencyViewController extends lib.BaseViewController implements 
         }
     }
 
-    onCreateNewEpic(epic: Epic, epicController: EpicsViewController, insertionIndex: number) {
-        dataStore.addNewEpicAtIndex(epic, insertionIndex + 1);
-        epicController.createEpicAtIndex(epic);
+    onRequestCreateNewEpic(epic: Epic, epicController: EpicsViewController) {
+        dataStore.addNewEpicAtIndex(epic);
+        epicController.addNewTeamEpic(epic);
         this.teamEpicsViewController.bindEpicToController(epic, epicController);
+        this.teamEpicsViewController.relayoutEpicControllers();
     }
 }

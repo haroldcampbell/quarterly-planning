@@ -146,8 +146,6 @@ class TeamEpicsView extends lib.BaseView {
         // I'm doing this cause I can't get the fucking clientWidth or
         // getBoundingClientRect to report the correct width.
         const resizeObserver = new ResizeObserver(entries => {
-            console.log(">> resizing: entries[0].contentRect ", entries[0].contentRect);
-
             lib.Observable.notify(OSubjectTeamEpicsScrollContainerResized, {
                 source: this,
                 value: { contentWidth: entries[0].contentRect },
@@ -228,8 +226,8 @@ export class TeamEpicsViewController extends lib.BaseViewController
 
         epicController.setActivePeriods(this.periods);
         epicController.onEpicCreated = (epic) => { this.bindEpicToController(epic, epicController); }
-        epicController.onCompleted = (conrollerBounds: EpicControllerBounds) => { this.onEpicRowAdded(conrollerBounds); }
-        epicController.onLayoutNeeded = (maxXBounds, didUpdateTeamId) => { this.onLayoutNeeded(maxXBounds, didUpdateTeamId); }
+        epicController.onBoundsChanged = (bounds: EpicControllerBounds) => { this.boundsDidChange(bounds); }
+        epicController.onLayoutNeeded = (maxXBounds) => { this.onLayoutNeeded(maxXBounds); }
         epicController.initController();
 
         this.epicControllers.push(epicController);
@@ -240,6 +238,17 @@ export class TeamEpicsViewController extends lib.BaseViewController
             return
         }
         this.epicControllerDictionary.set(epic.ID, epicController);
+    }
+
+    boundsDidChange(bounds: EpicControllerBounds) {
+        this.lastControllerBounds = bounds;
+        this.updateContextWidth(this.lastControllerBounds.size.width);
+    }
+
+    onLayoutNeeded(bounds: EpicControllerBounds) {
+        // this.updateContextWidth(bounds.size.width);
+        this.boundsDidChange(bounds);
+        this.layoutDependencyConnections();
     }
 
     private onTeamEpicsAdded() {
@@ -269,27 +278,19 @@ export class TeamEpicsViewController extends lib.BaseViewController
         this.dependencyConnections.forEach(pathInfo => {
             pathInfo.p.remove();
         });
-        this.dependencyConnections = [];
 
+        this.dependencyConnections = [];
         this.onTeamEpicsAdded();
     }
 
-    /** Updates the lastRowIndex with the number of rows added by the  epicController */
-    onEpicRowAdded(conrollerBounds: EpicControllerBounds) {
-        this.lastControllerBounds = conrollerBounds;
-        this.onLayoutNeeded(this.lastControllerBounds.size.width);
-    }
-
-    onLayoutNeeded(maxXBounds: number, didUpdateTeamId?: TeamID) {
+    updateContextWidth(maxXBounds: number) {
         if (maxXBounds > this.maxRowWidth) {
             this.maxRowWidth = maxXBounds;
             this.ctx.domContainer.$style(`width:${Math.max(SVGMaxContextWidth, this.maxRowWidth)}px; height: 100%; position: absolute; `);
         }
+    }
 
-        if (didUpdateTeamId === undefined) {
-            return;
-        }
-
+    layoutDependencyConnections() {
         this.dependencyConnections.forEach(pathInfo => {
             const upstreamController = this.epicControllerDictionary.get(pathInfo.upstreamEpicID)!;
             const upstreamSVGNode = upstreamController.getEpicSVGRectNode(pathInfo.upstreamEpicID);
@@ -304,12 +305,24 @@ export class TeamEpicsViewController extends lib.BaseViewController
         });
     }
 
+    relayoutEpicControllers() {
+        this.updateContextWidth(this.maxRowWidth);
+
+        this.lastControllerBounds = undefined;
+        this.epicControllers.forEach((controller) => {
+            console.log(">>this.lastControllerBounds:", this.lastControllerBounds);
+            controller.layoutAllEpicsWithBounds(this.lastControllerBounds);
+        })
+
+        this.layoutDependencyConnections();
+    }
+
     calcUpstreamStart(upstreamSVGNode: any): XYOnly {
         const startRect = upstreamSVGNode.getBBox();
 
         return {
             x: startRect?.x + startRect?.width,
-            y: startRect?.y + ShapeYOffset
+            y: startRect?.y + ShapeYOffset / 2.0
         };
     }
 
@@ -318,7 +331,7 @@ export class TeamEpicsViewController extends lib.BaseViewController
 
         return {
             x: endRect?.x,
-            y: endRect?.y + ShapeYOffset
+            y: endRect?.y + ShapeYOffset / 2.0
         };
     }
 

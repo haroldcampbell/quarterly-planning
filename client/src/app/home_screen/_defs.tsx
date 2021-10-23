@@ -49,7 +49,7 @@ export type Team = {
 
 export type TeamEpics = {
     Team: Team;
-    Epics: Epic[] | undefined;
+    Epics: Epic[];
 }
 
 export type TeamEpicDependency = {
@@ -93,4 +93,5 @@ export const OSubjectDataStoreReady = "data-store-data-ready";
 export const OSubjectWillUpdateTeamName = "will-update-team-name";
 export const OSubjectWillUpdateEpicName = "will-update-epic-name";
 
-export const OSubjectCreateNewEpic = "create-new-epic";
+/** The user wants to create a new team epic */
+export const OSubjectCreateNewEpicRequest = "request-create-new-epic";

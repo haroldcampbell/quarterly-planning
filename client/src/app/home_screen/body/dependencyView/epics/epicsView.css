@@ -1,27 +1,14 @@
 .epics-container-wrapper {
-    /* border-top: solid 1px transparent; */
-    /* border-bottom: solid 1px #eae7e7; */
-    border: solid 1px blue;
-
-    /* padding: 11px 0; */
     display: block;
 
     position: relative;
     height: 40px;
 }
 
-.epics-container-wrapper:nth-of-type(0) {
-    /* border: solid 1px blue; */
-    /* top: 120px; */
-}
-.epics-container-wrapper:first-of-type {
-    /* border-top: none; */
-    /* top: 120px; */
-}
-
 svg {
     margin-top: 70px;
 }
+
 svg rect.epics-container {
     fill: transparent;
     opacity: 0.5;
@@ -31,6 +18,19 @@ svg line.epics-container-divider {
     stroke: #eae7e7;
     stroke-width: 1px;
 }
+
+svg g.epics-container-group {
+    fill: red;
+}
+
+svg g.epics-container-group:hover path.new-epic-btn-container {
+    fill: #f8f8f8;
+}
+
+svg g.epics-container-group:hover text.new-epic-btn-text {
+    fill: #e4e4e4;
+}
+
 svg rect.epic {
     fill: #fff;
     /* stroke: #eae7e7; */
@@ -44,31 +44,21 @@ svg text.epic-name {
     fill: #707070;
 }
 
-svg rect.new-epic-btn-container {
-    fill: #f3f5f4;
-    stroke: none;
-    stroke-width: 1px;
-}
-
-svg rect.new-epic-btn-container:hover {
-    fill: #707070;
-    cursor: pointer;
-}
-
-svg rect.new-epic-btn-head {
-    pointer-events: none;
+svg path.new-epic-btn-container {
     fill: transparent;
-    stroke-width: 1px;
 }
 
 svg text.new-epic-btn-text {
     pointer-events: none;
-    font-size: 10px;
-    fill: #eae7e7;
+    font-size: 12px;
+    fill: transparent;
 }
-svg line.new-epic-btn-line {
-    pointer-events: none;
-    fill: #fff;
-    stroke: #eae7e7;
-    stroke-width: 1px;
+
+svg g.epics-container-group:hover path.new-epic-btn-container:hover {
+    fill: #707070;
+    cursor: pointer;
+}
+
+svg g.epics-container-group:hover text.new-epic-btn-text:hover {
+    fill: #e4e4e4;
 }
