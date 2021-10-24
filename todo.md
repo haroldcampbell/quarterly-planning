@@ -1,6 +1,4 @@
 
-[X] Update Team UI to match new design
-[] Edit team name
 
 ========
 NEXT
@@ -40,6 +38,7 @@ NEXT
 
 [] FIX: Scrollbars
 
+[] Edit team name by clicking on the Team Name directly
 --
 
 [] Capture Quarterly Planning info
@@ -131,6 +130,10 @@ NEXT
 ========
  DONE
 ========
+
+[X] Ensure Team name is truncated when too long
+
+[X] Update Team UI to match new design
 
 [X] Create epics
     [X] Update UX to allow adding epics based on the new design
