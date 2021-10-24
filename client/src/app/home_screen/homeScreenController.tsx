@@ -120,5 +120,4 @@ export class HomeScreenController extends lib.BaseScreenController implements li
         detailsController.initController();
         detailsController.showDialog();
     }
-
 }

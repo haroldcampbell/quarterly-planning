@@ -1,6 +1,7 @@
 export interface GTapElement extends HTMLElement {
     $appendCSS(className: string): void;
     $removeCSS(className: string): void;
+    $style(cssStyle?: string): string;
 }
 
 export type EpicID = string;
@@ -95,3 +96,6 @@ export const OSubjectWillUpdateEpicName = "will-update-epic-name";
 
 /** The user wants to create a new team epic */
 export const OSubjectCreateNewEpicRequest = "request-create-new-epic";
+
+/** The height of an epics countroller changed */
+export const OSubjectChangedTeamEpicHeightBounds = "did-update-team-epic-height-bounds"

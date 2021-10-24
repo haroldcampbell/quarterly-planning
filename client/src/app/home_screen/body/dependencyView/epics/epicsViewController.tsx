@@ -4,7 +4,7 @@ import * as dataStore from "../../../../data/dataStore";
 
 import { IViewController, IScreenController } from "../../../../../core/lib";
 import { calcSVGNodesXYForWeek, ColGap, EpicControllerBounds, epicSizeToWidth, MinWeekCellWidth, placeTextWithEllipsis, RowPadding, ShapeYOffset, SVGMaxContextWidth, TextShapeYGap } from "../../../../common/nodePositions";
-import { DateMonthPeriod, Epic, EpicID, EpicSizes, OSubjectCreateNewEpicRequest, OSubjectWillUpdateEpicName, SVGContainerID, TeamEpics, XYOnly } from "../../../_defs";
+import { DateMonthPeriod, Epic, EpicID, EpicSizes, OSubjectChangedTeamEpicHeightBounds, OSubjectCreateNewEpicRequest, OSubjectWillUpdateEpicName, SVGContainerID, TeamEpics, XYOnly } from "../../../_defs";
 
 import { OSubjectViewEpicDetails } from "../../../selectedEpicDetails/selectedEpicDetailsViewController";
 import { OSubjectTeamEpicsScrollContainerResized } from "./teamEpicsViewController";
@@ -22,7 +22,6 @@ type EpicViewSVGNode = {
     svgRectNode: any;
     svgTextNode: any;
     parentNode: any;
-    // btn?: NewEpicButton;
 }
 
 class NewEpicButton {
@@ -73,7 +72,7 @@ class EpicsView extends lib.BaseView {
     }
 
     viewContent() {
-        return undefined;//this.epicsContainerSVGNode;
+        return undefined;
     }
 
     initView() {
@@ -237,10 +236,6 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
             ExpectedStartPeriod: weekIndex + 1, // TODO: Specify the week
         }
 
-        // const index = previousEpic === undefined ? 0 : this.teamEpics.Epics?.indexOf(previousEpic);
-        // dataStore.addNewEpicAtIndex(newEpic);
-        // this.createEpicAtIndex(newEpic);
-
         lib.Observable.notify(OSubjectCreateNewEpicRequest, {
             source: this,
             value: {
@@ -313,7 +308,6 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
 
         this.updateBoundsHeight();
         this.onLayoutNeeded(this.bounds);
-        // this.onBoundsChanged(this.bounds!);
     }
 
     layoutAllEpicsWithBounds(previousControllerBounds: EpicControllerBounds | undefined) {
@@ -334,8 +328,6 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
 
             btn.positionButton(x, this.getBoundsY());
         });
-
-
     }
 
     private sizeSVGNodes(epic: Epic, svgEpicNode: EpicViewSVGNode) {
@@ -397,6 +389,14 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
         const height = this.maxNumberOfRows * (interRowGap + shapeHeight) - interRowGap + 2 * ShapeYOffset;
         this.bounds.size.height = height;
         this.epicsView.setEpicsContainerHeight(height);
+
+        lib.Observable.notify(OSubjectChangedTeamEpicHeightBounds, {
+            source: this,
+            value: {
+                teamID: this.teamEpics.Team.ID,
+                height: height,
+            },
+        });
     }
 
     private updateViewWidth(width: number) {
@@ -434,9 +434,7 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
     }
 
     addNewTeamEpic(epic: Epic) {
-        // this.teamEpics.Epics!.push(epic);
         this.createEpic(epic)
     }
-
 }
 

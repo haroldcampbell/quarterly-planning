@@ -1,23 +1,20 @@
 import * as gtap from "../../../../../../www/dist/js/gtap";
 import * as lib from "../../../../../core/lib";
-import { OSubjectWillUpdateTeamName, Team, TeamEpics } from "../../../_defs";
+import { GTapElement, OSubjectChangedTeamEpicHeightBounds, OSubjectWillUpdateTeamName, Team, TeamEpics } from "../../../_defs";
 
 /** @jsx gtap.$jsx */
 
 import "./teamNames.css"
 
-
 class TeamsNamesView extends lib.BaseView {
     private content = <div className='team-names-container-wrapper' />;
     private teamsContainer = <div className="teams-nav-container">
-        {/* <label>Teams</label> */}
         <button className="add-team-btn">Add Team</button>
     </div>;
     private teamNamesElms = <ul className="team-names-container" />;
 
-
     /** TeamID -> element */
-    private teamNamesMap: Map<string, HTMLElement> = new Map<string, HTMLElement>();
+    private teamNamesMap: Map<string, GTapElement> = new Map<string, GTapElement>();
 
     viewContent() {
         return this.content;
@@ -28,12 +25,16 @@ class TeamsNamesView extends lib.BaseView {
         this.content.appendChild(this.teamNamesElms);
     }
 
-    createTeamNameElement(team: Team): HTMLElement {
-        return <div>{team.Name}</div>;
+    createTeamNameElement(team: Team): GTapElement {
+        return <div className="team-name-wrapper">
+            <div className="team-name">
+                {team.Name}
+            </div>
+        </div>;
     }
 
     addTeamName(team: Team) {
-        let teamNameElm = <li className="team-name">
+        let teamNameElm = <li className="team-name-outer-wrapper">
             {this.createTeamNameElement(team)}
         </li>
 
@@ -46,6 +47,12 @@ class TeamsNamesView extends lib.BaseView {
 
         teamNameElm!.innerText = "";
         teamNameElm!.appendChild(this.createTeamNameElement(team));
+    }
+
+    updateTeamNameHeight(teamID: string, height: number) {
+        const teamNameElm = this.teamNamesMap.get(teamID)!;
+
+        teamNameElm.$style(`height: ${height - 1}px`); // Subtract 1 pixel to accomadate for the border
     }
 }
 
@@ -65,6 +72,8 @@ export class TeamsNamesViewController extends lib.BaseViewController implements 
 
     initController() {
         lib.Observable.subscribe(OSubjectWillUpdateTeamName, this);
+        lib.Observable.subscribe(OSubjectChangedTeamEpicHeightBounds, this);
+
         super.initController();
     }
 
@@ -79,7 +88,17 @@ export class TeamsNamesViewController extends lib.BaseViewController implements 
                 this.onUpdateTeamName(team);
                 break;
             }
+
+            case OSubjectChangedTeamEpicHeightBounds: {
+                const { teamID, height } = state.value;
+                this.updateTeamContainerHeight(teamID, height);
+                break;
+            }
         }
+    }
+
+    private updateTeamContainerHeight(teamID: any, height: any) {
+        this.teamsNamesView.updateTeamNameHeight(teamID, height);
     }
 
     onUpdateTeamName(team: Team) {

@@ -29,7 +29,6 @@ export const TextShapeYGap = TextYOffset - ShapeYOffset;
 export const MinWeekCellWidth = 100;
 export const SVGMaxContextWidth = MinWeekCellWidth * 12 + 11; // 11 = the column gaps
 
-
 export function calcSVGNodesXYForWeek(expectedStartPeriod: number, xOffset: number, svgNodeY: number, epicNodeWidth: number, svgTextNodeWidth: number): EpicWeekPosition {
     let x: number;
     const y = svgNodeY;

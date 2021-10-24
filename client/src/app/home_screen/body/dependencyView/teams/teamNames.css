@@ -8,13 +8,12 @@
 }
 
 .team-names-container-wrapper .teams-nav-container {
-    height: 71px;
+    height: 70px;
     border-bottom: solid 1px #e4e4e4;
     padding: 0 25px;
     position: relative;
 
     display: grid;
-    /* grid-template-rows: min-content 1fr; */
     grid-template-rows: 1fr;
 }
 
@@ -22,14 +21,11 @@
     font-size: 10px;
     color: #9f9f9f;
     display: none;
-    /* display: block; */
 }
 
 .team-names-container-wrapper .teams-nav-container button.add-team-btn {
     height: 40px;
     width: 200px;
-    /* text-align: center; */
-    /* justify-self: center; */
     border: none;
     border-radius: 10px;
     background-color: #eae7e7;
@@ -43,26 +39,35 @@
     text-align: center;
 
     display: grid;
-    grid-auto-rows: 62px; /* 40px (height) + 10px x 2 (top/bottom padding) + 1px x 2 (borders)*/
+    grid-auto-rows: min-content;
     grid-auto-flow: row;
-    row-gap: 2px;
 
     justify-items: center;
 }
 
-.team-names-container-wrapper .team-names-container li.team-name {
+.team-names-container-wrapper li.team-name-outer-wrapper {
     display: grid;
     justify-items: center;
     width: 100%;
-    padding: 10px 0px;
+    border-bottom: solid 1px #e4e4e4;
 }
 
-.team-names-container-wrapper .team-names-container li.team-name div {
+.team-names-container-wrapper li.team-name-outer-wrapper .team-name-wrapper {
+    display: grid;
+}
+
+.team-names-container-wrapper li.team-name-outer-wrapper .team-name {
     width: 200px;
-    border: solid 1px #707070;
+    border: solid 1px #f8f8f8;
     height: 40px;
     background-color: #fff;
     line-height: 40px;
+
+    align-self: center;
+    border-radius: 10px;
+    color: #707070;
+    font-weight: 200;
+    font-size: 20px;
 }
 
 .team-names-container-wrapper .team-names-container li.selected {

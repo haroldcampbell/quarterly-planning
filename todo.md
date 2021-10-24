@@ -1,5 +1,5 @@
 
-[] Update Team UI to match new design
+[X] Update Team UI to match new design
 [] Edit team name
 
 ========

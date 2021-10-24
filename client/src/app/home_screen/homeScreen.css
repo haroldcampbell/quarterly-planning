@@ -6,7 +6,6 @@
 
 /** Container for the main on-screen elements*/
 .screen-main-panel-container {
-    /* display: grid; */
     height: 100%;
     background-color: #e4e4e4;
 }

@@ -2,7 +2,7 @@ import * as gtap from "../../../../../www/dist/js/gtap";
 import * as lib from "../../../../core/lib";
 import * as dataStore from "../../../data/dataStore";
 import { OSubjectViewAddDependencyDialog } from "../../selectedEpicDetails/addDependencyDialogController";
-import { Team, TeamEpics, Epic, OSubjectDataStoreReady, OSubjectCreateNewEpicRequest, TeamEpicDependency, EpicID } from "../../_defs";
+import { Team, TeamEpics, Epic, OSubjectDataStoreReady, OSubjectCreateNewEpicRequest, TeamEpicDependency, EpicID, OSubjectChangedTeamEpicHeightBounds } from "../../_defs";
 
 /** @jsx gtap.$jsx */
 

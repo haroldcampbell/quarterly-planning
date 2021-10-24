@@ -162,9 +162,7 @@ class TeamEpicsView extends lib.BaseView {
     }
 }
 
-export class TeamEpicsViewController extends lib.BaseViewController
-// implements lib.IObserver
-{
+export class TeamEpicsViewController extends lib.BaseViewController {
     protected _view: lib.IView = new TeamEpicsView(this);
 
     private teamEpicsView = this._view as TeamEpicsView;
@@ -174,7 +172,6 @@ export class TeamEpicsViewController extends lib.BaseViewController
 
     QuarterStartDate!: Date;
 
-    // private lastRowIndex = 0;
     private lastControllerBounds?: EpicControllerBounds;
     private maxRowWidth = 0; /** Used to adjust the svg element size */
     private periods: DateMonthPeriod[] = [];
@@ -184,13 +181,10 @@ export class TeamEpicsViewController extends lib.BaseViewController
 
         this.teamEpicsView.QuarterStartDate = this.QuarterStartDate;
         this.teamEpicsView.setActivePeriods(this.periods);
-        // this.teamEpicsView.QuarterStartDate = new Date("Oct 27 2021");
 
         this.periods.push(createMonthDatePeriod(this.QuarterStartDate));
         this.periods.push(createMonthDatePeriod(this.periods[0].weekDetails[3].endDate, 1));
         this.periods.push(createMonthDatePeriod(this.periods[1].weekDetails[3].endDate, 1));
-
-        // lib.Observable.subscribe(OSubjectGetTeamEpicsActivePeriod, this);
 
         super.initView();
     }
@@ -205,21 +199,6 @@ export class TeamEpicsViewController extends lib.BaseViewController
         })
         this.onTeamEpicsAdded();
     }
-
-    // onUpdate(subject: string, state: lib.ObserverState): void {
-    //     switch (subject) {
-    //         case OSubjectGetTeamEpicsActivePeriod: {
-    //             const { contentWidth } = state.value;
-    //             this.onTeamEpicsScrollContainerResized(contentWidth);
-    //             break;
-    //         }
-    //         // case OSubjectWillUpdateEpicName: {
-    //         //     const { epic } = state.value;
-    //         //     this.onEpicNameUpdated(epic);
-    //         //     break;
-    //         // }
-    //     }
-    // }
 
     private initTeamEpics(epics: TeamEpics) {
         let epicController = new EpicsViewController(this, epics, this.lastControllerBounds);
@@ -246,7 +225,6 @@ export class TeamEpicsViewController extends lib.BaseViewController
     }
 
     onLayoutNeeded(bounds: EpicControllerBounds) {
-        // this.updateContextWidth(bounds.size.width);
         this.boundsDidChange(bounds);
         this.layoutDependencyConnections();
     }

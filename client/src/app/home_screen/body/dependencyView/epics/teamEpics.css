@@ -8,7 +8,6 @@
     overflow-x: scroll;
     display: grid;
     height: 100%;
-    /* margin-top: 20px; */
 }
 
 /* Date Periods: Start */
@@ -24,7 +23,6 @@
 }
 
 .team-epics-scroll-container .date-periods-container .spill-over-period {
-    /* border: solid 1px red; */
     background-color: #707070;
     margin-left: 5px;
     border-radius: 0px 10px 0 0;
@@ -35,10 +33,6 @@
     display: grid;
     grid-template-rows: max-content 1fr;
 }
-
-/* .team-epics-scroll-container .period-container:first-of-type { */
-/* margin-left: 20px; */
-/* } */
 
 .team-epics-scroll-container .period-container .month-name-container {
     background-color: #f2f0f0;
@@ -52,17 +46,12 @@
     color: #707070;
 }
 
-.team-epics-scroll-container .period-container .month-name-container span {
-    /* text-align: center; */
-}
-
 .team-epics-scroll-container .month-name-container span.month-name {
     font-size: 20px;
     line-height: 20px;
     font-weight: 100;
     text-align: right;
     align-self: center;
-    /* border: solid 1px red; */
 }
 
 .team-epics-scroll-container .month-name-container span.month-name-period {
@@ -72,7 +61,6 @@
     color: #9f9f9f;
     align-self: center;
     margin-top: 5px;
-    /* border: solid 1px red; */
 }
 
 .team-epics-scroll-container
