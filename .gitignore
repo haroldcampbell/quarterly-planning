@@ -4,6 +4,7 @@
 **/dist/**
 **/.env
 **/vendor
+**/coverage/**
 app/desktop_app/server/server
 
 .DS_Store
