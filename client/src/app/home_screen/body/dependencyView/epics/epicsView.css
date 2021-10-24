@@ -32,24 +32,23 @@ svg g.epics-container-group:hover text.new-epic-btn-text {
     fill: #e4e4e4;
 }
 
-svg rect.epic {
+svg g.epics-container-group rect.epic {
     fill: #fff;
-    /* stroke: #eae7e7; */
     stroke: #707070;
     stroke-width: 1px;
 }
 
-svg text.epic-name {
+svg g.epics-container-group text.epic-name {
     pointer-events: none;
     font-size: 10px;
     fill: #707070;
 }
 
-svg path.new-epic-btn-container {
+svg g.epics-container-group path.new-epic-btn-container {
     fill: transparent;
 }
 
-svg text.new-epic-btn-text {
+svg g.epics-container-group text.new-epic-btn-text {
     pointer-events: none;
     font-size: 12px;
     fill: transparent;
@@ -62,4 +61,9 @@ svg g.epics-container-group:hover path.new-epic-btn-container:hover {
 
 svg g.epics-container-group:hover text.new-epic-btn-text:hover {
     fill: #e4e4e4;
+}
+
+svg g.epics-container-group rect.selected-epic {
+    fill: #e4e4e4;
+    stroke-width: 2px;
 }

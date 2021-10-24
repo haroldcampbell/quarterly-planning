@@ -16,7 +16,7 @@ import "./selectedEpicDetailsView.css"
 import { OSubjectRedrawDependencyConnections } from "../body/dependencyView/epics/teamEpicsViewController";
 import { OSubjectViewAddDependencyDialog } from "./addDependencyDialogController";
 
-export const OSubjectViewEpicDetails = "view-epic-details";
+export const OSubjectEpicSelected = "epic-selected"; /** Fired when epic is selected */
 export const OSubjectHideEpicDetails = "hide-epic-details";
 
 class SelectedEpicDetailsView extends lib.BaseView {
@@ -96,7 +96,7 @@ export class SelectedEpicDetailsController extends lib.BaseViewController implem
     private inputChangeMap = new Map<string, InputHandler>();
 
     initController() {
-        lib.Observable.subscribe(OSubjectViewEpicDetails, this);
+        lib.Observable.subscribe(OSubjectEpicSelected, this);
         lib.Observable.subscribe(OSubjectHideEpicDetails, this);
         lib.Observable.subscribe(OSubjectRedrawDependencyConnections, this);
 
@@ -110,7 +110,7 @@ export class SelectedEpicDetailsController extends lib.BaseViewController implem
 
     onUpdate(subject: string, state: lib.ObserverState): void {
         switch (subject) {
-            case OSubjectViewEpicDetails: {
+            case OSubjectEpicSelected: {
                 const { epic, activePeriods } = state.value;
                 this.onEpicSelected(epic, activePeriods);
                 break;

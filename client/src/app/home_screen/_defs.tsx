@@ -43,6 +43,19 @@ export type Epic = {
     Upstreams?: string[];
 }
 
+
+export type EpicViewSVGNode = {
+    svgRectNode: any;
+    svgTextNode: any;
+    parentNode: any;
+}
+
+export type SelectedEpicInfo = {
+    epic: Epic;
+    selectedEpicViewSVGNode: EpicViewSVGNode;
+    activePeriods: DateMonthPeriod[];
+}
+
 export type Team = {
     ID: string;
     Name: string

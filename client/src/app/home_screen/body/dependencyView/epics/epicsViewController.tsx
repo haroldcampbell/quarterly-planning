@@ -4,9 +4,9 @@ import * as dataStore from "../../../../data/dataStore";
 
 import { IViewController, IScreenController } from "../../../../../core/lib";
 import { calcSVGNodesXYForWeek, ColGap, EpicControllerBounds, epicSizeToWidth, MinWeekCellWidth, placeTextWithEllipsis, RowPadding, ShapeYOffset, SVGMaxContextWidth, TextShapeYGap } from "../../../../common/nodePositions";
-import { DateMonthPeriod, Epic, EpicID, EpicSizes, OSubjectChangedTeamEpicHeightBounds, OSubjectCreateNewEpicRequest, OSubjectWillUpdateEpicName, SVGContainerID, TeamEpics, XYOnly } from "../../../_defs";
+import { DateMonthPeriod, Epic, EpicID, EpicSizes, EpicViewSVGNode, OSubjectChangedTeamEpicHeightBounds, OSubjectCreateNewEpicRequest, OSubjectWillUpdateEpicName, SVGContainerID, TeamEpics, XYOnly } from "../../../_defs";
 
-import { OSubjectViewEpicDetails } from "../../../selectedEpicDetails/selectedEpicDetailsViewController";
+import { OSubjectEpicSelected } from "../../../selectedEpicDetails/selectedEpicDetailsViewController";
 import { OSubjectTeamEpicsScrollContainerResized } from "./teamEpicsViewController";
 
 /** @jsx gtap.$jsx */
@@ -17,12 +17,6 @@ import "./epicsView.css"
 const shapeHeight = 20;
 const shapeEornerRadius = 5;
 export const interRowGap = 10; /** The horizontal space between epics for the same team */
-
-type EpicViewSVGNode = {
-    svgRectNode: any;
-    svgTextNode: any;
-    parentNode: any;
-}
 
 class NewEpicButton {
     private rCon: any;
@@ -109,7 +103,6 @@ class EpicsView extends lib.BaseView {
     addEpic(parentGroupSVGNode: any, epic: Epic): EpicViewSVGNode {
         const r = gtap.rect(SVGContainerID);
         r.$class("epic")
-        r.onclick = () => { this.onEpicSelected(epic); }
 
         const t = gtap.text(SVGContainerID);
         t.$class("epic-name")
@@ -118,17 +111,25 @@ class EpicsView extends lib.BaseView {
         parentGroupSVGNode.appendChild(r);
         parentGroupSVGNode.appendChild(t);
 
-        return {
+        const epicViewSVGNode = {
             parentNode: this.epicsContainerSVGNode,
             svgRectNode: r,
             svgTextNode: t
         }
+
+        r.onclick = () => { this.onEpicSelected(epic, epicViewSVGNode); }
+
+        return epicViewSVGNode;
     }
 
-    onEpicSelected(epic: Epic) {
-        lib.Observable.notify(OSubjectViewEpicDetails, {
+    onEpicSelected(epic: Epic, epicViewSVGNode: EpicViewSVGNode) {
+        lib.Observable.notify(OSubjectEpicSelected, {
             source: this,
-            value: { epic: epic, activePeriods: this.activePeriods },
+            value: {
+                epic: epic,
+                epicViewSVGNode: epicViewSVGNode,
+                activePeriods: this.activePeriods,
+            },
         });
     }
 }
@@ -144,7 +145,7 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
     public onBoundsChanged!: (bounds: EpicControllerBounds) => void;
     public onLayoutNeeded!: (bounds: EpicControllerBounds) => void;
 
-    private epicsViewSVGMap = new Map<string, EpicViewSVGNode>();
+    private epicsViewSVGMap = new Map<EpicID, EpicViewSVGNode>();
     private xOffset!: number;
 
     private grounSVGNode: any;
@@ -219,6 +220,7 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
 
         lib.Observable.subscribe(OSubjectTeamEpicsScrollContainerResized, this);
         lib.Observable.subscribe(OSubjectWillUpdateEpicName, this);
+        lib.Observable.subscribe(OSubjectEpicSelected, this);
 
         super.initController();
     }
@@ -257,6 +259,33 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
                 this.onEpicNameUpdated(epic);
                 break;
             }
+            case OSubjectEpicSelected: {
+                const { epic, epicViewSVGNode, activePeriods } = state.value;
+                this.onEpicSelected(epic, epicViewSVGNode, activePeriods);
+                break;
+            }
+        }
+    }
+
+    private selectedEpicInfo?: any;
+
+    private onEpicSelected(epic: Epic, selectedEpicViewSVGNode: EpicViewSVGNode, activePeriods: DateMonthPeriod[]) {
+
+        if (this.selectedEpicInfo !== undefined) {
+            this.selectedEpicInfo.selectedEpicViewSVGNode.svgRectNode.$removeCSS("selected-epic");
+        };
+
+        this.selectedEpicInfo = undefined;
+
+        if (!this.epicsViewSVGMap.has(epic.ID)) {
+            return;
+        }
+
+        selectedEpicViewSVGNode.svgRectNode.$appendCSS("selected-epic");
+        this.selectedEpicInfo = {
+            epic,
+            selectedEpicViewSVGNode,
+            activePeriods
         }
     }
 
