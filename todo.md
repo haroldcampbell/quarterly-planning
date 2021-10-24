@@ -1,5 +1,6 @@
-[] Highlight selected epic
-    [] Highlight Upstream dependencies
+[] Select epic
+    [X] Highlight selected epic
+    [X] Highlight Upstream dependencies
     [] Highlight Downstream dependencies
     [] Highlight releated team
     [] Hide dependency connections for teams that are not a dependency

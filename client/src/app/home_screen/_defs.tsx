@@ -112,3 +112,6 @@ export const OSubjectCreateNewEpicRequest = "request-create-new-epic";
 
 /** The height of an epics countroller changed */
 export const OSubjectChangedTeamEpicHeightBounds = "did-update-team-epic-height-bounds"
+
+/** Highlight epic if it is an upstream epic of the selected epic */
+export const OSubjectHighlightUpstreamEpic = "high-light-upstream-epic";

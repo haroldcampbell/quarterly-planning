@@ -64,6 +64,16 @@ svg g.epics-container-group:hover text.new-epic-btn-text:hover {
 }
 
 svg g.epics-container-group rect.selected-epic {
-    fill: #e4e4e4;
+    fill: #1f8ce8;
     stroke-width: 2px;
+    stroke: #eae7e7;
+}
+
+svg g.epics-container-group text.selected-epic {
+    fill: #f8f8f8;
+}
+
+svg g.epics-container-group rect.upstream-highlighed-epic {
+    fill: #e4e4e4;
+    stroke: #1f8ce8;
 }

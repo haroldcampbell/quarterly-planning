@@ -12,13 +12,11 @@ import "./teamEpics.css"
 
 export const OSubjectTeamEpicsScrollContainerResized = "team-epics-scroll-container-resized";
 export const OSubjectRedrawDependencyConnections = "redraw-dependency-connections";
-// export const OSubjectGetTeamEpicsActivePeriod = "team-epics-active-periods";
 
 function createMonthDatePeriod(startDate: Date, dayOffset: number = 0): DateMonthPeriod {
     const month1 = new Date(startDate.getTime() + dayOffset * MilliSecondsInDay);
     const month2 = new Date(startDate.getTime());
 
-    // month1.setMonth(startDate.getMonth() + offset);
     month2.setMonth(month1.getMonth() + 1);
 
     const monthPeriod = {
@@ -128,15 +126,7 @@ class TeamEpicsView extends lib.BaseView {
         datePeriodsContainerNode.appendChild(weeksContainerNode)
     }
 
-    loadSubviews(viewContent: any) {
-        // this.views.forEach((v) => {
-        //     const vContent = v.viewContent();
-
-        //     v.loadSubviews(vContent);
-        //     this.scrollContainer.appendChild(vContent);
-        // });
-        // viewContent.appendChild(this.scrollContainer);
-    }
+    loadSubviews(viewContent: any) { }
 
     initView() {
         this.content.appendChild(this.scrollContainer);
