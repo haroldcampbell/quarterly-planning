@@ -4,7 +4,7 @@ import * as lib from "../../core/lib";
 /** @jsx gtap.$jsx */
 
 import "./homeScreen.css"
-import { ScreenNavController } from "./nav/screenNavController";
+import { HomeNavController } from "./nav/homeNavController";
 import { BodyController } from "./body/bodyController";
 import { SelectedEpicDetailsController } from "./selectedEpicDetails/selectedEpicDetailsViewController";
 import { Epic, EpicID, TeamEpicDependency } from "./_defs";
@@ -73,7 +73,7 @@ class HomeScreen extends lib.BaseScreen {
 export class HomeScreenController extends lib.BaseScreenController implements lib.IObserver {
     protected _screen: lib.IScreen = new HomeScreen(this);
 
-    private screenNavController = new ScreenNavController(this);
+    private homeNavController = new HomeNavController(this);
     private bodyController = new BodyController(this);
     private selectedEpicDetails = new SelectedEpicDetailsController(this);
 
@@ -81,9 +81,9 @@ export class HomeScreenController extends lib.BaseScreenController implements li
         const mainPanelView = new MainPanelView(this)
         const detailsPanelView = new DetailsPanelView(this)
 
-        this.screenNavController.initController();
+        this.homeNavController.initController();
         this.bodyController.initController();
-        mainPanelView.addView(this.screenNavController.view);
+        mainPanelView.addView(this.homeNavController.view);
         mainPanelView.addView(this.bodyController.view);
         this._screen.addView(mainPanelView);
 

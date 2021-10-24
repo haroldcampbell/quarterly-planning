@@ -9,7 +9,12 @@ import "./teamNames.css"
 
 class TeamsNamesView extends lib.BaseView {
     private content = <div className='team-names-container-wrapper' />;
+    private teamsContainer = <div className="teams-nav-container">
+        {/* <label>Teams</label> */}
+        <button className="add-team-btn">Add Team</button>
+    </div>;
     private teamNamesElms = <ul className="team-names-container" />;
+
 
     /** TeamID -> element */
     private teamNamesMap: Map<string, HTMLElement> = new Map<string, HTMLElement>();
@@ -19,6 +24,7 @@ class TeamsNamesView extends lib.BaseView {
     }
 
     initView() {
+        this.content.appendChild(this.teamsContainer);
         this.content.appendChild(this.teamNamesElms);
     }
 

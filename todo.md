@@ -1,17 +1,10 @@
-[X] Create epics
-    [X] Update UX to allow adding epics based on the new design
-    [X] Create new Epic at the fist position when there are other epics
 
-
+[] Update Team UI to match new design
+[] Edit team name
 
 ========
 NEXT
 ========
-
-[] Create new Team
-    [] Update Team UI to match new design
-    [] Create new team
-    [] Create new Epic when team has zero epics
 
 [] Highlight selected epic
     [] Highlight Upstream dependencies
@@ -25,10 +18,10 @@ NEXT
 
 [] Migrate client-site in-memory data to server-side in-memory
     [] Identify APIs
-        [] CRUD Team
         [] CRUD Team.Epic
         [] CRUD TeamEpic.Upstream Dependency
         [] CRUD TeamEpic.Downstream Dependency
+        [] CRUD Team
     [] Create routes
     [] Delete Team
     [] Delete Epic
@@ -39,6 +32,9 @@ NEXT
     [] Highlight conflicts between epics that end after upstream start dependency
     [] Highlight conflicts between epics that start after upstream dependency
     [] Use multiple rows when epics over-lap
+
+[] Create new Team
+    [] Create new Epic when team has zero epics
 
 [] FIX: Put dependency connections on top of the epics after new epic created
 
@@ -135,6 +131,10 @@ NEXT
 ========
  DONE
 ========
+
+[X] Create epics
+    [X] Update UX to allow adding epics based on the new design
+    [X] Create new Epic at the fist position when there are other epics
 
 [X] Add Epic Duration to Estimated Size
     [X] Update the epic size based on the estimated size

@@ -1,12 +1,45 @@
 .team-names-container-wrapper {
-    border-top: solid 1px #707070;
-    border-right: solid 1px #707070;
     background-color: #fff;
     height: 100%;
     width: 249px;
+
+    border-radius: 0 10px 0 0;
+    position: relative;
 }
 
-.team-names-container {
+.team-names-container-wrapper .teams-nav-container {
+    height: 71px;
+    border-bottom: solid 1px #e4e4e4;
+    padding: 0 25px;
+    position: relative;
+
+    display: grid;
+    /* grid-template-rows: min-content 1fr; */
+    grid-template-rows: 1fr;
+}
+
+.team-names-container-wrapper .teams-nav-container label {
+    font-size: 10px;
+    color: #9f9f9f;
+    display: none;
+    /* display: block; */
+}
+
+.team-names-container-wrapper .teams-nav-container button.add-team-btn {
+    height: 40px;
+    width: 200px;
+    /* text-align: center; */
+    /* justify-self: center; */
+    border: none;
+    border-radius: 10px;
+    background-color: #eae7e7;
+    color: #707070;
+    font-weight: 200;
+    font-size: 20px;
+    align-self: center;
+}
+
+.team-names-container-wrapper .team-names-container {
     text-align: center;
 
     display: grid;
@@ -17,14 +50,14 @@
     justify-items: center;
 }
 
-.team-names-container li.team-name {
+.team-names-container-wrapper .team-names-container li.team-name {
     display: grid;
     justify-items: center;
     width: 100%;
     padding: 10px 0px;
 }
 
-.team-names-container li.team-name div {
+.team-names-container-wrapper .team-names-container li.team-name div {
     width: 200px;
     border: solid 1px #707070;
     height: 40px;
@@ -32,11 +65,11 @@
     line-height: 40px;
 }
 
-.team-names-container li.selected {
+.team-names-container-wrapper .team-names-container li.selected {
     background-color: #eae7e7;
 }
 
-.team-names-container li.selected div {
+.team-names-container-wrapper .team-names-container li.selected div {
     background-color: #707070;
     color: #f3f5f4;
 }

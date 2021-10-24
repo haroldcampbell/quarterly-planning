@@ -1,6 +1,6 @@
 .team-epics-container-wrapper {
     overflow-x: hidden;
-    margin-left: 20px;
+    margin-left: 13px;
 }
 
 .team-epics-scroll-container {
@@ -8,7 +8,7 @@
     overflow-x: scroll;
     display: grid;
     height: 100%;
-    margin-top: 20px;
+    /* margin-top: 20px; */
 }
 
 /* Date Periods: Start */
