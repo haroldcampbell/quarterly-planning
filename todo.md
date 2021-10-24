@@ -1,16 +1,15 @@
-
-
-========
-NEXT
-========
-
 [] Highlight selected epic
     [] Highlight Upstream dependencies
     [] Highlight Downstream dependencies
+    [] Highlight releated team
     [] Hide dependency connections for teams that are not a dependency
         [] Hide Upstream dependency
         [] Hide Downstream dependency
     [] Hide Teams that are not a dependency
+
+========
+NEXT
+========
 
 --
 
@@ -31,6 +30,10 @@ NEXT
     [] Highlight conflicts between epics that start after upstream dependency
     [] Use multiple rows when epics over-lap
 
+[] Update Epic details
+    [] Change Epic Start date
+    [] Change Epic size using a drop-down
+
 [] Create new Team
     [] Create new Epic when team has zero epics
 
@@ -39,6 +42,7 @@ NEXT
 [] FIX: Scrollbars
 
 [] Edit team name by clicking on the Team Name directly
+
 --
 
 [] Capture Quarterly Planning info
@@ -55,7 +59,6 @@ NEXT
 
 [] Mouse-over epic shows full-details (useful for when epic's name is truncated)
 
-[] BUG: Line separator doesn't span all the months when there are few epics in one month
 ========
  OPPORTUNITIES
 ========
@@ -69,6 +72,7 @@ NEXT
 [] Side-Panels
     [] Collapse Team side-panel
     [] Add Sticky Team name
+    [] Highlight related Team when side-pandel is open
 
 [] Projected End Date field
     [] Edit Projected End field
@@ -123,7 +127,11 @@ NEXT
 
 [] Explore Summary Report based on Epic clashes
 
-[] Expore adding projects to Epic and view of the projects
+[] Explore adding projects to Epic and view of the projects
+
+[] Explore adding Team Health & other related views to identify how to support teams
+
+[] Explore adding Business Area metrics
 
 
 
@@ -134,6 +142,8 @@ NEXT
 [X] Ensure Team name is truncated when too long
 
 [X] Update Team UI to match new design
+
+[X] BUG: Line separator doesn't span all the months when there are few epics in one month
 
 [X] Create epics
     [X] Update UX to allow adding epics based on the new design
