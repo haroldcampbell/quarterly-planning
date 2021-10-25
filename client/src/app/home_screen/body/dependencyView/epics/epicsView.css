@@ -75,11 +75,19 @@ svg g.epics-container-group text.selected-epic {
 }
 
 svg g.epics-container-group rect.upstream-highlighed-epic {
-    fill: #e4e4e4;
+    fill: #fff;
     stroke: #1f8ce8;
+    stroke-width: 2px;
 }
 
 svg g.epics-container-group rect.downstream-highlighed-epic {
     fill: #f2f0f0;
+    stroke: #f2f0f0;
+}
+
+svg g.epics-container-group rect.dimmed-epic {
+    stroke: #f2f0f0;
+}
+svg g.epics-container-group text.dimmed-epic {
     stroke: #f2f0f0;
 }
