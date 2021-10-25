@@ -109,7 +109,7 @@
 }
 
 /* Date Periods: End */
-#dependency-connections .connection {
+#dependency-connections path.connection {
     stroke: #1f8ce8;
     stroke-width: 0.5px;
     fill: none;
@@ -117,7 +117,18 @@
     stroke-linecap: round;
 }
 
-#dependency-connections .selected-epic-connection {
+#dependency-connections path.dimmed-connection {
+    stroke: #9f9f9f;
+    opacity: 0.5;
+    /* fill: none; */
+}
+#dependency-connections path.selected-connection {
+    stroke: #1f8ce8;
+    stroke-width: 1px;
+    stroke-dasharray: none;
+}
+#dependency-connections path.highlighed-downstream-connection {
+    stroke: #9f9f9f;
     stroke-width: 0.5px;
     stroke-dasharray: none;
 }

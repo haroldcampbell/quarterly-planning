@@ -82,12 +82,13 @@ svg g.epics-container-group rect.upstream-highlighed-epic {
 
 svg g.epics-container-group rect.downstream-highlighed-epic {
     fill: #f2f0f0;
-    stroke: #f2f0f0;
+    stroke: #9f9f9f;
 }
 
 svg g.epics-container-group rect.dimmed-epic {
     stroke: #f2f0f0;
 }
 svg g.epics-container-group text.dimmed-epic {
-    stroke: #f2f0f0;
+    fill: #9f9f9f;
+    opacity: 0.5;
 }

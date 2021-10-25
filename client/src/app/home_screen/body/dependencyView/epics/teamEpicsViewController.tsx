@@ -3,7 +3,7 @@ import * as lib from "../../../../../core/lib";
 import { EpicControllerBounds, MilliSecondsInDay, MinWeekCellWidth, ShapeYOffset, SVGMaxContextWidth } from "../../../../common/nodePositions";
 import * as dataStore from "../../../../data/dataStore";
 
-import { DateMonthPeriod, Epic, EpicID, GTapElement, PathInfo, SVGContainerID, TeamEpics, TeamID, WeekDetail, XYOnly } from "../../../_defs";
+import { DateMonthPeriod, Epic, EpicID, GTapElement, OSubjectHighlightDownstreamEpic, OSubjectHighlightUpstreamEpic, OSubjectUnHighlightAllEpic, PathInfo, SVGContainerID, TeamEpics, TeamID, WeekDetail, XYOnly } from "../../../_defs";
 import { EpicsViewController } from "./epicsViewController";
 
 /** @jsx gtap.$jsx */
@@ -152,7 +152,7 @@ class TeamEpicsView extends lib.BaseView {
     }
 }
 
-export class TeamEpicsViewController extends lib.BaseViewController {
+export class TeamEpicsViewController extends lib.BaseViewController implements lib.IObserver {
     protected _view: lib.IView = new TeamEpicsView(this);
 
     private teamEpicsView = this._view as TeamEpicsView;
@@ -176,6 +176,10 @@ export class TeamEpicsViewController extends lib.BaseViewController {
         this.periods.push(createMonthDatePeriod(this.periods[0].weekDetails[3].endDate, 1));
         this.periods.push(createMonthDatePeriod(this.periods[1].weekDetails[3].endDate, 1));
 
+        lib.Observable.subscribe(OSubjectUnHighlightAllEpic, this);
+        lib.Observable.subscribe(OSubjectHighlightUpstreamEpic, this);
+        lib.Observable.subscribe(OSubjectHighlightDownstreamEpic, this);
+
         super.initView();
     }
 
@@ -188,6 +192,51 @@ export class TeamEpicsViewController extends lib.BaseViewController {
             this.initTeamEpics(epics)
         })
         this.onTeamEpicsAdded();
+    }
+
+    onUpdate(subject: string, state: lib.ObserverState): void {
+        switch (subject) {
+            case OSubjectUnHighlightAllEpic: {
+                this.onDimAllConnections();
+                break;
+            }
+            case OSubjectHighlightUpstreamEpic: {
+                const { upstreamEpicID, activeEpicID } = state.value;
+                this.onHighlightUpstreamConnections(upstreamEpicID, activeEpicID);
+                break;
+            }
+            case OSubjectHighlightDownstreamEpic: {
+                const { downstreamEpicID, activeEpicID } = state.value;
+                this.onHighlightDownstreamConnections(downstreamEpicID, activeEpicID);
+                break;
+            }
+        }
+    }
+
+    private onDimAllConnections() {
+        this.dependencyConnections.forEach(pathInfo => {
+            pathInfo.p.$removeCSS("highlighed-downstream-connection");
+            pathInfo.p.$removeCSS("selected-connection");
+            pathInfo.p.$appendCSS("dimmed-connection");
+        });
+    }
+
+    private onHighlightDownstreamConnections(downstreamEpicID: EpicID, activeEpicID: EpicID) {
+        this.dependencyConnections.forEach(pathInfo => {
+            if (pathInfo.downstreamEpicID == downstreamEpicID && pathInfo.upstreamEpicID == activeEpicID) {
+                pathInfo.p.$removeCSS("dimmed-connection");
+                pathInfo.p.$appendCSS("highlighed-downstream-connection");
+            }
+        });
+    }
+
+    private onHighlightUpstreamConnections(upstreamEpicID: EpicID, activeEpicID: EpicID) {
+        this.dependencyConnections.forEach(pathInfo => {
+            if (pathInfo.upstreamEpicID == upstreamEpicID && pathInfo.downstreamEpicID == activeEpicID) {
+                pathInfo.p.$removeCSS("dimmed-connection");
+                pathInfo.p.$appendCSS("selected-connection");
+            }
+        });
     }
 
     private initTeamEpics(epics: TeamEpics) {

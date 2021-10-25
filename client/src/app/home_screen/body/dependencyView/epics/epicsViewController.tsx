@@ -270,7 +270,7 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
                 break;
             }
             case OSubjectUnHighlightAllEpic: {
-                this.onUnselectedEpic();
+                this.onUnhighlighAllEpics();
                 break;
             }
             case OSubjectHighlightUpstreamEpic: {
@@ -317,7 +317,7 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
         this.notifyDimHighlightedEpics();
     }
 
-    private onUnselectedEpic() {
+    private onUnhighlighAllEpics() {
         if (this.selectedEpicInfo !== undefined) {
             this.selectedEpicInfo.selectedEpicViewSVGNode.parentNode.$removeCSS("selected-epic-container");
             this.selectedEpicInfo.selectedEpicViewSVGNode.svgRectNode.$removeCSS("selected-epic");
@@ -357,7 +357,7 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
         epic.Upstreams.forEach((upstreamEpicID) => {
             lib.Observable.notify(OSubjectHighlightUpstreamEpic, {
                 source: this,
-                value: { upstreamEpicID },
+                value: { upstreamEpicID, activeEpicID: epic.ID },
             });
         });
     }
@@ -372,7 +372,7 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
         downstreamEpics.forEach((downstreamEpicID) => {
             lib.Observable.notify(OSubjectHighlightDownstreamEpic, {
                 source: this,
-                value: { downstreamEpicID },
+                value: { downstreamEpicID, activeEpicID: epic.ID },
             });
         });
     }
@@ -399,7 +399,7 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
             upstreamEpic.Upstreams.forEach((nextUpstreamEpicID) => {
                 lib.Observable.notify(OSubjectHighlightUpstreamEpic, {
                     source: this,
-                    value: { upstreamEpicID: nextUpstreamEpicID },
+                    value: { upstreamEpicID: nextUpstreamEpicID, activeEpicID: upstreamEpicID },
                 });
             });
         }
@@ -416,10 +416,11 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
 
         const downstreamEpics = dataStore.getDownstreamEpicsByID(downstreamEpicID);
         if (downstreamEpics !== undefined) {
-            downstreamEpics.forEach((downstreamEpicID) => {
+            /** Highlight the indirect downstream dependencies */
+            downstreamEpics.forEach((nextDownstreamEpicID) => {
                 lib.Observable.notify(OSubjectHighlightDownstreamEpic, {
                     source: this,
-                    value: { downstreamEpicID },
+                    value: { downstreamEpicID: nextDownstreamEpicID, activeEpicID: downstreamEpicID },
                 });
             });
         }

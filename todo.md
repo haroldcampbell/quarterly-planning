@@ -58,6 +58,8 @@ NEXT
 [] Side-pandel dependencies
     [] Update UI to single button for showing the Add Dependency Dialog
 
+[] Closing the Side-Pandel will Undim and unhighligh all epics
+
 [] Mouse-over epic shows full-details (useful for when epic's name is truncated)
 
 ========
