@@ -1,12 +1,11 @@
 [] Select epic
     [X] Highlight selected epic
     [X] Highlight Upstream dependencies
-    [] Highlight Downstream dependencies
+    [X] Highlight Downstream dependencies
     [] Highlight releated team
-    [] Hide dependency connections for teams that are not a dependency
-        [] Hide Upstream dependency
-        [] Hide Downstream dependency
-    [] Hide Teams that are not a dependency
+    [] Dim dependency connections for teams that are not a dependency
+        [] Dim Upstream dependency
+        [] Dim Downstream dependency
 
 ========
 NEXT
@@ -119,6 +118,8 @@ NEXT
     [] By Epic - Show me the impact of changing this epic
     [] By Project - Show me all the work impacting this project
     [] By Team dependencies - Show me all the projects that this team is impacting
+
+[] Collapse Teams that are not a dependency when an epic is selected
 
 [] Explore addition of excel fields
 

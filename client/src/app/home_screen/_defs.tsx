@@ -113,5 +113,11 @@ export const OSubjectCreateNewEpicRequest = "request-create-new-epic";
 /** The height of an epics countroller changed */
 export const OSubjectChangedTeamEpicHeightBounds = "did-update-team-epic-height-bounds"
 
+/** Unhighlighted and unselect all epics*/
+export const OSubjectUnHighlightAllEpic = "unhighlight-all-epics";
+
 /** Highlight epic if it is an upstream epic of the selected epic */
-export const OSubjectHighlightUpstreamEpic = "high-light-upstream-epic";
+export const OSubjectHighlightUpstreamEpic = "highlight-upstream-epic";
+
+/** Highlight epic if it is a downstream epic of the selected epic */
+export const OSubjectHighlightDownstreamEpic = "highlight-downstream-epic";
