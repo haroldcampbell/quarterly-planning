@@ -20,10 +20,6 @@ svg line.epics-container-divider {
     stroke-width: 1px;
 }
 
-svg g.epics-container-group {
-    fill: red;
-}
-
 svg g.epics-container-group:hover path.new-epic-btn-container {
     fill: #f8f8f8;
 }
@@ -61,6 +57,11 @@ svg g.epics-container-group:hover path.new-epic-btn-container:hover {
 
 svg g.epics-container-group:hover text.new-epic-btn-text:hover {
     fill: #e4e4e4;
+}
+
+svg g.epics-container-group rect.selected-epic-container {
+    fill: #f2f0f0;
+    opacity: 0.5;
 }
 
 svg g.epics-container-group rect.selected-epic {

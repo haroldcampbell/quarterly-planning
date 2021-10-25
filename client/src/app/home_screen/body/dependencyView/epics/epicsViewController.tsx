@@ -293,7 +293,7 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
         if (this.epicsViewSVGMap.has(epic.ID)) {
             lib.Observable.notify(OSubjectUnHighlightAllEpic, {
                 source: this,
-                value: {},
+                value: { epic },
             });
 
             this.highlightSelectedEpic(selectedEpicViewSVGNode);
@@ -304,12 +304,12 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
                 epic,
                 selectedEpicViewSVGNode,
             }
-        } else {
         }
     }
 
     private onUnselectedEpic() {
         if (this.selectedEpicInfo !== undefined) {
+            this.selectedEpicInfo.selectedEpicViewSVGNode.parentNode.$removeCSS("selected-epic-container");
             this.selectedEpicInfo.selectedEpicViewSVGNode.svgRectNode.$removeCSS("selected-epic");
             this.selectedEpicInfo.selectedEpicViewSVGNode.svgTextNode.$removeCSS("selected-epic");
         };
@@ -328,6 +328,7 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
     }
 
     private highlightSelectedEpic(selectedEpicViewSVGNode: EpicViewSVGNode) {
+        selectedEpicViewSVGNode.parentNode.$appendCSS("selected-epic-container");
         selectedEpicViewSVGNode.svgRectNode.$appendCSS("selected-epic");
         selectedEpicViewSVGNode.svgTextNode.$appendCSS("selected-epic");
     }

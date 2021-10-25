@@ -1,6 +1,7 @@
 import * as gtap from "../../../../../../www/dist/js/gtap";
 import * as lib from "../../../../../core/lib";
-import { GTapElement, OSubjectChangedTeamEpicHeightBounds, OSubjectWillUpdateTeamName, Team, TeamEpics } from "../../../_defs";
+import { OSubjectEpicSelected } from "../../../selectedEpicDetails/selectedEpicDetailsViewController";
+import { Epic, EpicViewSVGNode, GTapElement, OSubjectChangedTeamEpicHeightBounds, OSubjectUnHighlightAllEpic, OSubjectWillUpdateTeamName, Team, TeamEpics } from "../../../_defs";
 
 /** @jsx gtap.$jsx */
 
@@ -54,6 +55,22 @@ class TeamsNamesView extends lib.BaseView {
 
         teamNameElm.$style(`height: ${height - 1}px`); // Subtract 1 pixel to accomadate for the border
     }
+
+    highlightTeam(teamID: string) {
+        const teamNameElm = this.teamNamesMap.get(teamID)!;
+
+        teamNameElm.$appendCSS("selected-epic-container");
+    }
+
+    unhighlightAllTeamExcept(activeTeamID: string) {
+        for (let [teamID, elm] of this.teamNamesMap.entries()) {
+            if (teamID == activeTeamID) {
+                continue;
+            }
+
+            elm.$removeCSS("selected-epic-container");
+        }
+    }
 }
 
 export class TeamsNamesViewController extends lib.BaseViewController implements lib.IObserver {
@@ -73,6 +90,8 @@ export class TeamsNamesViewController extends lib.BaseViewController implements 
     initController() {
         lib.Observable.subscribe(OSubjectWillUpdateTeamName, this);
         lib.Observable.subscribe(OSubjectChangedTeamEpicHeightBounds, this);
+        lib.Observable.subscribe(OSubjectEpicSelected, this);
+        lib.Observable.subscribe(OSubjectUnHighlightAllEpic, this);
 
         super.initController();
     }
@@ -94,7 +113,25 @@ export class TeamsNamesViewController extends lib.BaseViewController implements 
                 this.updateTeamContainerHeight(teamID, height);
                 break;
             }
+            case OSubjectEpicSelected: {
+                const { epic } = state.value;
+                this.onEpicSelected(epic);
+                break;
+            }
+            case OSubjectUnHighlightAllEpic: {
+                const { epic } = state.value;
+                this.onUnhighlightNonselectedTeams(epic);
+                break;
+            }
         }
+    }
+
+    private onEpicSelected(epic: Epic) {
+        this.teamsNamesView.highlightTeam(epic.TeamID);
+    }
+
+    private onUnhighlightNonselectedTeams(epic: Epic) {
+        this.teamsNamesView.unhighlightAllTeamExcept(epic.TeamID);
     }
 
     private updateTeamContainerHeight(teamID: any, height: any) {

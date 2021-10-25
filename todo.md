@@ -2,7 +2,7 @@
     [X] Highlight selected epic
     [X] Highlight Upstream dependencies
     [X] Highlight Downstream dependencies
-    [] Highlight releated team
+    [X] Highlight related team
     [] Dim dependency connections for teams that are not a dependency
         [] Dim Upstream dependency
         [] Dim Downstream dependency

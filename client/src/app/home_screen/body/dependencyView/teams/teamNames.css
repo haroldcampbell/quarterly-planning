@@ -74,11 +74,21 @@
     text-overflow: ellipsis;
 }
 
-.team-names-container-wrapper .team-names-container li.selected {
+/* .team-names-container-wrapper .team-names-container li.selected {
     background-color: #eae7e7;
 }
 
 .team-names-container-wrapper .team-names-container li.selected div {
     background-color: #707070;
     color: #f3f5f4;
+} */
+
+.team-names-container li.selected-epic-container {
+    background-color: #f9f8f8;
+    /* opacity: 0.5; */
+}
+
+.team-names-container-wrapper li.selected-epic-container .team-name {
+    border: solid 1px #0c4472;
+    border-width: 2;
 }
