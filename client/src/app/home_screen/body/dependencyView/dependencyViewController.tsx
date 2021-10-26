@@ -3,6 +3,7 @@ import * as lib from "../../../../core/lib";
 import * as dataStore from "../../../data/dataStore";
 import { OSubjectViewAddDependencyDialog } from "../../selectedEpicDetails/addDependencyDialogController";
 import { Team, TeamEpics, Epic, OSubjectDataStoreReady, OSubjectCreateNewEpicRequest, TeamEpicDependency, EpicID, OSubjectChangedTeamEpicHeightBounds } from "../../_defs";
+import { AllTeamsResponse } from "../../_defsServerResponses";
 
 /** @jsx gtap.$jsx */
 
@@ -53,12 +54,13 @@ export class DependencyViewController extends lib.BaseViewController implements 
         lib.Observable.subscribe(OSubjectCreateNewEpicRequest, this);
         lib.Observable.subscribe(OSubjectRedrawDependencyConnections, this);
 
+        this.fetchData();
+
         super.initView();
     }
 
     loadData() {
         this.teams = dataStore.getTeams();
-
         this.teams.forEach((t) => {
             let epics = dataStore.getEpicsByTeamID(t.ID);
 
@@ -72,6 +74,22 @@ export class DependencyViewController extends lib.BaseViewController implements 
 
         this.teamNamesController.initData(this.teams);
         this.teamEpicsViewController.initData(this.teamEpics);
+    }
+
+    fetchData() {
+        lib.apiRequest(
+            `/teams`,
+            (ajax, data: any) => {
+                const result: AllTeamsResponse = data.jsonBody;
+
+                dataStore.setTeams(result.Teams);
+                dataStore.setEpics(result.Epics);
+                dataStore.createTeamEpics();
+
+                dataStore.wireServerData();
+            },
+            () => { }
+        );
     }
 
     onUpdate(subject: string, state: lib.ObserverState): void {

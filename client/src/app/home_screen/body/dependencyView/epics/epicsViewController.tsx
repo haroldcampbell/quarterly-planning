@@ -492,7 +492,6 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
         this.xOffset = RowPadding;
         this.possibleEpicSlots = new Map<string, EpicID>();
 
-        console.log(">>[layoutAllEpics]this.teamEpics", this.teamEpics)
         this.teamEpics.Epics?.forEach((e) => {
             this.layoutEpic(e);
         });

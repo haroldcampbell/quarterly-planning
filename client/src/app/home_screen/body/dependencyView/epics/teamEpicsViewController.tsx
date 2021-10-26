@@ -327,7 +327,6 @@ export class TeamEpicsViewController extends lib.BaseViewController implements l
 
         this.lastControllerBounds = undefined;
         this.epicControllers.forEach((controller) => {
-            console.log(">>this.lastControllerBounds:", this.lastControllerBounds);
             controller.layoutAllEpicsWithBounds(this.lastControllerBounds);
         })
 

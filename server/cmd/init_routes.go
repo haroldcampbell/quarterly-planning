@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"dependency/server/pkg/common"
+	"dependency/server/pkg/routes/api_routes"
 	"dependency/server/pkg/routes/www_routes"
 	"fmt"
 
@@ -75,6 +76,9 @@ func InitAPIRoutes() {
 
 	// Create routes
 	utils.Log(stem, "Wiring routers...")
+
+	api_routes.NewTeamRouter(router)
+
 	//
 	// printAllRoutes()
 	utils.Log(stem, "Done initializing API routes...")

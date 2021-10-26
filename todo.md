@@ -1,42 +1,51 @@
-[X] Select epic
-    [X] Highlight selected epic
-    [X] Highlight Upstream dependencies
-    [X] Highlight Downstream dependencies
-    [X] Highlight related team
-    [X] Dim the unrelated epics
-    [] Dim dependency connections for teams that are not a dependency
-        [] Dim Upstream dependency
-        [] Dim Downstream dependency
+-- Migrate client-site in-memory data to server-side in-memory
+
+[X] Load site with data from server
+    [X] Create the core structs
+        []X Team
+        [X] TeamEpic
+        [X] Epic
+    [X] Retrieve and load site from Routes
+
+[] Create data on the server
+    [] TeamEpic
+    [] Upstream Dependency
+    [] Downstream Dependency
+    [] Team
+    [] Save data back to JSON file
+
+[] Add ability to update server data
+    [] Update Team Name
+    [] Update Epic Name
+    [] Update Epic Downstream Dependency
+    [] Update Epic Upstream Dependency
 
 ========
 NEXT
 ========
 
---
+[] Migrate to MongoDB
 
-[] Migrate client-site in-memory data to server-side in-memory
-    [] Identify APIs
-        [] CRUD Team.Epic
-        [] CRUD TeamEpic.Upstream Dependency
-        [] CRUD TeamEpic.Downstream Dependency
-        [] CRUD Team
-    [] Create routes
+[] Add ability to delete data from site
     [] Delete Team
     [] Delete Epic
+    [] Delete Upstream Dependency
+    [] Delete Downstream Dependency
 
-[] Migrate to MongoDB
 
 [] Dependency conflicts
     [] Highlight conflicts between epics that end after upstream start dependency
     [] Highlight conflicts between epics that start after upstream dependency
     [] Use multiple rows when epics over-lap
 
-[] Update Epic details
+[] (Client-side) Update Epic details in the
     [] Change Epic Start date
     [] Change Epic size using a drop-down
 
-[] Create new Team
-    [] Create new Epic when team has zero epics
+[] Save Epic detail changes to the server
+
+[] Create new Team via CreateTeam button
+
 
 [] FIX: Put dependency connections on top of the epics after new epic created
 
@@ -144,11 +153,25 @@ NEXT
  DONE
 ========
 
+--
+
+[X] Select epic
+    [X] Highlight selected epic
+    [X] Highlight Upstream dependencies
+    [X] Highlight Downstream dependencies
+    [X] Highlight related team
+    [X] Dim the unrelated epics
+    [X] Dim dependency connections for teams that are not a dependency
+        [X] Dim Upstream dependency
+        [X] Dim Downstream dependency
+
 [X] Ensure Team name is truncated when too long
 
 [X] Update Team UI to match new design
 
 [X] BUG: Line separator doesn't span all the months when there are few epics in one month
+
+[X] Create new Epic when team has zero epics
 
 [X] Create epics
     [X] Update UX to allow adding epics based on the new design
