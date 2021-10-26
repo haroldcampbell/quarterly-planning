@@ -1,57 +1,50 @@
 -- Migrate client-site in-memory data to server-side in-memory
 
-[X] Load site with data from server
-    [X] Create the core structs
-        []X Team
-        [X] TeamEpic
-        [X] Epic
-    [X] Retrieve and load site from Routes
-
 [] Create data on the server
     [] TeamEpic
     [] Upstream Dependency
     [] Downstream Dependency
-    [] Team
-    [] Save data back to JSON file
-
-[] Add ability to update server data
-    [] Update Team Name
-    [] Update Epic Name
-    [] Update Epic Downstream Dependency
-    [] Update Epic Upstream Dependency
+    [] Delete Upstream Dependency
+    [] Delete Downstream Dependency
+    [] Save data to persistent store (JSON or MongoDB)
 
 ========
 NEXT
 ========
 
+[] Add ability to save updated data to the server
+    [] Update Team Name
+    [] Update Epic Name
+    [] Update Epic Downstream Dependency
+    [] Update Epic Upstream Dependency
+
 [] Migrate to MongoDB
+
+--
 
 [] Add ability to delete data from site
     [] Delete Team
     [] Delete Epic
-    [] Delete Upstream Dependency
-    [] Delete Downstream Dependency
 
+[] (Client-side) Update Epic details in the
+    [] Change Epic Start date
+    [] Change Epic size using a drop-down
+
+[] Save changes to Epic Details back to the server
+
+[] Create new Team via CreateTeam button
+    [] New team appears on screen
+    [] Epics can be added to new team
+    [] New team is saved to the server
+
+--
 
 [] Dependency conflicts
     [] Highlight conflicts between epics that end after upstream start dependency
     [] Highlight conflicts between epics that start after upstream dependency
     [] Use multiple rows when epics over-lap
 
-[] (Client-side) Update Epic details in the
-    [] Change Epic Start date
-    [] Change Epic size using a drop-down
-
-[] Save Epic detail changes to the server
-
-[] Create new Team via CreateTeam button
-
-
-[] FIX: Put dependency connections on top of the epics after new epic created
-
 [] FIX: Scrollbars
-
-[] Edit team name by clicking on the Team Name directly
 
 --
 
@@ -75,11 +68,14 @@ NEXT
  OPPORTUNITIES
 ========
 
+
 [] Read Team Epics from JIRA
 
 [] Write Team Epic changes to JIRA
 
 [] Sync change with JIRA
+
+[] Edit team name by clicking on the Team Name directly
 
 [] Side-Panels
     [] Collapse Team side-panel
@@ -152,6 +148,13 @@ NEXT
 ========
  DONE
 ========
+
+[X] Load site with data from server
+    [X] Create the core structs
+        []X Team
+        [X] TeamEpic
+        [X] Epic
+    [X] Retrieve and load site from Routes
 
 --
 
