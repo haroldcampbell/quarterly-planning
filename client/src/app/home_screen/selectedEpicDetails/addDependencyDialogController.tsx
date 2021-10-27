@@ -240,12 +240,18 @@ export class AddDependencyDialogController extends lib.BaseViewController {
     }
 
     onCreateEpicDependencies() {
-        dataStore.updateUpstreamEpics(this.DownstreamEpic, Array.from(this.selectedUpstreamEpics.values()));
-        dataStore.updateDownstreamEpics(this.DownstreamEpic, Array.from(this.selectedDownstreamEpics.values()));
 
-        lib.Observable.notify(OSubjectRedrawDependencyConnections, {
-            source: this,
-            value: { downstreamEpic: this.DownstreamEpic }
-        });
+        dataStore.RequestCreateDependencyConnections(
+            this.DownstreamEpic.ID,
+            Array.from(this.selectedUpstreamEpics.values()).map(epic => epic.ID),
+            Array.from(this.selectedDownstreamEpics.values()).map(epic => epic.ID)
+        );
+
+        // dataStore.updateDownstreamEpics(this.DownstreamEpic, Array.from(this.selectedDownstreamEpics.values()));
+
+        // lib.Observable.notify(OSubjectRedrawDependencyConnections, {
+        //     source: this,
+        //     value: { downstreamEpic: this.DownstreamEpic }
+        // });
     }
 }

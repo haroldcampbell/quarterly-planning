@@ -3,7 +3,7 @@ import * as lib from "../../../../core/lib";
 import * as dataStore from "../../../data/dataStore";
 import { OSubjectViewAddDependencyDialog } from "../../selectedEpicDetails/addDependencyDialogController";
 import { Team, TeamEpics, Epic, OSubjectDataStoreReady, OSubjectCreateNewEpicRequest, TeamEpicDependency, EpicID, OSubjectChangedTeamEpicHeightBounds } from "../../_defs";
-import { AllTeamsResponse } from "../../_defsServerResponses";
+import { AllTeamsResponse, CreateTeamResponse, URLAllTeams, URLCreateEpic } from "../../_defsServerResponses";
 
 /** @jsx gtap.$jsx */
 
@@ -78,7 +78,7 @@ export class DependencyViewController extends lib.BaseViewController implements 
 
     fetchData() {
         lib.apiRequest(
-            `/teams`,
+            URLAllTeams,
             (ajax, data: any) => {
                 const result: AllTeamsResponse = data.jsonBody;
 
@@ -111,6 +111,12 @@ export class DependencyViewController extends lib.BaseViewController implements 
     }
 
     onRequestCreateNewEpic(epic: Epic, epicController: EpicsViewController) {
+        dataStore.RequestCreateTeamEpics(epic, (newEpic) => {
+            this.onEpicCreated(newEpic, epicController);
+        })
+    }
+
+    onEpicCreated(epic: Epic, epicController: EpicsViewController) {
         dataStore.addNewEpicAtIndex(epic);
         epicController.addNewTeamEpic(epic);
         this.teamEpicsViewController.bindEpicToController(epic, epicController);

@@ -1,12 +1,12 @@
 -- Migrate client-site in-memory data to server-side in-memory
 
 [] Create data on the server
-    [] TeamEpic
-    [] Upstream Dependency
-    [] Downstream Dependency
-    [] Delete Upstream Dependency
-    [] Delete Downstream Dependency
-    [] Save data to persistent store (JSON or MongoDB)
+    [X] TeamEpic
+    [X] Upstream Dependency
+    [X] Downstream Dependency
+    [X] Delete Upstream Dependency
+    [X] Delete Downstream Dependency
+    [] Update client UI without refreshing the page
 
 ========
 NEXT
@@ -19,12 +19,16 @@ NEXT
     [] Update Epic Upstream Dependency
 
 [] Migrate to MongoDB
+    [] Save data to persistent store (JSON or MongoDB)
 
 --
 
 [] Add ability to delete data from site
     [] Delete Team
     [] Delete Epic
+
+[] BUG: Remove selected epic from Dependency Dialog
+[] BUG: Make sure dependency paths do not respond to the mouse clicks
 
 [] (Client-side) Update Epic details in the
     [] Change Epic Start date

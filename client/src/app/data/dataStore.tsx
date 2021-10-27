@@ -6,6 +6,7 @@ import { addEpicToTeamEpic } from "./teamEpics";
 export * from "./teams"
 export * from "./epics"
 export * from "./teamEpics"
+export * from "./connections"
 
 export function addNewEpicAtIndex(epic: Epic) {
     addEpicToTeamEpic(epic.TeamID, epic);

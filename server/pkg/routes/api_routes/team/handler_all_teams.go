@@ -9,8 +9,8 @@ import (
 )
 
 type AllTeamsResponse struct {
-	Teams []data.Team
-	Epics []data.Epic
+	Teams []*data.Team
+	Epics []*data.Epic
 }
 
 func (rt *TeamRouter) AllTeamsHandler(w http.ResponseWriter, r *http.Request) {

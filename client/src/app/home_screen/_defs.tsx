@@ -30,7 +30,7 @@ export enum EpicSizes {
 }
 
 export type Epic = {
-    ID: string;
+    ID: EpicID;
     TeamID: string;
     Name: string;
     Size: EpicSizes;

@@ -6,16 +6,6 @@ import (
 	"dependency/server/pkg/routes/www_routes"
 	"fmt"
 
-	// "groundtap/app/desktop_app/groundtap-server/pkg/common"
-	// "groundtap/app/desktop_app/groundtap-server/pkg/data/models"
-	// "groundtap/app/desktop_app/groundtap-server/pkg/data/mongo"
-	// "groundtap/app/desktop_app/groundtap-server/pkg/routes/api_routes/admin_console_router"
-	// "groundtap/app/desktop_app/groundtap-server/pkg/routes/api_routes/canvas_element_router"
-	// "groundtap/app/desktop_app/groundtap-server/pkg/routes/api_routes/data_group_router"
-	// "groundtap/app/desktop_app/groundtap-server/pkg/routes/api_routes/datastore_router"
-	// "groundtap/app/desktop_app/groundtap-server/pkg/routes/api_routes/project_router"
-	// "groundtap/app/desktop_app/groundtap-server/pkg/routes/api_routes/waitinglist_router"
-	// "groundtap/app/desktop_app/groundtap-server/pkg/routes/www_routes"
 	"net/http"
 
 	"github.com/gorilla/csrf"
@@ -77,7 +67,7 @@ func InitAPIRoutes() {
 	// Create routes
 	utils.Log(stem, "Wiring routers...")
 
-	api_routes.NewTeamRouter(router)
+	api_routes.NewAPIRouters(router)
 
 	//
 	// printAllRoutes()
