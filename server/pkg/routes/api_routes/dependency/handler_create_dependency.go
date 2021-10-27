@@ -23,17 +23,8 @@ func (rt *DependencyRouter) CreateDependencyHandler(w http.ResponseWriter, r *ht
 	upstreamEpicIDs := &[]string{}
 	activeEpicID := r.FormValue("active-epic-id")
 
-	downstreamIDsJSON := r.FormValue("downstream-connection-epic-ids")
-	err := json.Unmarshal([]byte(downstreamIDsJSON), downstreamEpicIDs)
-	if err != nil {
-		logger.Error("Error reading downstreamIDsJSON from client : %v Error: %s\n", downstreamIDsJSON, err)
-		serverutils.RespondWithError(as, logger, common.InvalidClientDataMessage, http.StatusNotFound)
-
-		return
-	}
-
 	upstreamIDsJSON := r.FormValue("upstream-connection-epic-ids")
-	err = json.Unmarshal([]byte(upstreamIDsJSON), upstreamEpicIDs)
+	err := json.Unmarshal([]byte(upstreamIDsJSON), upstreamEpicIDs)
 	if err != nil {
 		logger.Error("Error reading upstreamIDsJSON from client : %v Error: %s\n", upstreamIDsJSON, err)
 		serverutils.RespondWithError(as, logger, common.InvalidClientDataMessage, http.StatusNotFound)
@@ -41,7 +32,16 @@ func (rt *DependencyRouter) CreateDependencyHandler(w http.ResponseWriter, r *ht
 		return
 	}
 
-	data.CreateEpicDependencyConnections(activeEpicID, *downstreamEpicIDs, *upstreamEpicIDs)
+	downstreamIDsJSON := r.FormValue("downstream-connection-epic-ids")
+	err = json.Unmarshal([]byte(downstreamIDsJSON), downstreamEpicIDs)
+	if err != nil {
+		logger.Error("Error reading downstreamIDsJSON from client : %v Error: %s\n", downstreamIDsJSON, err)
+		serverutils.RespondWithError(as, logger, common.InvalidClientDataMessage, http.StatusNotFound)
+
+		return
+	}
+
+	data.CreateEpicDependencyConnections(activeEpicID, *upstreamEpicIDs, *downstreamEpicIDs)
 
 	// if err != nil {
 	// 	logger.Error("Failed to create new Epic.TeamID[%s]: %v", model.TeamID, err)

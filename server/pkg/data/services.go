@@ -55,23 +55,33 @@ func addDownstreamEpic(upstreamEpicID string, downstreamEpicID string) {
 }
 
 func removeDownstreamEpicByID(epicID string) {
-	var index = -1
 	downstreamEpicIDs := getDownstreamEpicsByID(epicID)
 
-	for i, ID := range downstreamEpicIDs {
-		if ID == epicID {
-			index = i
-			break
-		}
-	}
-
-	if index != -1 {
+	if found, index := arrayHasElementStr(epicID, downstreamEpicIDs); found {
 		downstreamEpicIDs = append(downstreamEpicIDs[:index], downstreamEpicIDs[index+1:]...)
 		setDownstreamEpicsByID(epicID, downstreamEpicIDs)
 	}
 }
 
-func createUpstreamEpics(downstreamEpic *Epic, upstreamEpics []*Epic) {
+func removeEpicAsUpstream(downstreamEpic *Epic, upstreamEpicID string) {
+	if downstreamEpic.Upstreams == nil {
+		return
+	}
+
+	tempEpic := GetEpicByID(upstreamEpicID)
+
+	if found, index := arrayHasElementStr(tempEpic.ID, downstreamEpic.Upstreams); found {
+		downstreamEpic.Upstreams = append(downstreamEpic.Upstreams[:index], downstreamEpic.Upstreams[index+1:]...)
+	}
+}
+
+func createUpstreamEpics(downstreamEpic *Epic, upstreamEpicIDs []string) {
+	upstreamEpics := make([]*Epic, 0, len(upstreamEpicIDs))
+	for _, epicID := range upstreamEpicIDs {
+		tempEpic := GetEpicByID(epicID)
+		upstreamEpics = append(upstreamEpics, tempEpic)
+	}
+
 	if downstreamEpic.Upstreams == nil {
 		downstreamEpic.Upstreams = make([]string, 0)
 	}
@@ -88,44 +98,16 @@ func createUpstreamEpics(downstreamEpic *Epic, upstreamEpics []*Epic) {
 	}
 }
 
-func removeUpstreamEpicByID(downstreamEpic *Epic, upstreamEpicID string) {
-	if downstreamEpic.Upstreams == nil {
-		return
-	}
-
-	var index = -1
-
-	for i, ID := range downstreamEpic.Upstreams {
-		if ID == upstreamEpicID {
-			index = i
-			break
-		}
-	}
-
-	if index != -1 {
-		downstreamEpic.Upstreams = append(downstreamEpic.Upstreams[:index], downstreamEpic.Upstreams[index+1:]...)
-	}
-}
-
-func toArr(arr ...interface{}) []interface{} {
-	return arr
-}
-
-func arrayHasElement(arr []interface{}, elm interface{}) (bool, int) {
-	for index, item := range arr {
-		if item == elm {
-			return true, index
-		}
-	}
-
-	return false, -1
-}
-
-func createDownstreamEpics(upstreamEpic *Epic, downstreamEpics []*Epic) {
+func createDownstreamEpics(upstreamEpic *Epic, downstreamEpicIDs []string) {
 	epics := GetEpics()
-
 	for _, e := range epics {
-		removeUpstreamEpicByID(e, upstreamEpic.ID)
+		removeEpicAsUpstream(e, upstreamEpic.ID)
+	}
+
+	downstreamEpics := make([]*Epic, 0, len(downstreamEpicIDs))
+	for _, epicID := range downstreamEpicIDs {
+		tempEpic := GetEpicByID(epicID)
+		downstreamEpics = append(downstreamEpics, tempEpic)
 	}
 
 	for _, downstreamEpic := range downstreamEpics {
@@ -133,8 +115,9 @@ func createDownstreamEpics(upstreamEpic *Epic, downstreamEpics []*Epic) {
 			downstreamEpic.Upstreams = make([]string, 0)
 		}
 
-		if found, _ := arrayHasElement(toArr(downstreamEpic.Upstreams), upstreamEpic.ID); !found {
-			return
+		if found, _ := arrayHasElementStr(upstreamEpic.ID, downstreamEpic.Upstreams); found {
+			/* Move on since already contained as upstream epic */
+			continue
 		}
 
 		downstreamEpic.Upstreams = append(downstreamEpic.Upstreams, upstreamEpic.ID)
@@ -142,27 +125,15 @@ func createDownstreamEpics(upstreamEpic *Epic, downstreamEpics []*Epic) {
 	}
 }
 
-func CreateEpicDependencyConnections(activeEpicID string, downstreamEpicIDs []string, upstreamEpicIDs []string) error {
+func CreateEpicDependencyConnections(activeEpicID string, upstreamEpicIDs []string, downstreamEpicIDs []string) error {
 	activeEpic := GetEpicByID(activeEpicID)
 
 	if activeEpic == nil {
 		return fmt.Errorf("Unknow/Invalid Epic ID: %v", activeEpicID)
 	}
 
-	downStreamEpics := make([]*Epic, 0, len(downstreamEpicIDs))
-	for _, epicID := range downstreamEpicIDs {
-		tempEpic := GetEpicByID(epicID)
-		downStreamEpics = append(downStreamEpics, tempEpic)
-	}
-
-	upStreamEpics := make([]*Epic, 0, len(upstreamEpicIDs))
-	for _, epicID := range downstreamEpicIDs {
-		tempEpic := GetEpicByID(epicID)
-		upStreamEpics = append(upStreamEpics, tempEpic)
-	}
-
-	createUpstreamEpics(activeEpic, downStreamEpics)
-	createDownstreamEpics(activeEpic, upStreamEpics)
+	createUpstreamEpics(activeEpic, upstreamEpicIDs)
+	createDownstreamEpics(activeEpic, downstreamEpicIDs)
 
 	return nil
 }

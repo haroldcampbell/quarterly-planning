@@ -93,16 +93,14 @@ export function processDownstreamEpics() {
     _downStreamsByEpicID = downStreamsEpicIDsMap;
 }
 
-export function RequestCreateDependencyConnections(activeEpicID: EpicID,
-    upstreamEpicIDs: EpicID[],
-    downstreamEpicIDs: EpicID[]) {
+export function RequestCreateDependencyConnections(activeEpicID: EpicID, upstreamEpicIDs: EpicID[], downstreamEpicIDs: EpicID[], callback: (r: any) => void) {
 
     lib.apiPostRequest(
         URLCreateDependencyConnetions,
         (formData: FormData) => {
             formData.append("active-epic-id", activeEpicID);
-            formData.append("downstream-connection-epic-ids", JSON.stringify(upstreamEpicIDs));
-            formData.append("upstream-connection-epic-ids", JSON.stringify(downstreamEpicIDs));
+            formData.append("upstream-connection-epic-ids", JSON.stringify(upstreamEpicIDs));
+            formData.append("downstream-connection-epic-ids", JSON.stringify(downstreamEpicIDs));
         },
         (ajax, data) => {
             if (data.successStatus == false) {
@@ -113,9 +111,8 @@ export function RequestCreateDependencyConnections(activeEpicID: EpicID,
             console.log(">>data", data)
 
             const response: CreateDependencyConnetionsResponse = data.jsonBody
-            // epic.ID = response.EpicID;
 
-            // onEpicCreatedCallback(epic);
+            callback(response)
         },
     );
 }

@@ -1,12 +1,7 @@
 -- Migrate client-site in-memory data to server-side in-memory
 
-[] Create data on the server
-    [X] TeamEpic
-    [X] Upstream Dependency
-    [X] Downstream Dependency
-    [X] Delete Upstream Dependency
-    [X] Delete Downstream Dependency
-    [] Update client UI without refreshing the page
+[] Migrate to MongoDB
+    [] Save data to persistent store (JSON or MongoDB)
 
 ========
 NEXT
@@ -17,9 +12,6 @@ NEXT
     [] Update Epic Name
     [] Update Epic Downstream Dependency
     [] Update Epic Upstream Dependency
-
-[] Migrate to MongoDB
-    [] Save data to persistent store (JSON or MongoDB)
 
 --
 
@@ -152,6 +144,15 @@ NEXT
 ========
  DONE
 ========
+
+[X] Create data on the server
+    [X] TeamEpic
+    [X] Upstream Dependency
+    [X] Downstream Dependency
+    [X] Delete Upstream Dependency
+    [X] Delete Downstream Dependency
+    [X] Update client UI without refreshing the page
+
 
 [X] Load site with data from server
     [X] Create the core structs

@@ -60,10 +60,10 @@ var epics = []*Epic{
 		Name:                "Epic SME3",
 		ExpectedStartPeriod: 4,
 		Size:                1,
-		Upstreams: []string{
-			"2",
-			"6",
-		},
+		// Upstreams: []string{
+		// 	"2",
+		// 	"6",
+		// },
 	},
 	{
 		ID:                  "10-1",
@@ -75,7 +75,7 @@ var epics = []*Epic{
 	{
 		ID:                  "10-2",
 		TeamID:              "A3",
-		Name:                "Epic SME4",
+		Name:                "Epic SME5",
 		ExpectedStartPeriod: 4,
 		Size:                2,
 	},
