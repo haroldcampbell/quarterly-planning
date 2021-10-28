@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"dependency/server/pkg/common"
+	"dependency/server/pkg/data"
 	"dependency/server/pkg/routes/api_routes"
 	"dependency/server/pkg/routes/www_routes"
 	"fmt"
@@ -16,7 +17,7 @@ import (
 
 var mongoURL = "mongo:27017"
 
-const dbName = "epicz_app_db"
+const DBName = "epicz_app_db"
 
 var router = mux.NewRouter()
 
@@ -61,13 +62,32 @@ func InitAPIRoutes() {
 
 	utils.Log(stem, "Initializing API routes...")
 
+	utils.Log(stem, "Attempting to connect to database...")
+	mongoConfig := data.NewMongoConfig(mongoURL, DBName)
+	session, err := data.NewSession(mongoConfig)
+	if err != nil {
+		msg := utils.ErrorMsg(stem, "Unable to connect to database: %v", err)
+		panic(msg)
+	}
+	buildInfo, _ := session.Copy().BuildInfo()
+	utils.Log(stem, "Mongo BuildInfo:%v", buildInfo)
+
 	// Initialize services
+	servicesMap := make(map[string]interface{})
+
 	utils.Log(stem, "Wiring services...")
+	teamService := data.NewTeamService(session.Copy(), mongoConfig)
+	epicService := data.NewEpicService(session.Copy(), mongoConfig)
+	downstreamService := data.NewDownstreamService(session.Copy(), mongoConfig)
+
+	servicesMap[data.EpicServiceKey] = epicService
+	servicesMap[data.TeamServiceKey] = teamService
+	servicesMap[data.DownstreamServiceKey] = downstreamService
 
 	// Create routes
 	utils.Log(stem, "Wiring routers...")
 
-	api_routes.NewAPIRouters(router)
+	api_routes.NewAPIRouters(router, servicesMap)
 
 	//
 	// printAllRoutes()

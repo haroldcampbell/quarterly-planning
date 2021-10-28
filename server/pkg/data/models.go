@@ -13,8 +13,3 @@ type Epic struct {
 	Size                float32
 	Upstreams           []string /* List of Epic IDs*/
 }
-
-// type TeamEpics struct {
-// 	TeamID string
-// 	Epics  []*Epic /* The Epics for the specified team*/
-// }

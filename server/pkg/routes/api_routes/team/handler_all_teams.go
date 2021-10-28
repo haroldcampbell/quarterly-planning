@@ -1,6 +1,7 @@
 package team
 
 import (
+	"dependency/server/pkg/common"
 	"dependency/server/pkg/data"
 	"net/http"
 
@@ -9,8 +10,8 @@ import (
 )
 
 type AllTeamsResponse struct {
-	Teams []*data.Team
-	Epics []*data.Epic
+	Teams []data.Team
+	Epics []data.Epic
 }
 
 func (rt *TeamRouter) AllTeamsHandler(w http.ResponseWriter, r *http.Request) {
@@ -18,20 +19,29 @@ func (rt *TeamRouter) AllTeamsHandler(w http.ResponseWriter, r *http.Request) {
 	var logger = utils.NewGoRoutineLogger("allTeamsHandler")
 	as := &serverutils.ActionStatus{Action: "allTeamsHandler", Writer: w}
 
-	// TODO: [SECURITY#OWNERSHIP][allCanvasElementsHandler] Check ownership
-	// projectGUID := r.FormValue("project-guid")
-	// logger.Log("projectGUID: %s", projectGUID)
+	// TODO: [SECURITY#OWNERSHIP] Check ownership
 
-	response := AllTeamsResponse{
-		Teams: rt.GetTeams(),
-		Epics: rt.GetEpics(),
+	teamService := rt.ServicesMap[data.TeamServiceKey].(*data.TeamServiceMongo)
+	epicService := rt.ServicesMap[data.EpicServiceKey].(*data.EpicServiceMongo)
+
+	teams, err := teamService.GetTeams()
+	if err != nil {
+		logger.Error("Failed to execute GetTeams(): %v", err)
+		serverutils.RespondWithError(as, logger, common.NothingFoundErrorMessage, http.StatusNotFound)
+		return
 	}
 
-	// if err != nil {
-	// logger.Error("Failed to execute AllCanvasElements(...) for projectGUID[%s]: %v", projectGUID, err)
-	// serverutils.RespondWithError(as, logger, common.NothingFoundErrorMessage, http.StatusNotFound)
-	// return
-	// }
+	epics, err := epicService.GetEpics()
+	if err != nil {
+		logger.Error("Failed to execute GetEpics(): %v", err)
+		serverutils.RespondWithError(as, logger, common.NothingFoundErrorMessage, http.StatusNotFound)
+		return
+	}
+
+	response := AllTeamsResponse{
+		Teams: teams,
+		Epics: epics,
+	}
 
 	as.JSONBody = response
 	data, err := as.Write(true, "ok")

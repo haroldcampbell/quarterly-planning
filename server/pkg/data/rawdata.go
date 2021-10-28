@@ -81,21 +81,21 @@ var epics = []*Epic{
 	},
 }
 
-var _downStreamsByEpicID = make(map[string][]string)
+// var _downStreamsByEpicID = make(map[string][]string)
 
-func initDownstreamEpics() {
-	for _, downstreamEpic := range epics {
-		if downstreamEpic.Upstreams == nil {
-			continue
-		}
+// func initDownstreamEpics() {
+// 	for _, downstreamEpic := range epics {
+// 		if downstreamEpic.Upstreams == nil {
+// 			continue
+// 		}
 
-		for _, upstreamEpicID := range downstreamEpic.Upstreams {
-			addDownstreamEpic(upstreamEpicID, downstreamEpic.ID)
-		}
-	}
-}
+// 		for _, upstreamEpicID := range downstreamEpic.Upstreams {
+// 			addDownstreamEpic(upstreamEpicID, downstreamEpic.ID)
+// 		}
+// 	}
+// }
 
-var _ = func() int {
-	initDownstreamEpics()
-	return 0
-}()
+// var _ = func() int {
+// 	initDownstreamEpics()
+// 	return 0
+// }()

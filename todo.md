@@ -1,15 +1,23 @@
 -- Migrate client-site in-memory data to server-side in-memory
 
-[] Migrate to MongoDB
-    [] Save data to persistent store (JSON or MongoDB)
+[] Save data to persistent store (MongoDB)
+    [X] Create Team
+    [X] Create Epic
+    [X] Get all Teams
+    [X] Get all Epics
+    [] Find EpicByID
+    [] Add Upstream Dependency
+    [] Add Downstream Dependency
+    [] Remove Upstream Dependency
+    [] Remove Downstream Dependency
+    [] Update Team Name
+    [] Update Epic Name
 
 ========
 NEXT
 ========
 
 [] Add ability to save updated data to the server
-    [] Update Team Name
-    [] Update Epic Name
     [] Update Epic Downstream Dependency
     [] Update Epic Upstream Dependency
 

@@ -3,6 +3,7 @@ package main
 import (
 	"dependency/server/cmd"
 	"dependency/server/pkg/common"
+	"dependency/server/pkg/data"
 	"flag"
 	"net/http"
 	"path/filepath"
@@ -64,6 +65,8 @@ func main() {
 	cmd.InitAPIEnv()
 	cmd.InitAPIRoutes()
 	cmd.InitWWWRoutes()
+
+	data.InitializeDatabase(cmd.DBName)
 
 	// SECURITY-WARN:  the security token needs to be enable before pushing to production
 	// protectedRoute := cmd.InitProtectedRoutes()
