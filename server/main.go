@@ -3,7 +3,6 @@ package main
 import (
 	"dependency/server/cmd"
 	"dependency/server/pkg/common"
-	"dependency/server/pkg/data"
 	"flag"
 	"net/http"
 	"path/filepath"
@@ -62,11 +61,13 @@ func reportAppPath() {
 }
 
 func main() {
+	cmd.InitializeDatabase(cmd.DBName)
+
 	cmd.InitAPIEnv()
 	cmd.InitAPIRoutes()
 	cmd.InitWWWRoutes()
 
-	data.InitializeDatabase(cmd.DBName)
+	// cmd.InitializeDatabase(cmd.DBName)
 
 	// SECURITY-WARN:  the security token needs to be enable before pushing to production
 	// protectedRoute := cmd.InitProtectedRoutes()

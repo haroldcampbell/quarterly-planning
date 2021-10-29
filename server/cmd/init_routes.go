@@ -13,6 +13,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/haroldcampbell/go_utils/envutils"
 	"github.com/haroldcampbell/go_utils/utils"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 var mongoURL = "mongo:27017"
@@ -69,16 +70,16 @@ func InitAPIRoutes() {
 		msg := utils.ErrorMsg(stem, "Unable to connect to database: %v", err)
 		panic(msg)
 	}
-	buildInfo, _ := session.Copy().BuildInfo()
-	utils.Log(stem, "Mongo BuildInfo:%v", buildInfo)
+	buildInfo, _ := session.BuildInfo(mongoConfig)
+	utils.Log(stem, "Mongo BuildInfo:%v", buildInfo.(primitive.D)[0])
 
 	// Initialize services
 	servicesMap := make(map[string]interface{})
 
 	utils.Log(stem, "Wiring services...")
-	teamService := data.NewTeamService(session.Copy(), mongoConfig)
-	epicService := data.NewEpicService(session.Copy(), mongoConfig)
-	downstreamService := data.NewDownstreamService(session.Copy(), mongoConfig)
+	teamService := data.NewTeamService(session, mongoConfig)
+	epicService := data.NewEpicService(session, mongoConfig)
+	downstreamService := data.NewDownstreamService(session, mongoConfig)
 
 	servicesMap[data.EpicServiceKey] = epicService
 	servicesMap[data.TeamServiceKey] = teamService

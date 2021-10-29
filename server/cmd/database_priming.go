@@ -1,19 +1,23 @@
-package data
+package cmd
 
-import "github.com/haroldcampbell/go_utils/utils"
+import (
+	"dependency/server/pkg/data"
+
+	"github.com/haroldcampbell/go_utils/utils"
+)
 
 func InitializeDatabase(dbName string) {
 	stem := "InitializeDatabase"
 
 	utils.Log(stem, "Attempting to connect to database...")
-	mongoConfig := NewMongoConfig(mongoURL, dbName)
-	session, err := NewSession(mongoConfig)
+	mongoConfig := data.NewMongoConfig(mongoURL, dbName)
+	session, err := data.NewSession(mongoConfig)
 	if err != nil {
 		msg := utils.ErrorMsg(stem, "Unable to connect to database: %v", err)
 		panic(msg)
 	}
-	buildInfo, _ := session.Copy().BuildInfo()
-	utils.Log(stem, "Mongo BuildInfo:%v", buildInfo)
+	// buildInfo, _ := session.Copy().BuildInfo()
+	// utils.Log(stem, "Mongo BuildInfo:%v", buildInfo)
 
 	err = session.DropDatabase(dbName)
 	if err != nil {
@@ -23,8 +27,8 @@ func InitializeDatabase(dbName string) {
 
 	// Initialize services
 	utils.Log(stem, "Priming database...")
-	teamService := NewTeamService(session.Copy(), mongoConfig)
-	epicService := NewEpicService(session.Copy(), mongoConfig)
+	teamService := data.NewTeamService(session, mongoConfig)
+	epicService := data.NewEpicService(session, mongoConfig)
 
 	teamIDMapping := make(map[string]string)
 	for index, team := range teams {
@@ -46,8 +50,6 @@ func InitializeDatabase(dbName string) {
 			break
 		}
 	}
-
-	// epicIDMapping := make(map[string]string)
 
 	for _, epic := range epics {
 		epic.TeamID = teamIDMapping[epic.TeamID] // TeamID to TeamID GUID

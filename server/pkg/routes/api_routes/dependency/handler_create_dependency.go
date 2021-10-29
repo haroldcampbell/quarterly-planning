@@ -23,9 +23,12 @@ func (rt *DependencyRouter) CreateDependencyHandler(w http.ResponseWriter, r *ht
 	downstreamService := rt.ServicesMap[data.DownstreamServiceKey].(*data.DownstreamServiceMongo)
 
 	activeEpicID := r.FormValue("active-epic-id")
+	upstreamIDsJSON := r.FormValue("upstream-connection-epic-ids")
+	downstreamIDsJSON := r.FormValue("downstream-connection-epic-ids")
+
+	// TODO: Validate the input
 
 	upstreamEpicIDs := []string{}
-	upstreamIDsJSON := r.FormValue("upstream-connection-epic-ids")
 	err := json.Unmarshal([]byte(upstreamIDsJSON), &upstreamEpicIDs)
 	if err != nil {
 		logger.Error("Error reading upstreamIDsJSON from client : %v Error: %s", upstreamIDsJSON, err)
@@ -35,7 +38,6 @@ func (rt *DependencyRouter) CreateDependencyHandler(w http.ResponseWriter, r *ht
 	}
 
 	downstreamEpicIDs := []string{}
-	downstreamIDsJSON := r.FormValue("downstream-connection-epic-ids")
 	err = json.Unmarshal([]byte(downstreamIDsJSON), &downstreamEpicIDs)
 	if err != nil {
 		logger.Error("Error reading downstreamIDsJSON from client : %v Error: %s", downstreamIDsJSON, err)
@@ -68,7 +70,7 @@ func (rt *DependencyRouter) CreateDependencyHandler(w http.ResponseWriter, r *ht
 
 	err = epicService.UpdateEpic(updatedEpic)
 	if err != nil {
-		logger.Error("Error executing UpdateEpic(updatedEpic). updatedEpic: %v, Error: %s\n", updatedEpic, err)
+		logger.Error("Error executing UpdateEpic(updatedEpic). updatedEpic: %v, Error: %s", updatedEpic, err)
 		serverutils.RespondWithError(as, logger, common.InvalidClientDataMessage, http.StatusNotFound)
 
 		return

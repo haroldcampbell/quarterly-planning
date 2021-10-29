@@ -108,8 +108,6 @@ export function RequestCreateDependencyConnections(activeEpicID: EpicID, upstrea
                 return;
             }
 
-            console.log(">>data", data)
-
             const response: CreateDependencyConnetionsResponse = data.jsonBody
 
             callback(response)

@@ -3,50 +3,8 @@ package data
 import (
 	"fmt"
 
-	"gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
+	"github.com/haroldcampbell/go_utils/utils"
 )
-
-type DownstreamServiceMongo struct {
-	collection *mgo.Collection
-}
-
-type DownstreamDocument struct {
-	DID bson.ObjectId `bson:"_id,omitempty"` // DocumentID
-
-	EpicID            string
-	DownstreamEpicIDs []string
-}
-
-func NewDownstreamService(session *mgo.Session, config *MongoConfig) *DownstreamServiceMongo {
-	collection := session.DB(config.DbName).C("downstreams")
-	collection.EnsureIndex(documentIndex("DownstreamKey"))
-
-	return &DownstreamServiceMongo{collection: collection}
-}
-
-func (s *DownstreamServiceMongo) getDownstreamEpicsByID(epicID string) ([]string, error) {
-	var doc DownstreamDocument
-
-	err := s.collection.Find(bson.M{"epicid": epicID}).One(&doc)
-	if err != nil {
-		return []string{}, err
-	}
-
-	return doc.DownstreamEpicIDs, nil
-}
-
-func (s *DownstreamServiceMongo) setDownstreamEpicsByID(epicID string, IDs []string) error {
-	var doc = DownstreamDocument{
-		EpicID:            epicID,
-		DownstreamEpicIDs: IDs,
-	}
-
-	_, err := s.collection.Upsert(bson.M{"epicid": epicID}, doc)
-
-	return err
-	// _downStreamsByEpicID[epicID] = IDs
-}
 
 func (s *DownstreamServiceMongo) addDownstreamEpic(upstreamEpicID string, downstreamEpicID string) error {
 	// if _downStreamsByEpicID[upstreamEpicID] == nil {
@@ -94,6 +52,7 @@ func (s *DownstreamServiceMongo) CreateUpstreamEpics(downstreamEpic Epic, upstre
 	for _, epicID := range downstreamEpic.Upstreams {
 		err := s.removeDownstreamEpicByID(epicID)
 		if err != nil {
+			utils.Error("services_connection_utils", "Error executing removeDownstreamEpicByID(...). epicID:%v err:%v", epicID, err)
 			return Epic{}, err
 		}
 	}
@@ -103,6 +62,7 @@ func (s *DownstreamServiceMongo) CreateUpstreamEpics(downstreamEpic Epic, upstre
 		downstreamEpic.Upstreams = append(downstreamEpic.Upstreams, epic.ID)
 		err := s.addDownstreamEpic(epic.ID, downstreamEpic.ID)
 		if err != nil {
+			utils.Error("services_connection_utils", "Error executing addDownstreamEpic(...). epic.ID:%v downstreamEpic.ID:%v err:%v", epic.ID, downstreamEpic.ID, err)
 			return Epic{}, err
 		}
 	}

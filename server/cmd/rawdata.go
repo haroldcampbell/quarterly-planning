@@ -1,6 +1,8 @@
-package data
+package cmd
 
-var teams = []*Team{
+import "dependency/server/pkg/data"
+
+var teams = []*data.Team{
 	{
 		ID:   "A1",
 		Name: "Team 1",
@@ -15,7 +17,7 @@ var teams = []*Team{
 	},
 }
 
-var epics = []*Epic{
+var epics = []*data.Epic{
 	{
 		ID:                  "1-3",
 		TeamID:              "A1",
@@ -50,9 +52,9 @@ var epics = []*Epic{
 		Name:                "Epic SME2",
 		ExpectedStartPeriod: 7,
 		Size:                1,
-		Upstreams: []string{
-			"1-3",
-		},
+		// Upstreams: []string{
+		// 	"1-3",
+		// },
 	},
 	{
 		ID:                  "9",

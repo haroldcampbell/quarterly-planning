@@ -5,10 +5,10 @@
     [X] Create Epic
     [X] Get all Teams
     [X] Get all Epics
-    [] Find EpicByID
-    [] Add Upstream Dependency
+    [X] Find EpicByID
+    [X] Add Upstream Dependency
+    [X] Remove Upstream Dependency
     [] Add Downstream Dependency
-    [] Remove Upstream Dependency
     [] Remove Downstream Dependency
     [] Update Team Name
     [] Update Epic Name

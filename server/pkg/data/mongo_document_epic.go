@@ -1,11 +1,9 @@
 package data
 
-import (
-	"gopkg.in/mgo.v2/bson"
-)
+import "go.mongodb.org/mongo-driver/bson/primitive"
 
 type EpicDocument struct {
-	DID bson.ObjectId `bson:"_id,omitempty"`
+	DID primitive.ObjectID `bson:"_id,omitempty"`
 
 	Epic
 }

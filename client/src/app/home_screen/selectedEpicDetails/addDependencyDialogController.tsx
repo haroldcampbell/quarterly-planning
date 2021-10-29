@@ -250,7 +250,7 @@ export class AddDependencyDialogController extends lib.BaseViewController {
         );
     }
 
-    onEpicDependenciesCreated(r: any) {
+    onEpicDependenciesCreated(response: any) {
         dataStore.updateUpstreamEpics(this.DownstreamEpic, Array.from(this.selectedUpstreamEpics.values()));
         dataStore.updateDownstreamEpics(this.DownstreamEpic, Array.from(this.selectedDownstreamEpics.values()));
         lib.Observable.notify(OSubjectRedrawDependencyConnections, {

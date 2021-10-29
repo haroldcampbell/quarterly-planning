@@ -11,7 +11,7 @@ import (
 )
 
 type CreateTeamResponse struct {
-	ID string
+	EpicID string
 }
 
 func (rt *EpicRouter) CreateEpicHandler(w http.ResponseWriter, r *http.Request) {
@@ -43,7 +43,7 @@ func (rt *EpicRouter) CreateEpicHandler(w http.ResponseWriter, r *http.Request) 
 	}
 
 	response := CreateTeamResponse{
-		ID: newEpicID,
+		EpicID: newEpicID,
 	}
 
 	as.JSONBody = response
