@@ -21,15 +21,15 @@ var epics = []*data.Epic{
 	{
 		ID:                  "1-3",
 		TeamID:              "A1",
-		Name:                "Epic IL1",
+		Name:                "E1",
 		ExpectedStartPeriod: 2,
 		Size:                0.5,
 	},
 	{
 		ID:                  "1-4",
 		TeamID:              "A1",
-		Name:                "Epic IL1",
-		ExpectedStartPeriod: 2.5,
+		Name:                "E2",
+		ExpectedStartPeriod: 3.5,
 		Size:                0.5,
 	},
 	{
