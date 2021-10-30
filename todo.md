@@ -1,26 +1,12 @@
 -- Migrate client-site in-memory data to server-side in-memory
 
-[] Save data to persistent store (MongoDB)
-    [X] Create Team
-    [X] Create Epic
-    [X] Get all Teams
-    [X] Get all Epics
-    [X] Find EpicByID
-    [X] Add Upstream Dependency
-    [X] Remove Upstream Dependency
-    [] Add Downstream Dependency
-    [] Remove Downstream Dependency
+[] Update data on server
     [] Update Team Name
     [] Update Epic Name
 
 ========
 NEXT
 ========
-
-[] Add ability to save updated data to the server
-    [] Update Epic Downstream Dependency
-    [] Update Epic Upstream Dependency
-
 --
 
 [] Add ability to delete data from site
@@ -147,11 +133,32 @@ NEXT
 
 [] Explore adding Business Area metrics
 
+[] Add a Kanban board to track the progress of conflicts
 
+[] Dashboard progress tracking and reporting
+    [] Team-level
+    [] Valuestream-level
+    [] Project-level that spans multiple valuestreams
+    [] Business Area-level (that spans multiple projects/valuestreams)
 
+[] Smart/live notes for documenting decisions and various specification gathering/documentation
 ========
  DONE
 ========
+
+[X] Save data to persistent store (MongoDB)
+    [X] Create Team
+    [X] Create Epic
+    [X] Get all Teams
+    [X] Get all Epics
+    [X] Find EpicByID
+    [X] Add Upstream Dependency
+    [X] Remove Upstream Dependency
+    [X] Add Downstream Dependency
+    [X] Remove Downstream Dependency
+    [X] Add ability to save updated data to the server
+        [X] Update Epic Downstream Dependency
+        [X] Update Epic Upstream Dependency
 
 [X] Create data on the server
     [X] TeamEpic
@@ -160,7 +167,6 @@ NEXT
     [X] Delete Upstream Dependency
     [X] Delete Downstream Dependency
     [X] Update client UI without refreshing the page
-
 
 [X] Load site with data from server
     [X] Create the core structs

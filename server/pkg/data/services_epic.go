@@ -153,8 +153,8 @@ func (s *EpicServiceMongo) UnlinkEpicAsUpstream(upstreamEpic Epic) error {
 		if found, index := arrayHasElementStr(upstreamEpic.ID, downstreamEpicDoc.Upstreams); found {
 			downstreamEpicDoc.Upstreams = append(downstreamEpicDoc.Upstreams[:index], downstreamEpicDoc.Upstreams[index+1:]...)
 
-			update := bson.D{{Key: "upstreams", Value: downstreamEpicDoc.Upstreams}}
-			_, err := s.collection.UpdateOne(*s.ctx, bson.M{"_id": downstreamEpicDoc.ID}, bson.D{{Key: "$set", Value: update}})
+			update := bson.D{{Key: "epic.upstreams", Value: downstreamEpicDoc.Epic.Upstreams}}
+			_, err := s.collection.UpdateOne(*s.ctx, bson.M{"_id": downstreamEpicDoc.DID}, bson.D{{Key: "$set", Value: update}})
 			if err != nil {
 				utils.Error("services_epics", "RemoveEpicAsUpstream: Error executing UpdateOne(...). downstreamEpicDoc._id:%v doc:%v err:%v", downstreamEpicDoc.ID, downstreamEpicDoc, err)
 				return err

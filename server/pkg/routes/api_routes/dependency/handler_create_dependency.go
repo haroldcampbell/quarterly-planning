@@ -86,15 +86,12 @@ func (rt *DependencyRouter) CreateDependencyHandler(w http.ResponseWriter, r *ht
 
 	epicService.UnlinkEpicAsUpstream(activeEpic)
 
-	logger.Log("[BEFORE] downstreamEpics %v", downstreamEpics)
 	downstreamEpics, err = downstreamService.CreateDownstreamEpics(activeEpic, downstreamEpics)
 	if err != nil {
 		logger.Error("Error executing CreateDownstreamEpics(activeEpic, downstreamEpics). activeEpic: %v downstreamEpics: %v, Error: %s", activeEpic, downstreamEpics, err)
 		serverutils.RespondWithError(as, logger, common.InvalidClientDataMessage, http.StatusNotFound)
 
 	}
-
-	logger.Log("[AFTER] downstreamEpics %v", downstreamEpics)
 
 	err = epicService.UpdateEpicsUpstreams(downstreamEpics)
 	if err != nil {
@@ -104,12 +101,7 @@ func (rt *DependencyRouter) CreateDependencyHandler(w http.ResponseWriter, r *ht
 		return
 	}
 
-	downstreamEpics, _ = epicService.GetEpicsByID(downstreamEpicIDs)
-	logger.Log("[VALIDATION] downstreamEpics %v", downstreamEpics)
-
-	response := CreateDependencyResponse{
-		// ID: newModel.ID,
-	}
+	response := CreateDependencyResponse{}
 
 	as.JSONBody = response
 	data, err := as.Write(true, "ok")

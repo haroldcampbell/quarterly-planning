@@ -65,16 +65,6 @@ func (s *DownstreamServiceMongo) CreateUpstreamEpics(downstreamEpic Epic, upstre
 	return downstreamEpic, nil
 }
 
-// func removeEpicAsUpstream(downstreamEpic *Epic, upstreamEpic Epic) {
-// 	if downstreamEpic.Upstreams == nil {
-// 		return
-// 	}
-
-// 	if found, index := arrayHasElementStr(upstreamEpic.ID, downstreamEpic.Upstreams); found {
-// 		downstreamEpic.Upstreams = append(downstreamEpic.Upstreams[:index], downstreamEpic.Upstreams[index+1:]...)
-// 	}
-// }
-
 func (s *DownstreamServiceMongo) CreateDownstreamEpics(upstreamEpic Epic, downstreamEpics []Epic) ([]Epic, error) {
 	for index, downstreamEpic := range downstreamEpics {
 		if downstreamEpic.Upstreams == nil {
@@ -83,12 +73,10 @@ func (s *DownstreamServiceMongo) CreateDownstreamEpics(upstreamEpic Epic, downst
 
 		if found, _ := arrayHasElementStr(upstreamEpic.ID, downstreamEpic.Upstreams); found {
 			/* Move on since already contained as upstream epic */
-			utils.Log(">>services_connection_utils[CreateDownstreamEpics]", "Continuing. Found upstreamEpic.ID[%v] in downstreamEpic.Upstreams[%v]", upstreamEpic.ID, downstreamEpic.Upstreams)
 			continue
 		}
 
 		downstreamEpic.Upstreams = append(downstreamEpic.Upstreams, upstreamEpic.ID)
-		utils.Log(">>services_connection_utils[CreateDownstreamEpics]", "Adding downstreamEpic(%v).Upstreams(%v) <- upstreamEpic.ID(%v)", downstreamEpic.ID, downstreamEpic.Upstreams, upstreamEpic.ID)
 		err := s.addDownstreamEpic(upstreamEpic.ID, downstreamEpic.ID)
 		if err != nil {
 			utils.Error("services_connection_utils", "CreateDownstreamEpics: Error executing addDownstreamEpic(...). upstreamEpic.ID:%v downstreamEpic.ID:%v err:%v", upstreamEpic.ID, downstreamEpic.ID, err)
