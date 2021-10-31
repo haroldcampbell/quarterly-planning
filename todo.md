@@ -1,8 +1,8 @@
 -- Migrate client-site in-memory data to server-side in-memory
 
-[] Update name data on server
+[X] Update name data on server
     [X] Update Team Name
-    [] Update Epic Name
+    [X] Update Epic Name
 
 ========
 NEXT

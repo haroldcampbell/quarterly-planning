@@ -11,6 +11,9 @@ export type CreateTeamResponse = {
     EpicID: EpicID
 }
 
+export const URLUpdateEpic = "/epic/update";
+
+
 export const URLCreateDependencyConnetions = "/dependency/create";
 export type CreateDependencyConnetionsResponse = {}
 

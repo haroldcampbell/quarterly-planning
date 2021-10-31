@@ -23,6 +23,7 @@ func newEpicRouter(r *mux.Router, servicesMap map[string]interface{}) {
 	}
 
 	r.Path("/epic/create").HandlerFunc(router.CreateEpicHandler).Methods("POST")
+	r.Path("/epic/update").HandlerFunc(router.UpdateEpicHandler).Methods("POST")
 }
 
 func newDependencyRouter(r *mux.Router, servicesMap map[string]interface{}) {

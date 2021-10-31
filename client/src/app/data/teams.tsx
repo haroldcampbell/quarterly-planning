@@ -32,16 +32,6 @@ export function getTeamByID(teamID: string): Team {
     return _teamsMap.get(teamID)!
 }
 
-// export function UpdateTeamName(teamID: string, value: string) {
-//     const team = getTeamByID(teamID);
-
-//     team.Name = value;
-//     lib.Observable.notify(OSubjectWillUpdateTeamName, {
-//         source: undefined,
-//         value: { team: team },
-//     });
-// }
-
 export function getTeamIDs(): string[] {
     return Array.from(_teamIDs);
 }
@@ -58,11 +48,11 @@ export function RequestUpdateTeam(teamID: string, value: string, onTeamUpdatedCa
         },
         (ajax, data) => {
             if (data.successStatus == false) {
-                alert("Error update team. Please try again.");
+                alert("Error updating team. Please try again.");
                 return;
             }
 
-            console.log(">>>[] data.jsonBody", data.jsonBody)
+            console.log(">>>[RequestUpdateTeam] data.jsonBody", data.jsonBody)
 
             onTeamUpdatedCallback(team);
         },

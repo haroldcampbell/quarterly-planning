@@ -77,21 +77,16 @@ func (s *EpicServiceMongo) GetEpics() ([]Epic, error) {
 }
 
 func (s *EpicServiceMongo) UpdateEpic(epic Epic) error {
-	var doc EpicDocument
-
-	err := s.collection.FindOne(*s.ctx, bson.M{"epic.id": epic.ID}).Decode(&doc)
-	if err != nil {
-		utils.Error("services_epics", "Error executing FindOne(...). epic.ID:%v err:%v", epic.ID, err)
-		return err
+	update := bson.D{
+		{Key: "epic.name", Value: epic.Name},
+		{Key: "epic.expectedstartperiod", Value: epic.ExpectedStartPeriod},
+		{Key: "epic.size", Value: epic.Size},
+		{Key: "epic.upstreams", Value: epic.Upstreams},
 	}
-	teamID := doc.Epic.TeamID
 
-	doc.Epic = epic
-	doc.Epic.TeamID = teamID
-
-	_, err = s.collection.UpdateOne(*s.ctx, bson.M{"epic.id": epic.ID}, bson.D{{Key: "$set", Value: doc}})
+	_, err := s.collection.UpdateOne(*s.ctx, bson.M{"epic.id": epic.ID}, bson.D{{Key: "$set", Value: update}})
 	if err != nil {
-		utils.Error("services_epics", "Error executing UpdateOne(...). epic.ID:%v doc:%v err:%v", epic.ID, doc, err)
+		utils.Error("services_epics", "Error executing UpdateOne(...). epic.ID:%v err:%v", epic.ID, err)
 		return err
 	}
 

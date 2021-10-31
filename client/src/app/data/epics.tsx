@@ -1,6 +1,6 @@
 import * as lib from "../../core/lib";
 import { Epic, EpicID, OSubjectWillUpdateEpicName } from "../home_screen/_defs";
-import { URLCreateEpic, CreateTeamResponse } from "../home_screen/_defsServerResponses";
+import { URLCreateEpic, CreateTeamResponse, URLUpdateEpic } from "../home_screen/_defsServerResponses";
 import { getEpicsByTeamID } from "./teamEpics";
 import { processDownstreamEpics } from "./connections";
 
@@ -17,16 +17,6 @@ export function getEpics(): Epic[] {
 
 export function addEpic(epic: Epic) {
     _epicsByID.set(epic.ID, epic);
-}
-
-export function UpdateEpicName(epicID: string, value: string) {
-    const epic = getEpicByID(epicID);
-
-    epic!.Name = value;
-    lib.Observable.notify(OSubjectWillUpdateEpicName, {
-        source: undefined,
-        value: { epic: epic },
-    });
 }
 
 export function setEpics(epics: Epic[]) {
@@ -57,6 +47,29 @@ export function RequestCreateTeamEpics(epic: Epic, onEpicCreatedCallback: (newEp
             epic.ID = response.EpicID;
 
             onEpicCreatedCallback(epic);
+        },
+    );
+}
+
+/** Updates epic on the remote sever */
+export function RequestUpdateEpic(epicID: string, value: string, onEpicUpdatedCallback: (newEpic: Epic) => void): void {
+    const epic = getEpicByID(epicID)!;
+    epic.Name = value;
+
+    lib.apiPostRequest(
+        URLUpdateEpic,
+        (formData: FormData) => {
+            formData.append("epic-json-data", JSON.stringify(epic));
+        },
+        (ajax, data) => {
+            if (data.successStatus == false) {
+                alert("Error updating epic. Please try again.");
+                return;
+            }
+
+            console.log(">>>[RequestUpdateEpic] data.jsonBody", data.jsonBody)
+
+            onEpicUpdatedCallback(epic);
         },
     );
 }
