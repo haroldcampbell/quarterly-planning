@@ -7,7 +7,7 @@ import { EpicDetailsView } from "./epicDetailsView";
 import { TeamNameDetailsView } from "./teamNameDetailsView";
 import { UpstreamDetailsView } from "./upstreamDetailsView";
 
-import { DateMonthPeriod, Epic, EpicID, InputChangeCallback, SelectedEpicDetailsDataOptions, TeamEpicDependency } from "../_defs";
+import { DateMonthPeriod, Epic, EpicID, InputChangeCallback, OSubjectWillUpdateTeamName, SelectedEpicDetailsDataOptions, Team, TeamEpicDependency } from "../_defs";
 
 /** @jsx gtap.$jsx */
 
@@ -153,7 +153,12 @@ export class SelectedEpicDetailsController extends lib.BaseViewController implem
         const node = e!.target as HTMLInputElement;
         node.blur();
 
-        dataStore.UpdateTeamName(this.selectedEpic.TeamID, node.value);
+        dataStore.RequestUpdateTeam(this.selectedEpic.TeamID, node.value, (team: Team) => {
+            lib.Observable.notify(OSubjectWillUpdateTeamName, {
+                source: undefined,
+                value: { team: team },
+            });
+        });
     }
 
     onInputChangedEpicName(e: Event) {

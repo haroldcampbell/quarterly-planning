@@ -14,6 +14,7 @@ func newTeamRouter(r *mux.Router, servicesMap map[string]interface{}) {
 	}
 
 	r.Path("/teams").HandlerFunc(router.AllTeamsHandler)
+	r.Path("/team/update").HandlerFunc(router.UpdateTeamHandler).Methods("POST")
 }
 
 func newEpicRouter(r *mux.Router, servicesMap map[string]interface{}) {

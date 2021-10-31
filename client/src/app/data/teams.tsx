@@ -1,5 +1,6 @@
 import * as lib from "../../core/lib";
 import { OSubjectWillUpdateTeamName, Team } from "../home_screen/_defs";
+import { URLUpdateTeam } from "../home_screen/_defsServerResponses";
 
 const _teamIDs: string[] = [];
 const _teamsMap = new Map<string, Team>();
@@ -31,16 +32,39 @@ export function getTeamByID(teamID: string): Team {
     return _teamsMap.get(teamID)!
 }
 
-export function UpdateTeamName(teamID: string, value: string) {
-    const team = getTeamByID(teamID);
+// export function UpdateTeamName(teamID: string, value: string) {
+//     const team = getTeamByID(teamID);
 
-    team.Name = value;
-    lib.Observable.notify(OSubjectWillUpdateTeamName, {
-        source: undefined,
-        value: { team: team },
-    });
-}
+//     team.Name = value;
+//     lib.Observable.notify(OSubjectWillUpdateTeamName, {
+//         source: undefined,
+//         value: { team: team },
+//     });
+// }
 
 export function getTeamIDs(): string[] {
     return Array.from(_teamIDs);
+}
+
+/** Updates a team on the remote sever */
+export function RequestUpdateTeam(teamID: string, value: string, onTeamUpdatedCallback: (newTeam: Team) => void): void {
+    const team = getTeamByID(teamID);
+    team.Name = value;
+
+    lib.apiPostRequest(
+        URLUpdateTeam,
+        (formData: FormData) => {
+            formData.append("team-json-data", JSON.stringify(team));
+        },
+        (ajax, data) => {
+            if (data.successStatus == false) {
+                alert("Error update team. Please try again.");
+                return;
+            }
+
+            console.log(">>>[] data.jsonBody", data.jsonBody)
+
+            onTeamUpdatedCallback(team);
+        },
+    );
 }

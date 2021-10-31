@@ -12,6 +12,6 @@ export type CreateTeamResponse = {
 }
 
 export const URLCreateDependencyConnetions = "/dependency/create";
-export type CreateDependencyConnetionsResponse = {
+export type CreateDependencyConnetionsResponse = {}
 
-}
+export const URLUpdateTeam = "/team/update";

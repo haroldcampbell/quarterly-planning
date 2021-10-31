@@ -33,7 +33,6 @@ func (rt *EpicRouter) CreateEpicHandler(w http.ResponseWriter, r *http.Request) 
 	}
 
 	epicService := rt.ServicesMap[data.EpicServiceKey].(*data.EpicServiceMongo)
-
 	newEpicID, err := epicService.CreateEpic(model)
 
 	if err != nil {

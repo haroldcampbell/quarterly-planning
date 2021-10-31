@@ -5,6 +5,8 @@ import (
 	"time"
 
 	"github.com/haroldcampbell/go_utils/serverutils"
+	"github.com/haroldcampbell/go_utils/utils"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -58,4 +60,15 @@ func (s *TeamServiceMongo) GetTeams() ([]Team, error) {
 	}
 
 	return result, err
+}
+
+func (s *TeamServiceMongo) UpdateTeam(team Team) error {
+	update := bson.D{{Key: "team.name", Value: team.Name}}
+	_, err := s.collection.UpdateOne(*s.ctx, bson.M{"team.id": team.ID}, bson.D{{Key: "$set", Value: update}})
+	if err != nil {
+		utils.Error("services_team", "Error executing UpdateOne(...). team.ID:%v err:%v", team.ID, team, err)
+		return err
+	}
+
+	return nil
 }
