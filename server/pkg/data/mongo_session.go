@@ -9,27 +9,13 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// func documentIndex(documentKey string) mgo.Index {
-// 	return mgo.Index{
-// 		Key:        []string{documentKey},
-// 		Unique:     true,
-// 		DropDups:   true,
-// 		Background: true,
-// 		Sparse:     true,
-// 		Collation: &mgo.Collation{
-// 			Locale:   "en",
-// 			Strength: 2,
-// 		},
-// 	}
-// }
-
 var NilFilter = bson.D{{}}
 
 func documentIndex(documentKey string) mongo.IndexModel {
 	t := true
 
 	return mongo.IndexModel{
-		Keys: bson.D{{documentKey, 1}},
+		Keys: bson.D{{Key: documentKey, Value: 1}},
 		Options: &options.IndexOptions{
 			Unique: &t,
 			// DropDups:   true,

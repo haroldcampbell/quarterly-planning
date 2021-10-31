@@ -58,7 +58,6 @@ NEXT
  OPPORTUNITIES
 ========
 
-
 [] Read Team Epics from JIRA
 
 [] Write Team Epic changes to JIRA
