@@ -78,3 +78,16 @@ func (s *DownstreamServiceMongo) setDownstreamEpicsByID(epicID string, IDs []str
 
 	return nil
 }
+
+func (s *DownstreamServiceMongo) DeleteConnectionsByEpicID(epicID string) (int64, error) {
+	results, err := s.collection.DeleteMany(*s.ctx, bson.M{"epicid": epicID})
+	if err != nil {
+		utils.Error("services_connection_db", "DeleteConnectionsByEpicID: Error executing DeleteMany(...). epicid:%v err:%v", epicID, err)
+		return results.DeletedCount, err
+	}
+
+	utils.Log("services_connection_db", "DeleteConnectionsByEpicID(%v) results: %v", epicID, results.DeletedCount)
+
+	return results.DeletedCount, nil
+
+}

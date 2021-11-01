@@ -2,6 +2,7 @@
     max-height: 100px;
     position: relative;
     overflow: auto;
+    border-bottom: solid 1px #eae7e7;
 }
 
 .dependency-table-view-container table {

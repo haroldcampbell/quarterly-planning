@@ -1,26 +1,19 @@
--- Migrate client-site in-memory data to server-side in-memory
-
-[X] Update name data on server
-    [X] Update Team Name
-    [X] Update Epic Name
+[] Add ability to delete data from site
+    [X] Delete Epic
+    [] Delete Team
 
 ========
 NEXT
 ========
---
-
-[] Add ability to delete data from site
-    [] Delete Team
-    [] Delete Epic
 
 [] BUG: Remove selected epic from Dependency Dialog
 [] BUG: Make sure dependency paths do not respond to the mouse clicks
+[] BUG: Dependencies don't show up in Side-panel until after refresh
 
 [] (Client-side) Update Epic details in the
     [] Change Epic Start date
     [] Change Epic size using a drop-down
-
-[] Save changes to Epic Details back to the server
+    [] Save changes to Epic Details back to the server
 
 [] Create new Team via CreateTeam button
     [] New team appears on screen
@@ -144,6 +137,12 @@ NEXT
 ========
  DONE
 ========
+
+-- Migrate client-site in-memory data to server-side in-memory
+
+[X] Update name data on server
+    [X] Update Team Name
+    [X] Update Epic Name
 
 [X] Save data to persistent store (MongoDB)
     [X] Create Team

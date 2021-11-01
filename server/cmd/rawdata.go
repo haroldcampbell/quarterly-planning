@@ -31,6 +31,9 @@ var epics = []*data.Epic{
 		Name:                "E2",
 		ExpectedStartPeriod: 3.5,
 		Size:                0.5,
+		Upstreams: []string{
+			"1-3",
+		},
 	},
 	{
 		ID:                  "2",
@@ -52,9 +55,9 @@ var epics = []*data.Epic{
 		Name:                "Epic SME2",
 		ExpectedStartPeriod: 7,
 		Size:                1,
-		// Upstreams: []string{
-		// 	"1-3",
-		// },
+		Upstreams: []string{
+			"1-3",
+		},
 	},
 	{
 		ID:                  "9",
@@ -62,10 +65,12 @@ var epics = []*data.Epic{
 		Name:                "Epic SME3",
 		ExpectedStartPeriod: 4,
 		Size:                1,
-		// Upstreams: []string{
-		// 	"2",
-		// 	"6",
-		// },
+		Upstreams: []string{
+			"1-3",
+			"1-4",
+			"2",
+			"6",
+		},
 	},
 	{
 		ID:                  "10-1",

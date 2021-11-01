@@ -1,7 +1,9 @@
+import path from "path/posix";
 import * as gtap from "../../../../../../www/dist/js/gtap";
 import * as lib from "../../../../../core/lib";
 import { EpicControllerBounds, MilliSecondsInDay, MinWeekCellWidth, ShapeYOffset, SVGMaxContextWidth } from "../../../../common/nodePositions";
 import * as dataStore from "../../../../data/dataStore";
+import { OSubjectDidDeleteEpic } from "../../../selectedEpicDetails/selectedEpicDetailsViewController";
 
 import { DateMonthPeriod, Epic, EpicID, GTapElement, OSubjectHighlightDownstreamEpic, OSubjectHighlightUpstreamEpic, OSubjectUnHighlightAllEpic, PathInfo, SVGContainerID, TeamEpics, TeamID, WeekDetail, XYOnly } from "../../../_defs";
 import { EpicsViewController } from "./epicsViewController";
@@ -179,6 +181,7 @@ export class TeamEpicsViewController extends lib.BaseViewController implements l
         lib.Observable.subscribe(OSubjectUnHighlightAllEpic, this);
         lib.Observable.subscribe(OSubjectHighlightUpstreamEpic, this);
         lib.Observable.subscribe(OSubjectHighlightDownstreamEpic, this);
+        lib.Observable.subscribe(OSubjectDidDeleteEpic, this);
 
         super.initView();
     }
@@ -208,6 +211,11 @@ export class TeamEpicsViewController extends lib.BaseViewController implements l
             case OSubjectHighlightDownstreamEpic: {
                 const { downstreamEpicID, activeEpicID } = state.value;
                 this.onHighlightDownstreamConnections(downstreamEpicID, activeEpicID);
+                break;
+            }
+            case OSubjectDidDeleteEpic: {
+                const { epic } = state.value;
+                this.unlinkDeletedEpicConnections(epic.ID)
                 break;
             }
         }
@@ -356,6 +364,17 @@ export class TeamEpicsViewController extends lib.BaseViewController implements l
         const end = this.calcDownstreamEnd(downstreamSVGNode);
 
         return { start: start, end: end };
+    }
+
+    private unlinkDeletedEpicConnections(epicID: string) {
+        // TODO: The code blocks below are not the most optimal. They can be optimized
+        this.dependencyConnections.forEach((pathInfo) => {
+            if (pathInfo.upstreamEpicID == epicID || pathInfo.downstreamEpicID == epicID) {
+                pathInfo.p.remove();
+            }
+        })
+        this.dependencyConnections = this.dependencyConnections.filter(pathInfo => pathInfo.upstreamEpicID != epicID);
+        this.dependencyConnections = this.dependencyConnections.filter(pathInfo => pathInfo.downstreamEpicID != epicID);
     }
 
     private dependencyConnections: PathInfo[] = [];

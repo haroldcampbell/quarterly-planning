@@ -29,6 +29,7 @@ func InitializeDatabase(dbName string) {
 	utils.Log(stem, "Priming database...")
 	teamService := data.NewTeamService(session, mongoConfig)
 	epicService := data.NewEpicService(session, mongoConfig)
+	downstreamService := data.NewDownstreamService(session, mongoConfig)
 
 	teamIDMapping := make(map[string]string)
 	for index, team := range teams {
@@ -51,16 +52,41 @@ func InitializeDatabase(dbName string) {
 		}
 	}
 
+	var newEpics = make([]*data.Epic, 0)
+	epicIDMapping := make(map[string]string)
+
 	for _, epic := range epics {
 		epic.TeamID = teamIDMapping[epic.TeamID] // TeamID to TeamID GUID
 
 		utils.Log(stem, "Inserting epic data: %v", epic)
-		// oldEpicID := epic.ID
-		_, err := epicService.CreateEpic(epic)
+		oldEpicID := epic.ID
+		newEpicID, err := epicService.CreateEpic(epic)
 		if err != nil {
 			utils.Log(stem, "Failed to insert epic: %v", err)
 		}
 
-		// epicIDMapping[oldEpicID] = newEpicID
+		epic.ID = newEpicID
+		epicIDMapping[oldEpicID] = newEpicID
+		newEpics = append(newEpics, epic)
 	}
+
+	for _, epic := range newEpics {
+		if epic.Upstreams == nil || len(epic.Upstreams) == 0 {
+			continue
+		}
+
+		// upstreamEpicIDs := []string{}
+
+		for index, oldID := range epic.Upstreams {
+			newEpicID := epicIDMapping[oldID]
+			// upstreamEpicIDs = append(upstreamEpicIDs, newEpicID)
+			epic.Upstreams[index] = newEpicID
+		}
+		upstreamEpics, _ := epicService.GetEpicsByID(epic.Upstreams)
+
+		updatedEpic, _ := downstreamService.CreateUpstreamEpics(*epic, upstreamEpics)
+		epicService.UpdateEpic(updatedEpic)
+
+	}
+
 }

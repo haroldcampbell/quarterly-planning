@@ -6,7 +6,7 @@ import { IViewController, IScreenController } from "../../../../../core/lib";
 import { calcSVGNodesXYForWeek, ColGap, EpicControllerBounds, epicSizeToWidth, MinWeekCellWidth, placeTextWithEllipsis, RowPadding, ShapeYOffset, SVGMaxContextWidth, TextShapeYGap } from "../../../../common/nodePositions";
 import { DateMonthPeriod, Epic, EpicID, EpicSizes, EpicViewSVGNode, OSubjectChangedTeamEpicHeightBounds, OSubjectCreateNewEpicRequest, OSubjectDimUnhighlightedEpics, OSubjectHighlightDownstreamEpic, OSubjectHighlightUpstreamEpic, OSubjectUnHighlightAllEpic, OSubjectWillUpdateEpicName, SVGContainerID, TeamEpics, XYOnly } from "../../../_defs";
 
-import { OSubjectEpicSelected } from "../../../selectedEpicDetails/selectedEpicDetailsViewController";
+import { OSubjectDidDeleteEpic, OSubjectEpicSelected } from "../../../selectedEpicDetails/selectedEpicDetailsViewController";
 import { OSubjectTeamEpicsScrollContainerResized } from "./teamEpicsViewController";
 
 /** @jsx gtap.$jsx */
@@ -226,6 +226,8 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
         lib.Observable.subscribe(OSubjectHighlightDownstreamEpic, this);
         lib.Observable.subscribe(OSubjectUnHighlightAllEpic, this);
         lib.Observable.subscribe(OSubjectDimUnhighlightedEpics, this);
+        lib.Observable.subscribe(OSubjectDidDeleteEpic, this);
+
 
         super.initController();
     }
@@ -288,6 +290,10 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
                 this.onDimUnhighlightedEpics();
                 break;
             }
+            case OSubjectDidDeleteEpic: {
+                const { epic } = state.value;
+                this.removeDeletedEpic(epic);
+            }
         }
     }
 
@@ -341,6 +347,22 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
         this.dimmedEpicSVGNodes = [];
         this.highlightedUpstreamEpicSVGNodes = [];
         this.highlightedDownstreamEpicSVGNodes = [];
+    }
+
+    private removeDeletedEpic(deletedEpic: Epic) {
+        if (!this.epicsViewSVGMap.has(deletedEpic.ID)) {
+            return;
+        }
+
+        lib.Observable.notify(OSubjectUnHighlightAllEpic, {
+            source: this,
+            value: { epic: deletedEpic },
+        });
+
+        const epicViewSVGNode = this.epicsViewSVGMap.get(deletedEpic.ID)!;
+
+        epicViewSVGNode.svgTextNode.remove();
+        epicViewSVGNode.svgRectNode.remove();
     }
 
     private highlightSelectedEpic(selectedEpicViewSVGNode: EpicViewSVGNode) {

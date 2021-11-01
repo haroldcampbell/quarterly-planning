@@ -93,13 +93,22 @@ func (s *EpicServiceMongo) UpdateEpic(epic Epic) error {
 	return nil
 }
 
+func (s *EpicServiceMongo) UpdateEpicsUpstream(downstreamEpic Epic) error {
+	update := bson.D{{Key: "epic.upstreams", Value: downstreamEpic.Upstreams}}
+	_, err := s.collection.UpdateOne(*s.ctx, bson.M{"epic.id": downstreamEpic.ID}, bson.D{{Key: "$set", Value: update}})
+	if err != nil {
+		utils.Error("services_epics", "UpdateEpicsUpstream: Error executing UpdateOne(...). downstreamEpic._id:%v err:%v", downstreamEpic.ID, err)
+		return err
+	}
+
+	return nil
+}
+
 // UpdateEpicsUpstreams will update only the Upstream attribute for the specified epics
 func (s *EpicServiceMongo) UpdateEpicsUpstreams(downstreamEpics []Epic) error {
 	for _, downstreamEpic := range downstreamEpics {
-		update := bson.D{{Key: "epic.upstreams", Value: downstreamEpic.Upstreams}}
-		_, err := s.collection.UpdateOne(*s.ctx, bson.M{"epic.id": downstreamEpic.ID}, bson.D{{Key: "$set", Value: update}})
+		err := s.UpdateEpicsUpstream(downstreamEpic)
 		if err != nil {
-			utils.Error("services_epics", "UpdateEpicsUpstreams: Error executing UpdateOne(...). downstreamEpic._id:%v err:%v", downstreamEpic.ID, err)
 			return err
 		}
 	}
@@ -133,10 +142,10 @@ func (s *EpicServiceMongo) GetEpicsByID(epicIDs []string) ([]Epic, error) {
 	return filteredEpics, nil
 }
 
-func (s *EpicServiceMongo) UnlinkEpicAsUpstream(upstreamEpic Epic) error {
+func (s *EpicServiceMongo) UnlinkEpicAsUpstreamByEpicID(upstreamEpicID string) error {
 	docs, err := s.getEpicDocuments()
 	if err != nil {
-		utils.Error("services_epics", "RemoveEpicAsUpstream: Calling getEpicDocuments() failed. err:%v", err)
+		utils.Error("services_epics", "UnlinkEpicAsUpstreamByEpicID: Calling getEpicDocuments() failed. err:%v", err)
 		return err
 	}
 
@@ -145,17 +154,56 @@ func (s *EpicServiceMongo) UnlinkEpicAsUpstream(upstreamEpic Epic) error {
 			continue
 		}
 
-		if found, index := arrayHasElementStr(upstreamEpic.ID, downstreamEpicDoc.Upstreams); found {
+		if found, index := arrayHasElementStr(upstreamEpicID, downstreamEpicDoc.Upstreams); found {
 			downstreamEpicDoc.Upstreams = append(downstreamEpicDoc.Upstreams[:index], downstreamEpicDoc.Upstreams[index+1:]...)
 
 			update := bson.D{{Key: "epic.upstreams", Value: downstreamEpicDoc.Epic.Upstreams}}
 			_, err := s.collection.UpdateOne(*s.ctx, bson.M{"_id": downstreamEpicDoc.DID}, bson.D{{Key: "$set", Value: update}})
 			if err != nil {
-				utils.Error("services_epics", "RemoveEpicAsUpstream: Error executing UpdateOne(...). downstreamEpicDoc._id:%v doc:%v err:%v", downstreamEpicDoc.ID, downstreamEpicDoc, err)
+				utils.Error("services_epics", "UnlinkEpicAsUpstreamByEpicID: Error executing UpdateOne(...). downstreamEpicDoc._id:%v doc:%v err:%v", downstreamEpicDoc.ID, downstreamEpicDoc, err)
 				return err
 			}
 		}
 	}
 
 	return nil
+}
+
+// func (s *EpicServiceMongo) UnlinkEpicAsUpstream(upstreamEpic Epic) error {
+// 	docs, err := s.getEpicDocuments()
+// 	if err != nil {
+// 		utils.Error("services_epics", "RemoveEpicAsUpstream: Calling getEpicDocuments() failed. err:%v", err)
+// 		return err
+// 	}
+
+// 	for _, downstreamEpicDoc := range docs {
+// 		if downstreamEpicDoc.Upstreams == nil {
+// 			continue
+// 		}
+
+// 		if found, index := arrayHasElementStr(upstreamEpic.ID, downstreamEpicDoc.Upstreams); found {
+// 			downstreamEpicDoc.Upstreams = append(downstreamEpicDoc.Upstreams[:index], downstreamEpicDoc.Upstreams[index+1:]...)
+
+// 			update := bson.D{{Key: "epic.upstreams", Value: downstreamEpicDoc.Epic.Upstreams}}
+// 			_, err := s.collection.UpdateOne(*s.ctx, bson.M{"_id": downstreamEpicDoc.DID}, bson.D{{Key: "$set", Value: update}})
+// 			if err != nil {
+// 				utils.Error("services_epics", "RemoveEpicAsUpstream: Error executing UpdateOne(...). downstreamEpicDoc._id:%v doc:%v err:%v", downstreamEpicDoc.ID, downstreamEpicDoc, err)
+// 				return err
+// 			}
+// 		}
+// 	}
+
+// 	return nil
+// }
+
+func (s EpicServiceMongo) DeleteEpicByEpicID(epicID string) (int64, error) {
+	results, err := s.collection.DeleteMany(*s.ctx, bson.M{"epic.id": epicID})
+	if err != nil {
+		utils.Error("services_epics", "DeleteEpicByID: Error executing DeleteMany(...). epic.id:%v err:%v", epicID, err)
+		return results.DeletedCount, err
+	}
+
+	utils.Log("services_epics", "DeleteEpicByID(%v) results: %v", epicID, results.DeletedCount)
+
+	return results.DeletedCount, nil
 }

@@ -57,16 +57,11 @@
 .selected-epic-details-container__team-name,
 .selected-epic-details-container__epic,
 .selected-epic-details-container__upstream,
-.selected-epic-details-container__downstream {
+.selected-epic-details-container__downstream,
+.selected-epic-details-container__delete-controls {
     padding: 20px 15px;
     background-color: #fff;
 }
-
-/* .selected-epic-details-container__epic .alt-info {
-    padding: 0 10px;
-    font-size: 12px;
-    color: #9f9f9f;
-} */
 
 .selected-epic-details-container__upstream .dependency-info,
 .selected-epic-details-container__downstream .dependency-info {
@@ -109,4 +104,33 @@
     color: #eae7e7;
     background-color: #707070;
     cursor: pointer;
+}
+
+.selected-epic-details-container__delete-controls div.warning {
+    border: solid 1px #c21d4f;
+    border-radius: 5px;
+    /* background-color: #fff; */
+    padding: 10px 5px;
+}
+
+.selected-epic-details-container__delete-controls label.warning {
+    color: #c21d4f;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+.selected-epic-details-container__delete-controls .button-container {
+    text-align: center;
+}
+
+.selected-epic-details-container__delete-controls .deleteButton {
+    background-color: #c21d4f;
+    color: #fff;
+    padding: 5px 10px;
+    display: inline-block;
+    border: none;
+    border-radius: 10px;
+    height: 40px;
+    width: 200px;
+    align-self: center;
 }

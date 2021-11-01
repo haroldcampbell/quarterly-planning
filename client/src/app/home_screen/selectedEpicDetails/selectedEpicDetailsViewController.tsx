@@ -15,10 +15,12 @@ import "./layoutGrid.css"
 import "./selectedEpicDetailsView.css"
 import { OSubjectRedrawDependencyConnections } from "../body/dependencyView/epics/teamEpicsViewController";
 import { OSubjectViewAddDependencyDialog } from "./addDependencyDialogController";
+import { DeleteControlsView } from "./deleteControlsView";
 
 export const OSubjectEpicSelected = "epic-selected"; /** Fired when epic is selected */
 export const OSubjectHideEpicDetails = "hide-epic-details";
-
+export const OSubjectDidDeleteEpic = "deleted-selected-epic";
+export const OSubjectDidDeleteTeam = "deleted-selected-team";
 class SelectedEpicDetailsView extends lib.BaseView {
     private content = <div className='selected-epic-details-view-container hide-epic-details' ></div>;
 
@@ -26,6 +28,7 @@ class SelectedEpicDetailsView extends lib.BaseView {
     private epicDetailsView = new EpicDetailsView(this.parentController);
     private upstreamView = new UpstreamDetailsView(this.parentController);
     private downstreamView = new DownstreamDetailsView(this.parentController);
+    private deleteControlsView = new DeleteControlsView(this.parentController);
 
     private selectedEpic!: Epic;
 
@@ -42,6 +45,7 @@ class SelectedEpicDetailsView extends lib.BaseView {
         this.addView(this.epicDetailsView);
         this.addView(this.upstreamView);
         this.addView(this.downstreamView);
+        this.addView(this.deleteControlsView);
 
         super.initView();
     }
@@ -60,6 +64,7 @@ class SelectedEpicDetailsView extends lib.BaseView {
         this.downstreamView.onShowDependencyDialogCallback = () => {
             this.showDependencyDialog(existingUpstreamEpics, existingDownstreamEpics);
         }
+
 
         this.content.classList.remove("hide-epic-details");
     }
@@ -80,6 +85,15 @@ class SelectedEpicDetailsView extends lib.BaseView {
         this.epicDetailsView.onInputChanged = (e: Event, dataOptionKey: string) => { callback(e, dataOptionKey) }
     }
 
+    wireOnDeleteButtonsClicked(onDeleteSelectedEpic: () => void, onDeleteSelectedTeam: () => void) {
+        this.deleteControlsView.onDeleteEpicCallback = () => {
+            onDeleteSelectedEpic();
+        }
+
+        this.deleteControlsView.onDeleteTeamCallback = () => {
+            onDeleteSelectedTeam();
+        }
+    }
     hideEpicDetails() {
         this.content.classList.add("hide-epic-details");
     }
@@ -101,7 +115,11 @@ export class SelectedEpicDetailsController extends lib.BaseViewController implem
         lib.Observable.subscribe(OSubjectRedrawDependencyConnections, this);
 
         this.detailsView.wireOnInputChanged((e: Event, dataOptionKey: string) => this.onInputChanged(e, dataOptionKey));
-
+        this.detailsView.wireOnDeleteButtonsClicked(() => {
+            this.onDeleteSelectedEpic();
+        }, () => {
+            this.onDeleteSelectedTeam()
+        });
         this.inputChangeMap.set(SelectedEpicDetailsDataOptions.TeamName, (e: Event) => this.onInputChangedTeamName(e));
         this.inputChangeMap.set(SelectedEpicDetailsDataOptions.EpicName, (e: Event) => this.onInputChangedEpicName(e));
 
@@ -125,6 +143,35 @@ export class SelectedEpicDetailsController extends lib.BaseViewController implem
             //     break;
             // }
         }
+    }
+
+    // TODO: Have to redraw all the controllers to update the epics
+    // TODO: START HERE
+
+    onDeleteSelectedEpic() {
+        const deletedEpic = this.selectedEpic;
+
+        dataStore.RequestDeleteEpic(this.selectedEpic!.ID, () => {
+            lib.Observable.notify(OSubjectDidDeleteEpic, {
+                source: undefined,
+                value: { epic: deletedEpic },
+            });
+
+            lib.Observable.notify(OSubjectHideEpicDetails, {
+                source: this,
+                value: {},
+            });
+        });
+    }
+
+    //Have to redraw re-init the dependency controller
+    onDeleteSelectedTeam() {
+        dataStore.RequestDeleteTeam(this.selectedEpic!.TeamID, (teams: Team[]) => {
+            lib.Observable.notify(OSubjectDidDeleteTeam, {
+                source: undefined,
+                value: { teams: teams },
+            });
+        });
     }
 
     onEpicSelected(epic: Epic, activePeriods: DateMonthPeriod[]) {

@@ -1,6 +1,6 @@
 import * as lib from "../../core/lib";
-import { OSubjectWillUpdateTeamName, Team } from "../home_screen/_defs";
-import { URLUpdateTeam } from "../home_screen/_defsServerResponses";
+import { OSubjectWillUpdateTeamName, Team, TeamID } from "../home_screen/_defs";
+import { URLDeleteTeam, URLUpdateTeam } from "../home_screen/_defsServerResponses";
 
 const _teamIDs: string[] = [];
 const _teamsMap = new Map<string, Team>();
@@ -51,10 +51,24 @@ export function RequestUpdateTeam(teamID: string, value: string, onTeamUpdatedCa
                 alert("Error updating team. Please try again.");
                 return;
             }
-
-            console.log(">>>[RequestUpdateTeam] data.jsonBody", data.jsonBody)
-
             onTeamUpdatedCallback(team);
+        },
+    );
+}
+
+export function RequestDeleteTeam(teamID: TeamID, onTeamDeletedCallback: (teams: Team[]) => void) {
+    lib.apiPostRequest(
+        URLDeleteTeam,
+        (formData: FormData) => {
+            formData.append("team-id", teamID);
+        },
+        (ajax, data) => {
+            if (data.successStatus == false) {
+                alert("Error removing team. Please try again.");
+                return;
+            }
+
+            onTeamDeletedCallback({} as Team[]);
         },
     );
 }

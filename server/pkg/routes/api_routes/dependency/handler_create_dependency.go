@@ -111,7 +111,10 @@ func (rt *DependencyRouter) createDownstreamEpics(logger *utils.RoutineLogger, a
 		return fmt.Errorf("Error executing GetEpicsByID(downstreamEpicIDs). downstreamEpicIDs: %v Error: %s", downstreamEpicIDs, err)
 	}
 
-	epicService.UnlinkEpicAsUpstream(activeEpic)
+	err = epicService.UnlinkEpicAsUpstreamByEpicID(activeEpic.ID)
+	if err != nil {
+		return fmt.Errorf("Error executing UnlinkEpicAsUpstreamByEpicID(activeEpic). activeEpic: %v  Error: %s", activeEpic, err)
+	}
 
 	downstreamEpics, err = downstreamService.CreateDownstreamEpics(activeEpic, downstreamEpics)
 	if err != nil {

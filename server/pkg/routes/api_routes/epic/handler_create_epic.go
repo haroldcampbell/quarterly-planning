@@ -10,7 +10,7 @@ import (
 	"github.com/haroldcampbell/go_utils/utils"
 )
 
-type CreateTeamResponse struct {
+type CreateEpicResponse struct {
 	EpicID string
 }
 
@@ -41,7 +41,7 @@ func (rt *EpicRouter) CreateEpicHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	response := CreateTeamResponse{
+	response := CreateEpicResponse{
 		EpicID: newEpicID,
 	}
 

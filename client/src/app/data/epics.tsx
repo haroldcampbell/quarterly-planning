@@ -1,8 +1,8 @@
 import * as lib from "../../core/lib";
 import { Epic, EpicID, OSubjectWillUpdateEpicName } from "../home_screen/_defs";
-import { URLCreateEpic, CreateTeamResponse, URLUpdateEpic } from "../home_screen/_defsServerResponses";
+import { URLCreateEpic, CreateTeamResponse, URLUpdateEpic, URLDeleteEpic, DeleteEpicResonse } from "../home_screen/_defsServerResponses";
 import { getEpicsByTeamID } from "./teamEpics";
-import { processDownstreamEpics } from "./connections";
+import { processDownstreamEpics, unlinkEpicConnections } from "./connections";
 
 /** Contains epicID -> Epic mapping */
 let _epicsByID: Map<string, Epic>;
@@ -67,9 +67,38 @@ export function RequestUpdateEpic(epicID: string, value: string, onEpicUpdatedCa
                 return;
             }
 
-            console.log(">>>[RequestUpdateEpic] data.jsonBody", data.jsonBody)
-
             onEpicUpdatedCallback(epic);
+        },
+    );
+}
+
+export function RequestDeleteEpic(epicID: EpicID, onEpicDeletedCallback: () => void) {
+    lib.apiPostRequest(
+        URLDeleteEpic,
+        (formData: FormData) => {
+            formData.append("epic-id", epicID);
+        },
+        (ajax, data) => {
+            if (data.successStatus == false) {
+                alert("Error removing epic. Please try again.");
+                return;
+            }
+            // unlink Upstream
+            getEpics().forEach(epic => {
+                if (epic.Upstreams === undefined || epic.Upstreams.length == 0) {
+                    return
+                }
+
+                epic.Upstreams = epic.Upstreams.filter(eID => eID != epicID)
+            })
+
+            // Unlink Downstream
+            unlinkEpicConnections(epicID);
+
+            // remove the epic for the list of epics
+            _epicsByID.delete(epicID)
+
+            onEpicDeletedCallback();
         },
     );
 }

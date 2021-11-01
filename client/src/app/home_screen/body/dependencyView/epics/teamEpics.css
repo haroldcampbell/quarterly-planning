@@ -8,6 +8,7 @@
     overflow-x: scroll;
     display: grid;
     height: 100%;
+    border-radius: 10px 0 0 0;
 }
 
 /* Date Periods: Start */
@@ -66,7 +67,6 @@
 .team-epics-scroll-container
     .period-container:first-of-type
     .month-name-container:first-of-type {
-    border-radius: 10px 0 0 0;
 }
 
 .team-epics-scroll-container .period-container .week-detail-container {

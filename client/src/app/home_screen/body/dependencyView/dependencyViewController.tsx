@@ -2,6 +2,7 @@ import * as gtap from "../../../../../www/dist/js/gtap";
 import * as lib from "../../../../core/lib";
 import * as dataStore from "../../../data/dataStore";
 import { OSubjectViewAddDependencyDialog } from "../../selectedEpicDetails/addDependencyDialogController";
+import { OSubjectDidDeleteEpic } from "../../selectedEpicDetails/selectedEpicDetailsViewController";
 import { Team, TeamEpics, Epic, OSubjectDataStoreReady, OSubjectCreateNewEpicRequest, TeamEpicDependency, EpicID, OSubjectChangedTeamEpicHeightBounds } from "../../_defs";
 import { AllTeamsResponse, CreateTeamResponse, URLAllTeams, URLCreateEpic } from "../../_defsServerResponses";
 
@@ -107,6 +108,7 @@ export class DependencyViewController extends lib.BaseViewController implements 
                 this.teamEpicsViewController.redrawDependencyConnections();
                 break;
             }
+
         }
     }
 

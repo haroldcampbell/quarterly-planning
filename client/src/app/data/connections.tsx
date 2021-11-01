@@ -13,6 +13,13 @@ export function getDownstreamEpicsByID(upstreamEpicID: EpicID): EpicID[] | undef
     return _downStreamsByEpicID.get(upstreamEpicID);
 }
 
+export function unlinkEpicConnections(deletedEpicID: EpicID) {
+    for (let [upstreamEpicID, downstreamEpicIDs] of _downStreamsByEpicID.entries()) {
+        downstreamEpicIDs = downstreamEpicIDs.filter(epicID => epicID !== deletedEpicID);
+        _downStreamsByEpicID.set(upstreamEpicID, downstreamEpicIDs);
+    }
+}
+
 /** Add depdency on upstream epics */
 export function updateUpstreamEpics(downstreamEpic: Epic, upstreamEpics: Epic[]) {
     if (downstreamEpic.Upstreams === undefined) {
