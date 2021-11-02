@@ -1,19 +1,11 @@
-[] Add ability to delete data from site
-    [X] Delete Epic
-    [X] Delete Team
-    [] Refresh UI with updated Team Info
+[] (Client-side) Update Epic details via the Side-panel
+    [] Change Epic Start date
+    [] Change Epic size using a drop-down
+    [] Save changes to Epic Details back to the server
 
 ========
 NEXT
 ========
-
-[] BUG: Remove selected epic from Dependency Dialog
-[] BUG: Make sure dependency paths do not respond to the mouse clicks
-
-[] (Client-side) Update Epic details in the
-    [] Change Epic Start date
-    [] Change Epic size using a drop-down
-    [] Save changes to Epic Details back to the server
 
 [] Create new Team via CreateTeam button
     [] New team appears on screen
@@ -27,7 +19,6 @@ NEXT
     [] Highlight conflicts between epics that start after upstream dependency
     [] Use multiple rows when epics over-lap
 
-[] FIX: Scrollbars
 
 --
 
@@ -42,8 +33,9 @@ NEXT
 
 [] Side-pandel dependencies
     [] Update UI to single button for showing the Add Dependency Dialog
+    [] Closing the Side-Pandel should Undim and unhighlight all epics
 
-[] Closing the Side-Pandel will Undim and unhighligh all epics
+[] FIX: Scrollbars
 
 [] Mouse-over epic shows full-details (useful for when epic's name is truncated)
 
@@ -137,6 +129,14 @@ NEXT
 ========
  DONE
 ========
+
+[X] Add ability to delete data from site
+    [X] Delete Epic
+    [X] Delete Team
+    [X] Refresh UI with updated Team Info
+
+[X] BUG: Make sure dependency paths do not respond to the mouse clicks
+[X] BUG: Remove selected epic from Dependency Dialog
 
 [X] BUG: Dependencies don't show up in Side-panel until after refresh
 
