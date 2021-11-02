@@ -128,7 +128,9 @@
     stroke-dasharray: none;
 }
 #dependency-connections path.highlighed-downstream-connection {
-    stroke: #9f9f9f;
+    stroke: #333;
+    opacity: 0.8;
+    /* stroke: #9f9f9f; */
     stroke-width: 0.5px;
     stroke-dasharray: none;
 }

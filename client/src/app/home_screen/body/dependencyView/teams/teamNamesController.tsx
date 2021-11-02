@@ -1,7 +1,7 @@
 import * as gtap from "../../../../../../www/dist/js/gtap";
 import * as lib from "../../../../../core/lib";
-import { OSubjectEpicSelected } from "../../../selectedEpicDetails/selectedEpicDetailsViewController";
-import { Epic, EpicViewSVGNode, GTapElement, OSubjectChangedTeamEpicHeightBounds, OSubjectUnHighlightAllEpic, OSubjectWillUpdateTeamName, Team, TeamEpics } from "../../../_defs";
+import { OSubjectDidDeleteTeam, OSubjectEpicSelected } from "../../../selectedEpicDetails/selectedEpicDetailsViewController";
+import { Epic, EpicViewSVGNode, GTapElement, OSubjectChangedTeamEpicHeightBounds, OSubjectUnHighlightAllEpic, OSubjectWillUpdateTeamName, Team, TeamEpics, TeamID } from "../../../_defs";
 
 /** @jsx gtap.$jsx */
 
@@ -41,6 +41,12 @@ class TeamsNamesView extends lib.BaseView {
 
         this.teamNamesElms.appendChild(teamNameElm);
         this.teamNamesMap.set(team.ID, teamNameElm)
+    }
+
+    deleteTeamName(teamID: TeamID) {
+        const teamNameElm = this.teamNamesMap.get(teamID)!;
+        teamNameElm.remove();
+        this.teamNamesMap.delete(teamID);
     }
 
     onUpdateTeamName(team: Team) {
@@ -92,6 +98,7 @@ export class TeamsNamesViewController extends lib.BaseViewController implements 
         lib.Observable.subscribe(OSubjectChangedTeamEpicHeightBounds, this);
         lib.Observable.subscribe(OSubjectEpicSelected, this);
         lib.Observable.subscribe(OSubjectUnHighlightAllEpic, this);
+        lib.Observable.subscribe(OSubjectDidDeleteTeam, this);
 
         super.initController();
     }
@@ -107,7 +114,6 @@ export class TeamsNamesViewController extends lib.BaseViewController implements 
                 this.onUpdateTeamName(team);
                 break;
             }
-
             case OSubjectChangedTeamEpicHeightBounds: {
                 const { teamID, height } = state.value;
                 this.updateTeamContainerHeight(teamID, height);
@@ -121,6 +127,11 @@ export class TeamsNamesViewController extends lib.BaseViewController implements 
             case OSubjectUnHighlightAllEpic: {
                 const { epic } = state.value;
                 this.onUnhighlightNonselectedTeams(epic);
+                break;
+            }
+            case OSubjectDidDeleteTeam: {
+                const { teamID, deletedEpicIDs } = state.value;
+                this.onDeleteEpicController(teamID);
                 break;
             }
         }
@@ -138,6 +149,9 @@ export class TeamsNamesViewController extends lib.BaseViewController implements 
         this.teamsNamesView.updateTeamNameHeight(teamID, height);
     }
 
+    private onDeleteEpicController(teamID: TeamID) {
+        this.teamsNamesView.deleteTeamName(teamID);
+    }
     onUpdateTeamName(team: Team) {
         this.teamsNamesView.onUpdateTeamName(team);
     }

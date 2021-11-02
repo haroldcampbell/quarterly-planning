@@ -3,9 +3,9 @@ import * as gtap from "../../../../../../www/dist/js/gtap";
 import * as lib from "../../../../../core/lib";
 import { EpicControllerBounds, MilliSecondsInDay, MinWeekCellWidth, ShapeYOffset, SVGMaxContextWidth } from "../../../../common/nodePositions";
 import * as dataStore from "../../../../data/dataStore";
-import { OSubjectDidDeleteEpic } from "../../../selectedEpicDetails/selectedEpicDetailsViewController";
+import { OSubjectDidDeleteEpic, OSubjectDidDeleteTeam } from "../../../selectedEpicDetails/selectedEpicDetailsViewController";
 
-import { DateMonthPeriod, Epic, EpicID, GTapElement, OSubjectHighlightDownstreamEpic, OSubjectHighlightUpstreamEpic, OSubjectUnHighlightAllEpic, PathInfo, SVGContainerID, TeamEpics, TeamID, WeekDetail, XYOnly } from "../../../_defs";
+import { DateMonthPeriod, Epic, EpicID, GTapElement, OSubjectDimUnhighlightedEpics, OSubjectHighlightDownstreamEpic, OSubjectHighlightUpstreamEpic, OSubjectUnHighlightAllEpic, PathInfo, SVGContainerID, TeamEpics, TeamID, WeekDetail, XYOnly } from "../../../_defs";
 import { EpicsViewController } from "./epicsViewController";
 
 /** @jsx gtap.$jsx */
@@ -183,6 +183,8 @@ export class TeamEpicsViewController extends lib.BaseViewController implements l
         lib.Observable.subscribe(OSubjectHighlightUpstreamEpic, this);
         lib.Observable.subscribe(OSubjectHighlightDownstreamEpic, this);
         lib.Observable.subscribe(OSubjectDidDeleteEpic, this);
+        lib.Observable.subscribe(OSubjectDidDeleteTeam, this);
+        lib.Observable.subscribe(OSubjectDimUnhighlightedEpics, this);
 
         super.initView();
     }
@@ -200,8 +202,13 @@ export class TeamEpicsViewController extends lib.BaseViewController implements l
 
     onUpdate(subject: string, state: lib.ObserverState): void {
         switch (subject) {
+            case OSubjectDimUnhighlightedEpics: {
+                const { selectedEpic } = state.value;
+                this.onDimAllConnections(selectedEpic)
+                break;
+            }
             case OSubjectUnHighlightAllEpic: {
-                this.onDimAllConnections();
+                this.onUnHighlightAllConnections();
                 break;
             }
             case OSubjectHighlightUpstreamEpic: {
@@ -219,14 +226,27 @@ export class TeamEpicsViewController extends lib.BaseViewController implements l
                 this.unlinkDeletedEpicConnections(epic.ID)
                 break;
             }
+            case OSubjectDidDeleteTeam: {
+                const { teamID, deletedEpicIDs } = state.value;
+                this.onDeleteEpicController(teamID, deletedEpicIDs);
+                break;
+            }
         }
     }
 
-    private onDimAllConnections() {
+    private onDimAllConnections(selectedEpic: Epic) {
+        this.dependencyConnections.forEach(pathInfo => {
+            if (pathInfo.upstreamEpicID != selectedEpic.ID || pathInfo.downstreamEpicID != selectedEpic.ID) {
+                pathInfo.p.$appendCSS("dimmed-connection");
+            }
+        });
+    }
+
+    private onUnHighlightAllConnections() {
         this.dependencyConnections.forEach(pathInfo => {
             pathInfo.p.$removeCSS("highlighed-downstream-connection");
             pathInfo.p.$removeCSS("selected-connection");
-            pathInfo.p.$appendCSS("dimmed-connection");
+            pathInfo.p.$removeCSS("dimmed-connection");
         });
     }
 
@@ -248,8 +268,8 @@ export class TeamEpicsViewController extends lib.BaseViewController implements l
         });
     }
 
-    private initTeamEpics(epics: TeamEpics) {
-        let epicController = new EpicsViewController(this, epics, this.lastControllerBounds);
+    private initTeamEpics(teamEpics: TeamEpics) {
+        let epicController = new EpicsViewController(this, teamEpics, this.lastControllerBounds);
 
         epicController.setActivePeriods(this.periods);
         epicController.onEpicCreated = (epic) => { this.bindEpicToController(epic, epicController); }
@@ -300,6 +320,17 @@ export class TeamEpicsViewController extends lib.BaseViewController implements l
         this.epicControllers.forEach((controller) => {
             controller.setMaxRowWidth(this.maxRowWidth);
         })
+    }
+
+    private onDeleteEpicController(teamID: TeamID, deletedEpicIDs: EpicID[]) {
+        this.epicControllers = this.epicControllers.filter(epicController => epicController.teamEpics.Team.ID != teamID);
+
+        deletedEpicIDs.forEach(epicID => {
+            this.unlinkDeletedEpicConnections(epicID);
+        })
+
+        this.relayoutEpicControllers();
+        this.onUnHighlightAllConnections();
     }
 
     redrawDependencyConnections() {

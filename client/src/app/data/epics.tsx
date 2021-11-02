@@ -83,12 +83,15 @@ export function RequestDeleteEpic(epicID: EpicID, onEpicDeletedCallback: () => v
                 return;
             }
 
-            UnlinkEpicConnection(epicID)
-
-            // remove the epic for the list of epics
-            _epicsByID.delete(epicID)
-
+            DeleteEpicByEpicID(epicID);
             onEpicDeletedCallback();
         },
     );
+}
+
+export function DeleteEpicByEpicID(epicID: EpicID) {
+    UnlinkEpicConnection(epicID);
+
+    // remove the epic for the list of epics
+    _epicsByID.delete(epicID);
 }

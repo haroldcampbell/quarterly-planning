@@ -114,6 +114,7 @@ export class SelectedEpicDetailsController extends lib.BaseViewController implem
         lib.Observable.subscribe(OSubjectEpicSelected, this);
         lib.Observable.subscribe(OSubjectHideEpicDetails, this);
         lib.Observable.subscribe(OSubjectRedrawDependencyConnections, this);
+        lib.Observable.subscribe(OSubjectDidDeleteTeam, this);
 
         this.detailsView.wireOnInputChanged((e: Event, dataOptionKey: string) => this.onInputChanged(e, dataOptionKey));
         this.detailsView.wireOnDeleteButtonsClicked(() => {
@@ -143,6 +144,10 @@ export class SelectedEpicDetailsController extends lib.BaseViewController implem
                 this.onEpicSelected(downstreamEpic, this.activePeriods!);
                 break;
             }
+            case OSubjectDidDeleteTeam: {
+                this.onHideEpicDetails();
+                break;
+            }
         }
     }
 
@@ -164,10 +169,13 @@ export class SelectedEpicDetailsController extends lib.BaseViewController implem
 
     //Have to redraw re-init the dependency controller
     onDeleteSelectedTeam() {
-        dataStore.RequestDeleteTeam(this.selectedEpic!.TeamID, (teams: Team[]) => {
+        dataStore.RequestDeleteTeam(this.selectedEpic!.TeamID, (deletedEpicIDs: EpicID[]) => {
             lib.Observable.notify(OSubjectDidDeleteTeam, {
                 source: undefined,
-                value: { teams: teams },
+                value: {
+                    teamID: this.selectedEpic!.TeamID,
+                    deletedEpicIDs
+                },
             });
 
             // TODO: remove the related connections and epics

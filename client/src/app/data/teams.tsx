@@ -1,10 +1,10 @@
 import * as lib from "../../core/lib";
-import { OSubjectWillUpdateTeamName, Team, TeamID } from "../home_screen/_defs";
+import { Epic, EpicID, OSubjectWillUpdateTeamName, Team, TeamID } from "../home_screen/_defs";
 import { URLDeleteTeam, URLUpdateTeam } from "../home_screen/_defsServerResponses";
+import { DeleteEpicByEpicID, getEpics } from "./epics";
 
 const _teamIDs: string[] = [];
 const _teamsMap = new Map<string, Team>();
-
 let _teams: Team[] | undefined = undefined;
 
 /** Sets the data for the teams */
@@ -15,17 +15,21 @@ export function setTeams(teams: Team[]) {
     })
 }
 
+function buildTeams() {
+    _teams = [];
+    _teamIDs.forEach((teamID) => {
+        _teams!.push(getTeamByID(teamID))
+    })
+}
+
 export function getTeams(): Team[] {
     if (_teams !== undefined) {
         return _teams;
     }
 
-    _teams = [];
-    _teamIDs.forEach((teamID) => {
-        _teams!.push(getTeamByID(teamID))
-    })
+    buildTeams();
 
-    return _teams;
+    return _teams!;
 }
 
 export function getTeamByID(teamID: string): Team {
@@ -56,7 +60,7 @@ export function RequestUpdateTeam(teamID: string, value: string, onTeamUpdatedCa
     );
 }
 
-export function RequestDeleteTeam(teamID: TeamID, onTeamDeletedCallback: (teams: Team[]) => void) {
+export function RequestDeleteTeam(teamID: TeamID, onTeamDeletedCallback: (deletedEpicIDs: EpicID[]) => void) {
     lib.apiPostRequest(
         URLDeleteTeam,
         (formData: FormData) => {
@@ -68,7 +72,22 @@ export function RequestDeleteTeam(teamID: TeamID, onTeamDeletedCallback: (teams:
                 return;
             }
 
-            onTeamDeletedCallback({} as Team[]);
+            const deletedEpicIDs = deleteTeamByTeamID(teamID)
+            onTeamDeletedCallback(deletedEpicIDs);
         },
     );
+}
+
+function deleteTeamByTeamID(teamID: TeamID): EpicID[] {
+    const deletedEpicIDs = getEpics().filter(epic => epic.TeamID == teamID).map(epic => epic.ID)
+
+    deletedEpicIDs.forEach(epicID => {
+        DeleteEpicByEpicID(epicID);
+    });
+
+    _teamsMap.delete(teamID);
+    _teamIDs.splice(_teamIDs.indexOf(teamID), 1);
+    buildTeams();
+
+    return deletedEpicIDs;// Epics that need to be deleted
 }

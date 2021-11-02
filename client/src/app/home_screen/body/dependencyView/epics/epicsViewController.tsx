@@ -4,9 +4,9 @@ import * as dataStore from "../../../../data/dataStore";
 
 import { IViewController, IScreenController } from "../../../../../core/lib";
 import { calcSVGNodesXYForWeek, ColGap, EpicControllerBounds, epicSizeToWidth, MinWeekCellWidth, placeTextWithEllipsis, RowPadding, ShapeYOffset, SVGMaxContextWidth, TextShapeYGap } from "../../../../common/nodePositions";
-import { DateMonthPeriod, Epic, EpicID, EpicSizes, EpicViewSVGNode, OSubjectChangedTeamEpicHeightBounds, OSubjectCreateNewEpicRequest, OSubjectDimUnhighlightedEpics, OSubjectHighlightDownstreamEpic, OSubjectHighlightUpstreamEpic, OSubjectUnHighlightAllEpic, OSubjectWillUpdateEpicName, SVGContainerID, TeamEpics, XYOnly } from "../../../_defs";
+import { DateMonthPeriod, Epic, EpicID, EpicSizes, EpicViewSVGNode, OSubjectChangedTeamEpicHeightBounds, OSubjectCreateNewEpicRequest, OSubjectDimUnhighlightedEpics, OSubjectHighlightDownstreamEpic, OSubjectHighlightUpstreamEpic, OSubjectUnHighlightAllEpic, OSubjectWillUpdateEpicName, SVGContainerID, TeamEpics, TeamID, XYOnly } from "../../../_defs";
 
-import { OSubjectDidDeleteEpic, OSubjectEpicSelected } from "../../../selectedEpicDetails/selectedEpicDetailsViewController";
+import { OSubjectDidDeleteEpic, OSubjectDidDeleteTeam, OSubjectEpicSelected } from "../../../selectedEpicDetails/selectedEpicDetailsViewController";
 import { OSubjectRedrawDependencyConnections, OSubjectTeamEpicsScrollContainerResized } from "./teamEpicsViewController";
 
 /** @jsx gtap.$jsx */
@@ -138,7 +138,7 @@ class EpicsView extends lib.BaseView {
 export class EpicsViewController extends lib.BaseViewController implements lib.IObserver {
     protected _view: lib.IView = new EpicsView(this);
 
-    private teamEpics: TeamEpics;
+    teamEpics: TeamEpics;
     private bounds!: EpicControllerBounds;
     private maxRowWidth = 0;/** The max row with across all of the epic view controllers */
 
@@ -149,7 +149,7 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
     private epicsViewSVGMap = new Map<EpicID, EpicViewSVGNode>();
     private xOffset!: number;
 
-    private grounSVGNode: any;
+    private groupContainerSVGNode: any;
 
     /** Array of the createNewEpic buttons */
     private buttonsArray: any[] = [];
@@ -205,9 +205,9 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
 
     initController() {
         this.xOffset = RowPadding;
-        this.grounSVGNode = gtap.group(SVGContainerID);
-        this.grounSVGNode.$class("epics-container-group")
-        this.epicsView.collectChildren(this.grounSVGNode);
+        this.groupContainerSVGNode = gtap.group(SVGContainerID);
+        this.groupContainerSVGNode.$class("epics-container-group")
+        this.epicsView.collectChildren(this.groupContainerSVGNode);
 
         this.epicsView.setEpicsContainerSVGNodeY(this.getBoundsY());
         this.teamEpics.Epics?.forEach((epic) => {
@@ -228,6 +228,7 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
         lib.Observable.subscribe(OSubjectDimUnhighlightedEpics, this);
         lib.Observable.subscribe(OSubjectDidDeleteEpic, this);
         lib.Observable.subscribe(OSubjectRedrawDependencyConnections, this);
+        lib.Observable.subscribe(OSubjectDidDeleteTeam, this);
 
         super.initController();
     }
@@ -293,6 +294,7 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
             case OSubjectDidDeleteEpic: {
                 const { epic } = state.value;
                 this.removeDeletedEpic(epic);
+                break;
             }
             case OSubjectRedrawDependencyConnections: {
                 const { downstreamEpic } = state.value;
@@ -303,6 +305,13 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
 
                 const selectedEpicViewSVGNode = this.epicsViewSVGMap.get(downstreamEpic.ID)!;
                 this.onEpicSelected(downstreamEpic, selectedEpicViewSVGNode);
+                break;
+            }
+            case OSubjectDidDeleteTeam: {
+                const { teamID } = state.value;
+                this.onDeleteController(teamID);
+
+                break;
             }
         }
     }
@@ -375,6 +384,15 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
         epicViewSVGNode.svgRectNode.remove();
     }
 
+    private onDeleteController(teamID: TeamID) {
+        if (this.teamEpics.Team.ID == teamID) {
+            this.groupContainerSVGNode.remove();
+            return;
+        }
+
+        this.onUnhighlighAllEpics();
+    }
+
     private highlightSelectedEpic(selectedEpicViewSVGNode: EpicViewSVGNode) {
         selectedEpicViewSVGNode.parentNode.$appendCSS("selected-epic-container");
         selectedEpicViewSVGNode.svgRectNode.$appendCSS("selected-epic");
@@ -402,7 +420,7 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
     private notifyDimHighlightedEpics() {
         lib.Observable.notify(OSubjectDimUnhighlightedEpics, {
             source: this,
-            value: {},
+            value: { selectedEpic: this.selectedEpicInfo!.epic },
         });
     }
 
@@ -472,7 +490,7 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
         const numButtons = 12 // One button for each week.
 
         for (let index = 0; index < numButtons; index++) {
-            const btn = new NewEpicButton(this.grounSVGNode);
+            const btn = new NewEpicButton(this.groupContainerSVGNode);
             const x = NewEpicButton.indexToXPosition(index)
 
             btn.positionButton(x, this.getBoundsY());
@@ -483,7 +501,7 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
 
     private createEpic(epic: Epic) {
         let epicsView = this.view as EpicsView
-        const svgNodes = epicsView.addEpic(this.grounSVGNode, epic);
+        const svgNodes = epicsView.addEpic(this.groupContainerSVGNode, epic);
 
         this.epicsViewSVGMap.set(epic.ID, svgNodes);
         this.onEpicCreated?.(epic);

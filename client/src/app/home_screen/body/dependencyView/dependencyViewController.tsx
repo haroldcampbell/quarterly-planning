@@ -108,7 +108,6 @@ export class DependencyViewController extends lib.BaseViewController implements 
                 this.teamEpicsViewController.redrawDependencyConnections();
                 break;
             }
-
         }
     }
 
