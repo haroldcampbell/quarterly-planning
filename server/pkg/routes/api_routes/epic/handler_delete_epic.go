@@ -10,9 +10,9 @@ import (
 )
 
 type DeleteEpicResponse struct {
-	EpicID                       string
-	EpicsDeleted                 int64
-	DownstreamConnectionsDeleted int64
+	EpicID       string
+	EpicsDeleted int64
+	// DownstreamConnectionsDeleted int64
 }
 
 func (rt *EpicRouter) DeleteEpicHandler(w http.ResponseWriter, r *http.Request) {
@@ -25,22 +25,16 @@ func (rt *EpicRouter) DeleteEpicHandler(w http.ResponseWriter, r *http.Request) 
 	epicID := r.FormValue("epic-id")
 
 	epicService := rt.ServicesMap[data.EpicServiceKey].(*data.EpicServiceMongo)
-	downstreamService := rt.ServicesMap[data.DownstreamServiceKey].(*data.DownstreamServiceMongo)
+	epicConnectionService := rt.ServicesMap[data.EpicConnectionServiceKey].(*data.EpicConnectionServiceMongo)
 
-	downstreamConnectionsDeleted, err := downstreamService.DeleteConnectionsByEpicID(epicID)
+	err := epicConnectionService.UnlinkEpicConnections(epicID)
 	if err != nil {
-		logger.Error("DeleteConnectionsByEpicID: Failed to delete connections Epic.ID[%s]: %v", epicID, err)
+		logger.Error("UnlinkEpicConnections: Failed to delete connections epicID[%s]: %v", epicID, err)
 		serverutils.RespondWithError(as, logger, common.NothingFoundErrorMessage, http.StatusNotFound)
 		return
 	}
 
-	err = epicService.UnlinkEpicAsUpstreamByEpicID(epicID)
-	if err != nil {
-		logger.Error("UnlinkEpicAsUpstreamByEpicID: Failed to delete EpicID[%s]: %v", epicID, err)
-		serverutils.RespondWithError(as, logger, common.NothingFoundErrorMessage, http.StatusNotFound)
-		return
-	}
-	epicsDeleted, err := epicService.DeleteEpicByEpicID(epicID)
+	epicsDeletedCount, err := epicService.DeleteEpicByEpicID(epicID)
 	if err != nil {
 		logger.Error("DeleteEpicByEpicID: Failed to delete Epic.ID[%s]: %v", epicID, err)
 		serverutils.RespondWithError(as, logger, common.NothingFoundErrorMessage, http.StatusNotFound)
@@ -48,10 +42,8 @@ func (rt *EpicRouter) DeleteEpicHandler(w http.ResponseWriter, r *http.Request) 
 	}
 
 	response := DeleteEpicResponse{
-		EpicID: epicID,
-		// TeamID: epic
-		EpicsDeleted:                 epicsDeleted,
-		DownstreamConnectionsDeleted: downstreamConnectionsDeleted,
+		EpicID:       epicID,
+		EpicsDeleted: epicsDeletedCount,
 	}
 
 	as.JSONBody = response

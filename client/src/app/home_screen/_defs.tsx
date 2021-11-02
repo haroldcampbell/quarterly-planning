@@ -41,9 +41,13 @@ export type Epic = {
      *  - 1, 1.5, 2, 2.5, etc...
      * */
     ExpectedStartPeriod: number;
-    Upstreams?: string[];
+    // Upstreams?: string[];
 }
 
+export type EpicConnection = {
+    UpstreamEpicID: EpicID;
+    DownstreamEpicID: EpicID;
+}
 
 export type EpicViewSVGNode = {
     svgRectNode: any;

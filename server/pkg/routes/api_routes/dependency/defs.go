@@ -1,14 +1,12 @@
 package dependency
 
-import "dependency/server/pkg/data"
-
 type DependencyRouter struct {
 	ServicesMap map[string]interface{}
 }
 
-func (rt *DependencyRouter) services() (*data.EpicServiceMongo, *data.DownstreamServiceMongo) {
-	epicService := rt.ServicesMap[data.EpicServiceKey].(*data.EpicServiceMongo)
-	downstreamService := rt.ServicesMap[data.DownstreamServiceKey].(*data.DownstreamServiceMongo)
+// func (rt *DependencyRouter) services() (*data.EpicServiceMongo, *data.DownstreamServiceMongo) {
+// 	epicService := rt.ServicesMap[data.EpicServiceKey].(*data.EpicServiceMongo)
+// 	downstreamService := rt.ServicesMap[data.DownstreamServiceKey].(*data.DownstreamServiceMongo)
 
-	return epicService, downstreamService
-}
+// 	return epicService, downstreamService
+// }

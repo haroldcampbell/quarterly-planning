@@ -11,5 +11,5 @@ type Epic struct {
 	Name                string
 	ExpectedStartPeriod float32
 	Size                float32
-	Upstreams           []string /* List of Epic IDs*/
+	// Upstreams           []string /* List of Epic IDs*/
 }

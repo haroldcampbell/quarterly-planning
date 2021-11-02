@@ -60,19 +60,13 @@ export class DownstreamDetailsView extends lib.BaseView {
     }
 
     onEpicSelected(epic: Epic): Map<EpicID, TeamEpicDependency> {
-        const downstreamEpicIDs = dataStore.getDownstreamEpicsByID(epic.ID);
         const downstreamTeamDetails = new Map<EpicID, TeamEpicDependency>();
+        const downstreamEpicIDs = dataStore.GetDownstreamConnections(epic.ID).map(connection => connection.DownstreamEpicID)
 
         this.dependencyTableView.clearTableRows();
+        this.dependencyCountElm.innerText = downstreamEpicIDs.length;
 
-        if (downstreamEpicIDs === undefined) {
-            this.dependencyCountElm.innerText = 0;
-            return downstreamTeamDetails;
-        }
-
-        this.dependencyCountElm.innerText = downstreamEpicIDs!.length;
-
-        downstreamEpicIDs!.forEach((epicID) => {
+        downstreamEpicIDs.forEach((epicID) => {
             const downstreamEpic = dataStore.getEpicByID(epicID)!;
             const downstreamTeam = dataStore.getTeamByID(downstreamEpic!.TeamID);
 

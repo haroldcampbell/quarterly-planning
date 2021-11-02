@@ -40,7 +40,6 @@ export class UpstreamDetailsView extends lib.BaseView {
         </div>
     </div>;
 
-    // private upstreamTeamDetails = new Map<EpicID, TeamEpicDependency>();
     onShowDependencyDialogCallback?: () => void;
 
     viewContent() {
@@ -64,17 +63,12 @@ export class UpstreamDetailsView extends lib.BaseView {
 
     onEpicSelected(epic: Epic): Map<EpicID, TeamEpicDependency> {
         const upstreamTeamDetails = new Map<EpicID, TeamEpicDependency>();
+        const upstreamEpicIDs = dataStore.GetUpstreamConnections(epic.ID).map(connection => connection.UpstreamEpicID)
 
         this.dependencyTableView.clearTableRows();
+        this.dependencyCountElm.innerText = upstreamEpicIDs.length;
 
-        if (epic.Upstreams === undefined) {
-            this.dependencyCountElm.innerText = 0;
-            return upstreamTeamDetails;
-        }
-
-        this.dependencyCountElm.innerText = epic.Upstreams!.length;
-
-        epic.Upstreams!.forEach((epicID) => {
+        upstreamEpicIDs.forEach((epicID) => {
             const upstreamEpic = dataStore.getEpicByID(epicID)!;
             const upstreamTeam = dataStore.getTeamByID(upstreamEpic!.TeamID);
 

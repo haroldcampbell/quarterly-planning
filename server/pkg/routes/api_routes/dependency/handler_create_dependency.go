@@ -30,22 +30,22 @@ func (rt *DependencyRouter) CreateDependencyHandler(w http.ResponseWriter, r *ht
 		return
 	}
 
-	epicService, _ := rt.services()
-	activeEpic, err := epicService.GetEpicByID(activeEpicID)
+	epicConnectionService := rt.ServicesMap[data.EpicConnectionServiceKey].(*data.EpicConnectionServiceMongo)
+	err := epicConnectionService.UnlinkEpicConnections(activeEpicID)
 	if err != nil {
-		logger.Error("Error executing GetEpicByID(activeEpicID). activeEpicID: %v Error: %s", activeEpicID, err)
+		logger.Error("Error executing UnlinkEpicConnections(activeEpicID). activeEpicID: %v Error: %s", activeEpicID, err)
 		serverutils.RespondWithError(as, logger, common.InvalidClientDataMessage, http.StatusNotFound)
 		return
 	}
 
-	err = rt.createUpstreamEpics(logger, as, activeEpic, upstreamIDsJSON)
+	err = rt.createUpstreamEpics(logger, as, activeEpicID, upstreamIDsJSON)
 	if err != nil {
 		logger.Error("%v", err)
 		serverutils.RespondWithError(as, logger, common.InvalidClientDataMessage, http.StatusNotFound)
 		return
 	}
 
-	err = rt.createDownstreamEpics(logger, as, activeEpic, downstreamIDsJSON)
+	err = rt.createDownstreamEpics(logger, as, activeEpicID, downstreamIDsJSON)
 	if err != nil {
 		logger.Error("%v", err)
 		serverutils.RespondWithError(as, logger, common.InvalidClientDataMessage, http.StatusNotFound)
@@ -70,60 +70,39 @@ func isValidInput(logger *utils.RoutineLogger, activeEpicID string) bool {
 	return true
 }
 
-func (rt *DependencyRouter) createUpstreamEpics(logger *utils.RoutineLogger, as *serverutils.ActionStatus, activeEpic data.Epic, upstreamIDsJSON string) error {
+func (rt *DependencyRouter) createUpstreamEpics(logger *utils.RoutineLogger, as *serverutils.ActionStatus, activeEpicID string, upstreamIDsJSON string) error {
 	upstreamEpicIDs := []string{}
 	err := json.Unmarshal([]byte(upstreamIDsJSON), &upstreamEpicIDs)
 	if err != nil {
-		return fmt.Errorf("Error reading upstreamIDsJSON from client : %v Error: %s", upstreamIDsJSON, err)
+		return fmt.Errorf("error reading upstreamIDsJSON from client : %v Error: %s", upstreamIDsJSON, err)
 	}
 
-	epicService, downstreamService := rt.services()
+	epicConnectionService := rt.ServicesMap[data.EpicConnectionServiceKey].(*data.EpicConnectionServiceMongo)
 
-	upstreamEpics, err := epicService.GetEpicsByID(upstreamEpicIDs)
-	if err != nil {
-		return fmt.Errorf("Error executing GetEpicsByID(upstreamEpicIDs). upstreamEpicIDs: %v Error: %s", upstreamEpicIDs, err)
-	}
-
-	updatedEpic, err := downstreamService.CreateUpstreamEpics(activeEpic, upstreamEpics)
-	if err != nil {
-		return fmt.Errorf("Error executing CreateUpstreamEpics(activeEpic, upstreamEpics). activeEpic: %v upstreamEpics: %v, Error: %s", activeEpic, upstreamEpics, err)
-	}
-
-	err = epicService.UpdateEpic(updatedEpic)
-	if err != nil {
-		return fmt.Errorf("Error executing UpdateEpic(updatedEpic). updatedEpic: %v, Error: %s", updatedEpic, err)
+	for _, upstreamEpicID := range upstreamEpicIDs {
+		err := epicConnectionService.CreateEpicConnection(upstreamEpicID, activeEpicID)
+		if err != nil {
+			return fmt.Errorf("error executing CreateEpicConnection(upstreamEpicID, activeEpicID). upstreamEpicID: %v activeEpicID: %v Error: %s", upstreamEpicID, activeEpicID, err)
+		}
 	}
 
 	return nil
 }
 
-func (rt *DependencyRouter) createDownstreamEpics(logger *utils.RoutineLogger, as *serverutils.ActionStatus, activeEpic data.Epic, downstreamIDsJSON string) error {
+func (rt *DependencyRouter) createDownstreamEpics(logger *utils.RoutineLogger, as *serverutils.ActionStatus, activeEpicID string, downstreamIDsJSON string) error {
 	downstreamEpicIDs := []string{}
 	err := json.Unmarshal([]byte(downstreamIDsJSON), &downstreamEpicIDs)
 	if err != nil {
-		return fmt.Errorf("Error reading downstreamIDsJSON from client : %v Error: %s", downstreamIDsJSON, err)
+		return fmt.Errorf("error reading downstreamIDsJSON from client : %v Error: %s", downstreamIDsJSON, err)
 	}
 
-	epicService, downstreamService := rt.services()
+	epicConnectionService := rt.ServicesMap[data.EpicConnectionServiceKey].(*data.EpicConnectionServiceMongo)
 
-	downstreamEpics, err := epicService.GetEpicsByID(downstreamEpicIDs)
-	if err != nil {
-		return fmt.Errorf("Error executing GetEpicsByID(downstreamEpicIDs). downstreamEpicIDs: %v Error: %s", downstreamEpicIDs, err)
-	}
-
-	err = epicService.UnlinkEpicAsUpstreamByEpicID(activeEpic.ID)
-	if err != nil {
-		return fmt.Errorf("Error executing UnlinkEpicAsUpstreamByEpicID(activeEpic). activeEpic: %v  Error: %s", activeEpic, err)
-	}
-
-	downstreamEpics, err = downstreamService.CreateDownstreamEpics(activeEpic, downstreamEpics)
-	if err != nil {
-		return fmt.Errorf("Error executing CreateDownstreamEpics(activeEpic, downstreamEpics). activeEpic: %v downstreamEpics: %v, Error: %s", activeEpic, downstreamEpics, err)
-	}
-
-	err = epicService.UpdateEpicsUpstreams(downstreamEpics)
-	if err != nil {
-		return fmt.Errorf("Error executing UpdateEpics(downstreamEpics). downstreamEpics: %v, Error: %s", downstreamEpics, err)
+	for _, downstreamEpicID := range downstreamEpicIDs {
+		err := epicConnectionService.CreateEpicConnection(activeEpicID, downstreamEpicID)
+		if err != nil {
+			return fmt.Errorf("error executing CreateEpicConnection(activeEpicID, downstreamEpicID). activeEpicID: %v downstreamEpicID: %v Error: %s", activeEpicID, downstreamEpicID, err)
+		}
 	}
 
 	return nil

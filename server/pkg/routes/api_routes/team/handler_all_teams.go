@@ -10,8 +10,9 @@ import (
 )
 
 type AllTeamsResponse struct {
-	Teams []data.Team
-	Epics []data.Epic
+	Teams           []data.Team
+	Epics           []data.Epic
+	EpicConnections []data.EpicConnection
 }
 
 func (rt *TeamRouter) AllTeamsHandler(w http.ResponseWriter, r *http.Request) {
@@ -22,8 +23,6 @@ func (rt *TeamRouter) AllTeamsHandler(w http.ResponseWriter, r *http.Request) {
 	// TODO: [SECURITY#OWNERSHIP] Check ownership
 
 	teamService := rt.ServicesMap[data.TeamServiceKey].(*data.TeamServiceMongo)
-	epicService := rt.ServicesMap[data.EpicServiceKey].(*data.EpicServiceMongo)
-
 	teams, err := teamService.GetTeams()
 	if err != nil {
 		logger.Error("Failed to execute GetTeams(): %v", err)
@@ -31,6 +30,7 @@ func (rt *TeamRouter) AllTeamsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	epicService := rt.ServicesMap[data.EpicServiceKey].(*data.EpicServiceMongo)
 	epics, err := epicService.GetEpics()
 	if err != nil {
 		logger.Error("Failed to execute GetEpics(): %v", err)
@@ -38,9 +38,18 @@ func (rt *TeamRouter) AllTeamsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	epicConnectionService := rt.ServicesMap[data.EpicConnectionServiceKey].(*data.EpicConnectionServiceMongo)
+	epicConnections, err := epicConnectionService.RetrieveAllEpicConnections()
+	if err != nil {
+		logger.Error("Failed to execute RetrieveAllEpicConnections(): %v", err)
+		serverutils.RespondWithError(as, logger, common.NothingFoundErrorMessage, http.StatusNotFound)
+		return
+	}
+
 	response := AllTeamsResponse{
-		Teams: teams,
-		Epics: epics,
+		Teams:           teams,
+		Epics:           epics,
+		EpicConnections: epicConnections,
 	}
 
 	as.JSONBody = response

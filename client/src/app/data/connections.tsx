@@ -1,107 +1,48 @@
 
 import * as lib from "../../core/lib";
-import { Epic, EpicID } from "../home_screen/_defs";
+import { Epic, EpicConnection, EpicID } from "../home_screen/_defs";
 import { CreateDependencyConnetionsResponse, URLCreateDependencyConnetions } from "../home_screen/_defsServerResponses";
 
 import { getEpics } from "./epics"
 
 /** Contains a map of epicID to array of downstream epicIDs */
-let _downStreamsByEpicID: Map<EpicID, EpicID[]>;
+let _epicConnections: EpicConnection[];
 
-/** Returns an array of downstream epicIDs for the specified upstream epic */
-export function getDownstreamEpicsByID(upstreamEpicID: EpicID): EpicID[] | undefined {
-    return _downStreamsByEpicID.get(upstreamEpicID);
+export function SetEpicConnections(connections: EpicConnection[]) {
+    _epicConnections = connections;
 }
 
-export function unlinkEpicConnections(deletedEpicID: EpicID) {
-    for (let [upstreamEpicID, downstreamEpicIDs] of _downStreamsByEpicID.entries()) {
-        downstreamEpicIDs = downstreamEpicIDs.filter(epicID => epicID !== deletedEpicID);
-        _downStreamsByEpicID.set(upstreamEpicID, downstreamEpicIDs);
-    }
+export function GetEpicConnections(): EpicConnection[] {
+    return _epicConnections;
 }
 
-/** Add depdency on upstream epics */
-export function updateUpstreamEpics(downstreamEpic: Epic, upstreamEpics: Epic[]) {
-    if (downstreamEpic.Upstreams === undefined) {
-        downstreamEpic.Upstreams = [];
-    }
-
-    /** Remove the existing downstreams that contain them as its upstream */
-    downstreamEpic.Upstreams?.forEach((epicID) => {
-        const downstreamEpicIDs = getDownstreamEpicsByID(epicID);
-        const index = downstreamEpicIDs?.indexOf(downstreamEpic.ID);
-        if (index != -1) {
-            downstreamEpicIDs?.splice(index!, 1);
-        }
-    })
-
-    downstreamEpic.Upstreams = [];
-    upstreamEpics.forEach((epic) => {
-        downstreamEpic.Upstreams!.push(epic.ID);
-        //
-        addDownstreamEpic(_downStreamsByEpicID, epic.ID, downstreamEpic.ID);
-    });
+/**
+ * Returns the list of connections where the epicID is a DownstreamEpicID
+ * @param epicID
+ */
+export function GetUpstreamConnections(epicID: EpicID): EpicConnection[] {
+    return _epicConnections.filter((connection) => connection.DownstreamEpicID == epicID);
 }
 
-/** Add dependency from downstream epics */
-export function updateDownstreamEpics(upstreamEpic: Epic, downstreamEpics: Epic[]) {
-    const epics = getEpics();
-
-    epics.forEach((e) => {
-        if (e.Upstreams === undefined) {
-            return;
-        }
-
-        const index = e.Upstreams.indexOf(upstreamEpic.ID);
-
-        if (index != -1) {
-            e.Upstreams?.splice(index!, 1);
-        }
-    })
-
-    downstreamEpics.forEach((downstreamEpic) => {
-        if (downstreamEpic.Upstreams === undefined) {
-            downstreamEpic.Upstreams = [];
-        }
-
-        if (downstreamEpic.Upstreams.indexOf(upstreamEpic.ID) != -1) {
-            return;
-        }
-
-        downstreamEpic.Upstreams.push(upstreamEpic.ID);
-        addDownstreamEpic(_downStreamsByEpicID, upstreamEpic.ID, downstreamEpic.ID);
-    });
+/**
+ * Returns the list of connections where the epicID is an UpstreamEpicID
+ * @param epicID
+ * @returns
+ */
+export function GetDownstreamConnections(epicID: EpicID): EpicConnection[] {
+    return _epicConnections.filter((connection) => connection.UpstreamEpicID == epicID);
 }
 
-/** Builds the downstream epics by walking the epic.upstreams  */
-function addDownstreamEpic(map: Map<EpicID, EpicID[]>, upstreamEpicID: EpicID, downstreamEpicID: EpicID) {
-    if (!map.has(upstreamEpicID)) {
-        map.set(upstreamEpicID, []);
-    }
-    const downstreamEpics = map.get(upstreamEpicID)!
-    if (downstreamEpics.indexOf(downstreamEpicID) != -1) {
-        console.trace(">>addDownstreamEpic: Attempted to add duplicated downstream epic", `${upstreamEpicID}<-${downstreamEpicID}`);
-        return;
-    }
-    downstreamEpics.push(downstreamEpicID);
+/**
+ * Removes connections that have the specified epicID as either a downstream or an upstream epicID
+ * @param epicID
+ */
+export function UnlinkEpicConnection(epicID: EpicID) {
+    _epicConnections = _epicConnections.filter((connection) => connection.UpstreamEpicID != epicID);
+    _epicConnections = _epicConnections.filter((connection) => connection.DownstreamEpicID != epicID);
 }
 
-export function processDownstreamEpics() {
-    const downStreamsEpicIDsMap = new Map<EpicID, EpicID[]>();
-    const epics = getEpics();
-
-    epics.forEach((downstreamEpic) => {
-        if (downstreamEpic.Upstreams) {
-            downstreamEpic.Upstreams?.forEach((upstreamEpicID) => {
-                addDownstreamEpic(downStreamsEpicIDsMap, upstreamEpicID, downstreamEpic.ID);
-            });
-        }
-    })
-    _downStreamsByEpicID = downStreamsEpicIDsMap;
-}
-
-export function RequestCreateDependencyConnections(activeEpicID: EpicID, upstreamEpicIDs: EpicID[], downstreamEpicIDs: EpicID[], callback: (r: any) => void) {
-
+export function RequestCreateDependencyConnections(activeEpicID: EpicID, upstreamEpicIDs: EpicID[], downstreamEpicIDs: EpicID[], callback: () => void) {
     lib.apiPostRequest(
         URLCreateDependencyConnetions,
         (formData: FormData) => {
@@ -115,9 +56,37 @@ export function RequestCreateDependencyConnections(activeEpicID: EpicID, upstrea
                 return;
             }
 
-            const response: CreateDependencyConnetionsResponse = data.jsonBody
-
-            callback(response)
+            callback()
         },
     );
+}
+
+export function UpdateUpstreamConnections(upstreamEpicIDs: EpicID[], downstreamEpicID: EpicID) {
+    // Remove all connections that have downstreamEpicID as a downstream.
+    // This essentially removes all of the upstreams <- downstreamEpicID relationships
+    _epicConnections = _epicConnections.filter((connection) => connection.DownstreamEpicID != downstreamEpicID);
+
+    upstreamEpicIDs.forEach(upstreamEpicID => {
+        const epicConnection: EpicConnection = {
+            UpstreamEpicID: upstreamEpicID,
+            DownstreamEpicID: downstreamEpicID
+        };
+
+        _epicConnections.push(epicConnection)
+    })
+}
+
+export function UpdateDownstreamConnections(upstreamEpicID: EpicID, downstreamEpicIDs: EpicID[]) {
+    // Remove all connections that have downstreamEpicID as a downstream.
+    // This essentially removes all of the upstreams <- downstreamEpicID relationships
+    _epicConnections = _epicConnections.filter((connection) => connection.UpstreamEpicID != upstreamEpicID);
+
+    downstreamEpicIDs.forEach(downstreamEpicID => {
+        const epicConnection: EpicConnection = {
+            UpstreamEpicID: upstreamEpicID,
+            DownstreamEpicID: downstreamEpicID
+        };
+
+        _epicConnections.push(epicConnection)
+    })
 }

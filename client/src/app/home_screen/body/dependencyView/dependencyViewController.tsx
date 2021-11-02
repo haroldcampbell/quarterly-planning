@@ -85,8 +85,8 @@ export class DependencyViewController extends lib.BaseViewController implements 
 
                 dataStore.setTeams(result.Teams);
                 dataStore.setEpics(result.Epics);
-                dataStore.createTeamEpics();
-
+                dataStore.SetEpicConnections(result.EpicConnections);
+                dataStore.createTeamEpics()
                 dataStore.wireServerData();
             },
             () => { }

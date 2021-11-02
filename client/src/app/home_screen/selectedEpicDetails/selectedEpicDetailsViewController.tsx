@@ -108,6 +108,7 @@ export class SelectedEpicDetailsController extends lib.BaseViewController implem
 
     private detailsView = this._view as SelectedEpicDetailsView;
     private inputChangeMap = new Map<string, InputHandler>();
+    private activePeriods?: DateMonthPeriod[];
 
     initController() {
         lib.Observable.subscribe(OSubjectEpicSelected, this);
@@ -137,11 +138,11 @@ export class SelectedEpicDetailsController extends lib.BaseViewController implem
                 this.onHideEpicDetails();
                 break;
             }
-            // case OSubjectRedrawDependencyConnections: {
-            //     const { downstreamEpic } = state.value;
-            //     this.onEpicSelected(downstreamEpic);
-            //     break;
-            // }
+            case OSubjectRedrawDependencyConnections: {
+                const { downstreamEpic } = state.value;
+                this.onEpicSelected(downstreamEpic, this.activePeriods!);
+                break;
+            }
         }
     }
 
@@ -176,11 +177,13 @@ export class SelectedEpicDetailsController extends lib.BaseViewController implem
 
     onEpicSelected(epic: Epic, activePeriods: DateMonthPeriod[]) {
         this.selectedEpic = epic;
+        this.activePeriods = activePeriods;
         this.detailsView.showEpicDetails(epic, activePeriods);
     }
 
     onHideEpicDetails() {
         this.selectedEpic = undefined;
+        this.activePeriods = undefined;
         this.detailsView.hideEpicDetails();
     }
 

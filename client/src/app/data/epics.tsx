@@ -1,8 +1,7 @@
 import * as lib from "../../core/lib";
 import { Epic, EpicID, OSubjectWillUpdateEpicName } from "../home_screen/_defs";
 import { URLCreateEpic, CreateTeamResponse, URLUpdateEpic, URLDeleteEpic, DeleteEpicResonse } from "../home_screen/_defsServerResponses";
-import { getEpicsByTeamID } from "./teamEpics";
-import { processDownstreamEpics, unlinkEpicConnections } from "./connections";
+import { UnlinkEpicConnection } from "./connections";
 
 /** Contains epicID -> Epic mapping */
 let _epicsByID: Map<string, Epic>;
@@ -23,11 +22,11 @@ export function setEpics(epics: Epic[]) {
     _epicsByID = new Map<string, Epic>()
 
     epics.forEach(epic => {
-        epic.Upstreams = epic.Upstreams === null ? [] : epic.Upstreams;
+        // epic.Upstreams = epic.Upstreams === null ? [] : epic.Upstreams;
         _epicsByID.set(epic.ID, epic)
     })
 
-    processDownstreamEpics()
+    // processDownstreamEpics()
 }
 
 /** Creates the epic on the remote sever */
@@ -83,17 +82,8 @@ export function RequestDeleteEpic(epicID: EpicID, onEpicDeletedCallback: () => v
                 alert("Error removing epic. Please try again.");
                 return;
             }
-            // unlink Upstream
-            getEpics().forEach(epic => {
-                if (epic.Upstreams === undefined || epic.Upstreams.length == 0) {
-                    return
-                }
 
-                epic.Upstreams = epic.Upstreams.filter(eID => eID != epicID)
-            })
-
-            // Unlink Downstream
-            unlinkEpicConnections(epicID);
+            UnlinkEpicConnection(epicID)
 
             // remove the epic for the list of epics
             _epicsByID.delete(epicID)

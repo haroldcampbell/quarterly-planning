@@ -7,7 +7,7 @@ import { calcSVGNodesXYForWeek, ColGap, EpicControllerBounds, epicSizeToWidth, M
 import { DateMonthPeriod, Epic, EpicID, EpicSizes, EpicViewSVGNode, OSubjectChangedTeamEpicHeightBounds, OSubjectCreateNewEpicRequest, OSubjectDimUnhighlightedEpics, OSubjectHighlightDownstreamEpic, OSubjectHighlightUpstreamEpic, OSubjectUnHighlightAllEpic, OSubjectWillUpdateEpicName, SVGContainerID, TeamEpics, XYOnly } from "../../../_defs";
 
 import { OSubjectDidDeleteEpic, OSubjectEpicSelected } from "../../../selectedEpicDetails/selectedEpicDetailsViewController";
-import { OSubjectTeamEpicsScrollContainerResized } from "./teamEpicsViewController";
+import { OSubjectRedrawDependencyConnections, OSubjectTeamEpicsScrollContainerResized } from "./teamEpicsViewController";
 
 /** @jsx gtap.$jsx */
 
@@ -227,7 +227,7 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
         lib.Observable.subscribe(OSubjectUnHighlightAllEpic, this);
         lib.Observable.subscribe(OSubjectDimUnhighlightedEpics, this);
         lib.Observable.subscribe(OSubjectDidDeleteEpic, this);
-
+        lib.Observable.subscribe(OSubjectRedrawDependencyConnections, this);
 
         super.initController();
     }
@@ -293,6 +293,16 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
             case OSubjectDidDeleteEpic: {
                 const { epic } = state.value;
                 this.removeDeletedEpic(epic);
+            }
+            case OSubjectRedrawDependencyConnections: {
+                const { downstreamEpic } = state.value;
+
+                if (!this.epicsViewSVGMap.has(downstreamEpic.ID)) {
+                    return;
+                }
+
+                const selectedEpicViewSVGNode = this.epicsViewSVGMap.get(downstreamEpic.ID)!;
+                this.onEpicSelected(downstreamEpic, selectedEpicViewSVGNode);
             }
         }
     }
@@ -372,31 +382,21 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
     }
 
     private notifyUpstreamEpicsForHighlight(epic: Epic, selectedEpicViewSVGNode: EpicViewSVGNode) {
-        if (epic.Upstreams === undefined || epic.Upstreams.length == 0) {
-            return
-        }
-
-        epic.Upstreams.forEach((upstreamEpicID) => {
+        dataStore.GetUpstreamConnections(epic.ID).forEach((connection) => {
             lib.Observable.notify(OSubjectHighlightUpstreamEpic, {
                 source: this,
-                value: { upstreamEpicID, activeEpicID: epic.ID },
+                value: { upstreamEpicID: connection.UpstreamEpicID, activeEpicID: epic.ID },
             });
-        });
+        })
     }
 
     private notifyDownstreamEpicsForHighlight(epic: Epic) {
-        const downstreamEpics = dataStore.getDownstreamEpicsByID(epic.ID);
-
-        if (downstreamEpics === undefined) {
-            return;
-        }
-
-        downstreamEpics.forEach((downstreamEpicID) => {
+        dataStore.GetDownstreamConnections(epic.ID).forEach((connection) => {
             lib.Observable.notify(OSubjectHighlightDownstreamEpic, {
                 source: this,
-                value: { downstreamEpicID, activeEpicID: epic.ID },
+                value: { downstreamEpicID: connection.DownstreamEpicID, activeEpicID: epic.ID },
             });
-        });
+        })
     }
 
     private notifyDimHighlightedEpics() {
@@ -415,37 +415,28 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
         upstreamEpicSVGNode.svgRectNode.$appendCSS("upstream-highlighed-epic");
         this.highlightedUpstreamEpicSVGNodes.push(upstreamEpicSVGNode);
 
-        const upstreamEpic = dataStore.getEpicByID(upstreamEpicID)!
-        if (upstreamEpic.Upstreams !== undefined) {
-            /** Highlight the indirect upstream dependencies */
-            upstreamEpic.Upstreams.forEach((nextUpstreamEpicID) => {
-                lib.Observable.notify(OSubjectHighlightUpstreamEpic, {
-                    source: this,
-                    value: { upstreamEpicID: nextUpstreamEpicID, activeEpicID: upstreamEpicID },
-                });
+        dataStore.GetUpstreamConnections(upstreamEpicID).forEach((connection) => {
+            lib.Observable.notify(OSubjectHighlightUpstreamEpic, {
+                source: this,
+                value: { upstreamEpicID: connection.UpstreamEpicID, activeEpicID: upstreamEpicID },
             });
-        }
+        })
     }
 
     private onHighlightDownstreamEpic(downstreamEpicID: EpicID) {
         if (!this.epicsViewSVGMap.has(downstreamEpicID)) {
             return;
         }
-
         const downstreamEpicSVGNode = this.epicsViewSVGMap.get(downstreamEpicID)!
         downstreamEpicSVGNode.svgRectNode.$appendCSS("downstream-highlighed-epic");
         this.highlightedDownstreamEpicSVGNodes.push(downstreamEpicSVGNode);
 
-        const downstreamEpics = dataStore.getDownstreamEpicsByID(downstreamEpicID);
-        if (downstreamEpics !== undefined) {
-            /** Highlight the indirect downstream dependencies */
-            downstreamEpics.forEach((nextDownstreamEpicID) => {
-                lib.Observable.notify(OSubjectHighlightDownstreamEpic, {
-                    source: this,
-                    value: { downstreamEpicID: nextDownstreamEpicID, activeEpicID: downstreamEpicID },
-                });
+        dataStore.GetDownstreamConnections(downstreamEpicID).forEach((connection) => {
+            lib.Observable.notify(OSubjectHighlightDownstreamEpic, {
+                source: this,
+                value: { downstreamEpicID: connection.DownstreamEpicID, activeEpicID: downstreamEpicID },
             });
-        }
+        })
     }
 
     private onDimUnhighlightedEpics() {

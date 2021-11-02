@@ -27,13 +27,6 @@ export function addEpicToTeamEpic(teamID: string, epic: Epic) {
     _epicsByTeamID.get(teamID)!.push(epic);
 }
 
-export function setTeamEpics(teamEpics: { [key: string]: { TeamID: string, Epics: Epic[] } }) {
-    for (let TeamID in teamEpics) {
-        const teamEpic = teamEpics[TeamID]
-        _epicsByTeamID.set(teamEpic.TeamID, teamEpic.Epics)
-    }
-}
-
 export function createTeamEpics() {
     const teams = getTeams();
     const epics = getEpics();

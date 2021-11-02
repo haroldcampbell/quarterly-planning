@@ -33,9 +33,9 @@ func documentIndex(documentKey string) mongo.IndexModel {
 const EpicServiceKey = "EpicServiceKey"
 const TeamServiceKey = "TeamServiceKey"
 const DownstreamServiceKey = "DownstreamServiceKey"
+const EpicConnectionServiceKey = "EpicConnectionServiceKey"
 
 type Session struct {
-	// session *mgo.Session
 	ctx    *context.Context
 	client *mongo.Client
 }
@@ -43,6 +43,7 @@ type Session struct {
 func NewSession(config *MongoConfig) (*Session, error) {
 	var ctx = context.TODO()
 
+	// clientOptions := options.Client().ApplyURI(config.IP)
 	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017/")
 	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
@@ -55,13 +56,6 @@ func NewSession(config *MongoConfig) (*Session, error) {
 	}
 
 	return &Session{&ctx, client}, err
-	//var err error
-	// session, err := mgo.Dial(config.IP)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// session.SetMode(mgo.Monotonic, true)
-	// return &Session{session}, err
 }
 
 func (s *Session) DropDatabase(db string) error {
@@ -78,13 +72,3 @@ func (s *Session) BuildInfo(config *MongoConfig) (interface{}, error) {
 
 	return info, err
 }
-
-// func (s *Session) Copy() *mgo.Session {
-// 	return s.session.Copy()
-// }
-
-// func (s *Session) Close() {
-// 	if s.session != nil {
-// 		s.session.Close()
-// 	}
-// }

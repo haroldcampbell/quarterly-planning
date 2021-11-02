@@ -240,19 +240,23 @@ export class AddDependencyDialogController extends lib.BaseViewController {
     }
 
     onCreateEpicDependencies() {
+        const upstreamEpicIDs = Array.from(this.selectedUpstreamEpics.values()).map(epic => epic.ID);
+        const downstreamEpicIDs = Array.from(this.selectedDownstreamEpics.values()).map(epic => epic.ID);
+
         dataStore.RequestCreateDependencyConnections(
             this.DownstreamEpic.ID,
-            Array.from(this.selectedUpstreamEpics.values()).map(epic => epic.ID),
-            Array.from(this.selectedDownstreamEpics.values()).map(epic => epic.ID),
-            (r: any) => {
-                this.onEpicDependenciesCreated(r);
+            upstreamEpicIDs,
+            downstreamEpicIDs,
+            () => {
+                this.onEpicDependenciesCreated(upstreamEpicIDs, downstreamEpicIDs);
             }
         );
     }
 
-    onEpicDependenciesCreated(response: any) {
-        dataStore.updateUpstreamEpics(this.DownstreamEpic, Array.from(this.selectedUpstreamEpics.values()));
-        dataStore.updateDownstreamEpics(this.DownstreamEpic, Array.from(this.selectedDownstreamEpics.values()));
+    onEpicDependenciesCreated(upstreamEpicIDs: EpicID[], downstreamEpicIDs: EpicID[]) {
+        dataStore.UpdateUpstreamConnections(upstreamEpicIDs, this.DownstreamEpic.ID);
+        dataStore.UpdateDownstreamConnections(this.DownstreamEpic.ID, downstreamEpicIDs);
+
         lib.Observable.notify(OSubjectRedrawDependencyConnections, {
             source: this,
             value: { downstreamEpic: this.DownstreamEpic }

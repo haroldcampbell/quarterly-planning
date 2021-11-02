@@ -79,11 +79,13 @@ func InitAPIRoutes() {
 	utils.Log(stem, "Wiring services...")
 	teamService := data.NewTeamService(session, mongoConfig)
 	epicService := data.NewEpicService(session, mongoConfig)
-	downstreamService := data.NewDownstreamService(session, mongoConfig)
+	epicConnectionService := data.NewEpicConnectionService(session, mongoConfig)
+	// downstreamService := data.NewDownstreamService(session, mongoConfig)
 
 	servicesMap[data.EpicServiceKey] = epicService
 	servicesMap[data.TeamServiceKey] = teamService
-	servicesMap[data.DownstreamServiceKey] = downstreamService
+	servicesMap[data.EpicConnectionServiceKey] = epicConnectionService
+	// servicesMap[data.DownstreamServiceKey] = downstreamService
 
 	// Create routes
 	utils.Log(stem, "Wiring routers...")

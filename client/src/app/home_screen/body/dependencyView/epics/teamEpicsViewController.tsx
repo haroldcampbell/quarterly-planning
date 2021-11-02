@@ -167,6 +167,7 @@ export class TeamEpicsViewController extends lib.BaseViewController implements l
     private lastControllerBounds?: EpicControllerBounds;
     private maxRowWidth = 0; /** Used to adjust the svg element size */
     private periods: DateMonthPeriod[] = [];
+    private dependencyConnections: PathInfo[] = [];
 
     initView() {
         this.QuarterStartDate = new Date("Oct 1 2021")
@@ -277,13 +278,15 @@ export class TeamEpicsViewController extends lib.BaseViewController implements l
     }
 
     private onTeamEpicsAdded() {
-        this.epicControllerDictionary.forEach((controller, epicID) => {
-            const epic = dataStore.getEpicByID(epicID);
+        const connections = dataStore.GetEpicConnections()
+        connections.forEach(connection => {
 
-            if (epic?.Upstreams) {
-                const epicSvgNode = controller.getEpicSVGRectNode(epicID);
-                this.wireUpstreams(epicID, epic.Upstreams, epicSvgNode);
+            if (!this.epicControllerDictionary.has(connection.UpstreamEpicID)) {
+                console.log(`wireUpstreams: unable to find wireUpstreams dependency id(${connection.UpstreamEpicID}) < - ${connection.DownstreamEpicID} `);
+                return;
             }
+
+            this.makeDependencyConnection(connection.UpstreamEpicID, connection.DownstreamEpicID);
         })
 
         /** Show the spill over when the epic extend beyond the quarter */
@@ -377,23 +380,13 @@ export class TeamEpicsViewController extends lib.BaseViewController implements l
         this.dependencyConnections = this.dependencyConnections.filter(pathInfo => pathInfo.downstreamEpicID != epicID);
     }
 
-    private dependencyConnections: PathInfo[] = [];
+    private makeDependencyConnection(upstreamEpicID: EpicID, downstreamEpicID: EpicID) {
+        const upstreamController = this.epicControllerDictionary.get(upstreamEpicID)!;
+        const upstreamSVGNode = upstreamController.getEpicSVGRectNode(upstreamEpicID);
 
-    wireUpstreams(sourceID: EpicID, targetUpstreams: any[], sourceSVGNode: any) {
-        targetUpstreams.forEach((upstreamEpicID) => {
-            if (!this.epicControllerDictionary.has(upstreamEpicID)) {
-                console.log(`wireUpstreams: unable to find wireUpstreams dependency id(${upstreamEpicID}) < - ${sourceID} `);
-                return;
-            }
-
-            this.makeDependencyConnection(sourceSVGNode, upstreamEpicID, sourceID);
-        })
-    }
-
-    makeDependencyConnection(sourceSVGNode: any, upstreamEpicID: EpicID, downstreamEpicID: EpicID) {
-        const controller = this.epicControllerDictionary.get(upstreamEpicID)!;
-        const targetSVGNode = controller.getEpicSVGRectNode(upstreamEpicID);
-        const { start, end } = this.calcDependencyConnection(targetSVGNode, sourceSVGNode);
+        const downstreamController = this.epicControllerDictionary.get(downstreamEpicID)!;
+        const downstreamSVGNode = downstreamController.getEpicSVGRectNode(downstreamEpicID);
+        const { start, end } = this.calcDependencyConnection(upstreamSVGNode, downstreamSVGNode);
 
         const timestamp = Date.now();
         const p = gtap.path(SVGContainerID, `connection[${timestamp}][${upstreamEpicID} - ${downstreamEpicID}]`);
