@@ -9,7 +9,6 @@ NEXT
 
 [] BUG: Remove selected epic from Dependency Dialog
 [] BUG: Make sure dependency paths do not respond to the mouse clicks
-[] BUG: Dependencies don't show up in Side-panel until after refresh
 
 [] (Client-side) Update Epic details in the
     [] Change Epic Start date
@@ -138,6 +137,8 @@ NEXT
 ========
  DONE
 ========
+
+[X] BUG: Dependencies don't show up in Side-panel until after refresh
 
 -- Migrate client-site in-memory data to server-side in-memory
 
