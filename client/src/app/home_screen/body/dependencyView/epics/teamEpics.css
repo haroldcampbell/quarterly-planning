@@ -115,12 +115,13 @@
     fill: none;
     stroke-dasharray: 2px 2px;
     stroke-linecap: round;
+    pointer-events: none;
 }
 
 #dependency-connections path.dimmed-connection {
     stroke: #9f9f9f;
     opacity: 0.5;
-    /* fill: none; */
+    /* pointer-events: none; */
 }
 #dependency-connections path.selected-connection {
     stroke: #1f8ce8;
@@ -130,7 +131,7 @@
 #dependency-connections path.highlighed-downstream-connection {
     stroke: #333;
     opacity: 0.8;
-    /* stroke: #9f9f9f; */
     stroke-width: 0.5px;
     stroke-dasharray: none;
+    /* pointer-events: none; */
 }
