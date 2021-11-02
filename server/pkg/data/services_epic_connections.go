@@ -67,25 +67,25 @@ func (s *EpicConnectionServiceMongo) CreateEpicConnection(upstreamEpicID string,
 }
 
 func (s *EpicConnectionServiceMongo) RetrieveAllEpicConnections() ([]EpicConnection, error) {
-	var result []EpicConnection
+	var results []EpicConnection
 	var docs []EpicConnectionDocument
 
 	curr, err := s.collection.Find(*s.ctx, NilFilter)
 	if err != nil {
-		return result, err
+		return results, err
 	}
 
 	err = curr.All(*s.ctx, &docs)
 	if err != nil {
-		return result, err
+		return results, err
 	}
 
-	result = make([]EpicConnection, 0, len(docs))
+	results = make([]EpicConnection, 0, len(docs))
 	for _, doc := range docs {
-		result = append(result, doc.ToModel())
+		results = append(results, doc.ToModel())
 	}
 
-	return result, err
+	return results, err
 }
 
 func (s *EpicConnectionServiceMongo) UnlinkEpicConnections(epicID string) error {
@@ -102,56 +102,4 @@ func (s *EpicConnectionServiceMongo) UnlinkEpicConnections(epicID string) error 
 	}
 
 	return nil
-
-	// 	utils.Log("services_connection_db", "DeleteConnectionsByEpicID(%v) results: %v", epicID, results.DeletedCount)
 }
-
-// func (s *EpicServiceMongo) UnlinkEpicAsUpstreamByEpicID(upstreamEpicID string) error {
-// 	docs, err := s.getEpicDocuments()
-// 	if err != nil {
-// 		utils.Error("services_epics", "UnlinkEpicAsUpstreamByEpicID: Calling getEpicDocuments() failed. err:%v", err)
-// 		return err
-// 	}
-
-// 	for _, downstreamEpicDoc := range docs {
-// 		if downstreamEpicDoc.Upstreams == nil {
-// 			continue
-// 		}
-
-// 		if found, index := arrayHasElementStr(upstreamEpicID, downstreamEpicDoc.Upstreams); found {
-// 			downstreamEpicDoc.Upstreams = append(downstreamEpicDoc.Upstreams[:index], downstreamEpicDoc.Upstreams[index+1:]...)
-
-// 			update := bson.D{{Key: "epic.upstreams", Value: downstreamEpicDoc.Epic.Upstreams}}
-// 			_, err := s.collection.UpdateOne(*s.ctx, bson.M{"_id": downstreamEpicDoc.DID}, bson.D{{Key: "$set", Value: update}})
-// 			if err != nil {
-// 				utils.Error("services_epics", "UnlinkEpicAsUpstreamByEpicID: Error executing UpdateOne(...). downstreamEpicDoc._id:%v doc:%v err:%v", downstreamEpicDoc.ID, downstreamEpicDoc, err)
-// 				return err
-// 			}
-// 		}
-// 	}
-
-// 	return nil
-// }
-
-// func (s *EpicServiceMongo) UpdateEpicsUpstream(downstreamEpic Epic) error {
-// 	update := bson.D{{Key: "epic.upstreams", Value: downstreamEpic.Upstreams}}
-// 	_, err := s.collection.UpdateOne(*s.ctx, bson.M{"epic.id": downstreamEpic.ID}, bson.D{{Key: "$set", Value: update}})
-// 	if err != nil {
-// 		utils.Error("services_epics", "UpdateEpicsUpstream: Error executing UpdateOne(...). downstreamEpic._id:%v err:%v", downstreamEpic.ID, err)
-// 		return err
-// 	}
-
-// 	return nil
-// }
-
-// // UpdateEpicsUpstreams will update only the Upstream attribute for the specified epics
-// func (s *EpicServiceMongo) UpdateEpicsUpstreams(downstreamEpics []Epic) error {
-// 	for _, downstreamEpic := range downstreamEpics {
-// 		err := s.UpdateEpicsUpstream(downstreamEpic)
-// 		if err != nil {
-// 			return err
-// 		}
-// 	}
-
-// 	return nil
-// }

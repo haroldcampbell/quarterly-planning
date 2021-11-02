@@ -72,3 +72,15 @@ func (s *TeamServiceMongo) UpdateTeam(team Team) error {
 
 	return nil
 }
+
+func (s *TeamServiceMongo) DeleteTeamByTeamID(teamID string) error {
+	results, err := s.collection.DeleteMany(*s.ctx, bson.M{"team.id": teamID})
+	if err != nil {
+		utils.Error("services_team", "DeleteTeamByTeamID: Error executing DeleteMany(...). team.id:%v err:%v", teamID, err)
+		return err
+	}
+
+	utils.Log("services_team", "DeleteTeamByTeamID(%v) results: %v", teamID, results.DeletedCount)
+
+	return nil
+}

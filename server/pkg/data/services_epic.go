@@ -118,6 +118,29 @@ func (s *EpicServiceMongo) GetEpicsByID(epicIDs []string) ([]Epic, error) {
 	return filteredEpics, nil
 }
 
+func (s *EpicServiceMongo) GetEpicsByTeamID(teamID string) ([]Epic, error) {
+	var results []Epic
+	var docs []EpicDocument
+
+	curr, err := s.collection.Find(*s.ctx, bson.M{"epic.teamid": teamID})
+	if err != nil {
+		utils.Error("services_epics", "Error executing GetEpicsByTeamID(). epic.TeamID:%v err:%v", teamID, err)
+		return results, err
+	}
+
+	err = curr.All(*s.ctx, &docs)
+	if err != nil {
+		return results, err
+	}
+
+	results = make([]Epic, 0, len(docs))
+	for _, doc := range docs {
+		results = append(results, doc.ToModel())
+	}
+
+	return results, err
+}
+
 func (s EpicServiceMongo) DeleteEpicByEpicID(epicID string) (int64, error) {
 	results, err := s.collection.DeleteMany(*s.ctx, bson.M{"epic.id": epicID})
 	if err != nil {

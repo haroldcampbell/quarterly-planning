@@ -146,9 +146,6 @@ export class SelectedEpicDetailsController extends lib.BaseViewController implem
         }
     }
 
-    // TODO: Have to redraw all the controllers to update the epics
-    // TODO: START HERE
-
     onDeleteSelectedEpic() {
         const deletedEpic = this.selectedEpic;
 
@@ -172,6 +169,12 @@ export class SelectedEpicDetailsController extends lib.BaseViewController implem
                 source: undefined,
                 value: { teams: teams },
             });
+
+            // TODO: remove the related connections and epics
+            // lib.Observable.notify(OSubjectHideTeamDetails, {
+            //     source: this,
+            //     value: {},
+            // });
         });
     }
 

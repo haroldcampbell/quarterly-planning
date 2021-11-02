@@ -1,6 +1,7 @@
 [] Add ability to delete data from site
     [X] Delete Epic
-    [] Delete Team
+    [X] Delete Team
+    [] Refresh UI with updated Team Info
 
 ========
 NEXT
