@@ -51,9 +51,12 @@ export function RequestCreateTeamEpics(epic: Epic, onEpicCreatedCallback: (newEp
 }
 
 /** Updates epic on the remote sever */
-export function RequestUpdateEpic(epicID: string, value: string, onEpicUpdatedCallback: (newEpic: Epic) => void): void {
+// export function RequestUpdateEpic(epicID: string, value: string, onEpicUpdatedCallback: (newEpic: Epic) => void): void {
+export function RequestUpdateEpic(epicID: string, value: { [key: string]: any }, onEpicUpdatedCallback: (newEpic: Epic) => void): void {
     const epic = getEpicByID(epicID)!;
-    epic.Name = value;
+    epic.Name = value.Name ?? epic.Name;
+    epic.Size = value.Size ?? epic.Size;
+    epic.ExpectedStartPeriod = value.ExpectedStartPeriod ?? epic.ExpectedStartPeriod;
 
     lib.apiPostRequest(
         URLUpdateEpic,

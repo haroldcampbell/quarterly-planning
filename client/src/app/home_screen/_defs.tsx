@@ -129,3 +129,6 @@ export const OSubjectHighlightDownstreamEpic = "highlight-downstream-epic";
 
 /** Dim the epics that are related to, impacted by, or impacting, the selected epic */
 export const OSubjectDimUnhighlightedEpics = "dim-unhighlighted-epics";
+
+/** Notifies listeners that the epic size changed. */
+export const OSubjectDidChangeEpicSize = "did-change-epic-size";

@@ -541,6 +541,8 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
         }
 
         this.bounds.position.y = y;
+        this.bounds.size.width = 0;
+
         this.epicsView.setEpicsContainerSVGNodeY(this.getBoundsY());
         this.layoutAllEpics();
 

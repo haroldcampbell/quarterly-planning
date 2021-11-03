@@ -64,8 +64,6 @@ class SelectedEpicDetailsView extends lib.BaseView {
         this.downstreamView.onShowDependencyDialogCallback = () => {
             this.showDependencyDialog(existingUpstreamEpics, existingDownstreamEpics);
         }
-
-
         this.content.classList.remove("hide-epic-details");
     }
 
@@ -230,10 +228,10 @@ export class SelectedEpicDetailsController extends lib.BaseViewController implem
         const node = e!.target as HTMLInputElement;
         node.blur();
 
-        dataStore.RequestUpdateEpic(this.selectedEpic.ID, node.value, (epic: Epic) => {
+        dataStore.RequestUpdateEpic(this.selectedEpic.ID, { Name: node.value }, (newEpic: Epic) => {
             lib.Observable.notify(OSubjectWillUpdateEpicName, {
                 source: undefined,
-                value: { epic: epic },
+                value: { epic: newEpic },
             });
         })
     }

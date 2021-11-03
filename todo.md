@@ -1,7 +1,8 @@
 [] (Client-side) Update Epic details via the Side-panel
+    [X] Change Epic size using a drop-down
+    [X] Show spill-over for epics that are outside of the quarter
+    [X] Change RequestUpdateEpic to allow saving Epic Details back to the server
     [] Change Epic Start date
-    [] Change Epic size using a drop-down
-    [] Save changes to Epic Details back to the server
 
 ========
 NEXT
@@ -19,7 +20,6 @@ NEXT
     [] Highlight conflicts between epics that start after upstream dependency
     [] Use multiple rows when epics over-lap
 
-
 --
 
 [] Capture Quarterly Planning info
@@ -36,6 +36,7 @@ NEXT
     [] Closing the Side-Pandel should Undim and unhighlight all epics
 
 [] FIX: Scrollbars
+[] FIX: Epic position error. The week dividers aren't correctly included in the epic.x calculation
 
 [] Mouse-over epic shows full-details (useful for when epic's name is truncated)
 

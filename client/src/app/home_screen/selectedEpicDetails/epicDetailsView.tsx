@@ -1,15 +1,26 @@
 import * as gtap from "../../../../www/dist/js/gtap";
 import * as lib from "../../../core/lib";
+import * as dataStore from "../../data/dataStore";
+
 import { epicSizeInDays, MilliSecondsInDay } from "../../common/nodePositions";
-import { DateMonthPeriod, Epic, EpicDateInfo, EpicSizes, InputChangeCallback, SelectedEpicDetailsDataOptions } from "../_defs";
+import { DateMonthPeriod, Epic, EpicDateInfo, EpicSizes, InputChangeCallback, OSubjectDidChangeEpicSize, SelectedEpicDetailsDataOptions } from "../_defs";
 
 /** @jsx gtap.$jsx */
 
 export class EpicDetailsView extends lib.BaseView {
+    private epicSizeOptions = <select name="epicSizes">
+        <option value="0.5">XSmall</option>
+        <option value="1">Small</option>
+        <option value="2">Medium</option>
+        <option value="3">Large</option>
+        <option value="5">XLarge</option>
+        <option value="11">Unknown</option>
+    </select>;
+    private epicSizeNode = <div>{this.epicSizeOptions}</div>;
     private epicNameElm = <input data-option={SelectedEpicDetailsDataOptions.EpicName} type='text' />;
-    private epicSizeNode = <h3></h3>;
     private expectedStartWeekNode = <h3></h3>;
     private expectedEndWeekNode = <h3></h3>;
+
 
     private content = <div className='selected-epic-details-container__epic rows' >
         <div className="row-cell">
@@ -49,6 +60,11 @@ export class EpicDetailsView extends lib.BaseView {
             this.onInputChanged?.(e, SelectedEpicDetailsDataOptions.EpicName);
         };
 
+        this.epicSizeOptions.onchange = () => {
+            var selectedInput = this.epicSizeOptions.options[this.epicSizeOptions.selectedIndex].value;
+            this.onEpicSizeChanged(selectedInput);
+        }
+
         super.initView();
     }
 
@@ -56,15 +72,21 @@ export class EpicDetailsView extends lib.BaseView {
         this.selectedEpic = epic;
 
         (this.epicNameElm as HTMLInputElement).value = epic.Name;
-        this.epicSizeNode.innerText = this.getEpicSizeInText();
+
+        this.epicSizeOptions.value = this.selectedEpic!.Size
 
         const startDateInfo = getExpectedStartWeekInfo(epic, activePeriods);
         this.expectedStartWeekNode.innerText = startDateInfo.text;
         this.expectedEndWeekNode.innerText = calProjectedEndWeek(epic, startDateInfo);
     }
 
-    private getEpicSizeInText(): string {
-        return this.selectedEpic === undefined ? "" : EpicSizes[this.selectedEpic!.Size];
+    onEpicSizeChanged(newEpicSize: EpicSizes) {
+        dataStore.RequestUpdateEpic(this.selectedEpic!.ID, { Size: Number(newEpicSize) }, (newEpic: Epic) => {
+            lib.Observable.notify(OSubjectDidChangeEpicSize, {
+                source: this,
+                value: { epic: newEpic },
+            });
+        });
     }
 }
 

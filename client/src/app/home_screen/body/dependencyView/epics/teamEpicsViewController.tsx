@@ -5,7 +5,7 @@ import { EpicControllerBounds, MilliSecondsInDay, MinWeekCellWidth, ShapeYOffset
 import * as dataStore from "../../../../data/dataStore";
 import { OSubjectDidDeleteEpic, OSubjectDidDeleteTeam } from "../../../selectedEpicDetails/selectedEpicDetailsViewController";
 
-import { DateMonthPeriod, Epic, EpicID, GTapElement, OSubjectDimUnhighlightedEpics, OSubjectHighlightDownstreamEpic, OSubjectHighlightUpstreamEpic, OSubjectUnHighlightAllEpic, PathInfo, SVGContainerID, TeamEpics, TeamID, WeekDetail, XYOnly } from "../../../_defs";
+import { DateMonthPeriod, Epic, EpicID, GTapElement, OSubjectDidChangeEpicSize, OSubjectDimUnhighlightedEpics, OSubjectHighlightDownstreamEpic, OSubjectHighlightUpstreamEpic, OSubjectUnHighlightAllEpic, PathInfo, SVGContainerID, TeamEpics, TeamID, WeekDetail, XYOnly } from "../../../_defs";
 import { EpicsViewController } from "./epicsViewController";
 
 /** @jsx gtap.$jsx */
@@ -185,6 +185,7 @@ export class TeamEpicsViewController extends lib.BaseViewController implements l
         lib.Observable.subscribe(OSubjectDidDeleteEpic, this);
         lib.Observable.subscribe(OSubjectDidDeleteTeam, this);
         lib.Observable.subscribe(OSubjectDimUnhighlightedEpics, this);
+        lib.Observable.subscribe(OSubjectDidChangeEpicSize, this);
 
         super.initView();
     }
@@ -229,6 +230,12 @@ export class TeamEpicsViewController extends lib.BaseViewController implements l
             case OSubjectDidDeleteTeam: {
                 const { teamID, deletedEpicIDs } = state.value;
                 this.onDeleteEpicController(teamID, deletedEpicIDs);
+                break;
+            }
+            case OSubjectDidChangeEpicSize: {
+                const { epic } = state.value;
+                this.relayoutEpicControllers();
+
                 break;
             }
         }
@@ -309,17 +316,23 @@ export class TeamEpicsViewController extends lib.BaseViewController implements l
             this.makeDependencyConnection(connection.UpstreamEpicID, connection.DownstreamEpicID);
         })
 
-        /** Show the spill over when the epic extend beyond the quarter */
+        this.syncSpillOverVisibility()
+
+        this.epicControllers.forEach((controller) => {
+            controller.setMaxRowWidth(this.maxRowWidth);
+        })
+    }
+
+    /** Show the spill over when the epic extend beyond the quarter */
+    private syncSpillOverVisibility() {
         const periodNodesWidth = this.teamEpicsView.getPeriodNodeLength();
         if (periodNodesWidth < this.maxRowWidth) {
             let diffWidth = this.maxRowWidth - periodNodesWidth;
             diffWidth = diffWidth < 100 ? 100 : diffWidth; // Enforce a min width
             this.teamEpicsView.setSpillOverWidth(diffWidth);
+        } else {
+            this.teamEpicsView.setSpillOverWidth(0);
         }
-
-        this.epicControllers.forEach((controller) => {
-            controller.setMaxRowWidth(this.maxRowWidth);
-        })
     }
 
     private onDeleteEpicController(teamID: TeamID, deletedEpicIDs: EpicID[]) {
@@ -365,13 +378,15 @@ export class TeamEpicsViewController extends lib.BaseViewController implements l
     }
 
     relayoutEpicControllers() {
-        this.updateContextWidth(this.maxRowWidth);
+        this.maxRowWidth = 0;
+        this.updateContextWidth(-1);
 
         this.lastControllerBounds = undefined;
         this.epicControllers.forEach((controller) => {
             controller.layoutAllEpicsWithBounds(this.lastControllerBounds);
         })
 
+        this.syncSpillOverVisibility()
         this.layoutDependencyConnections();
     }
 
