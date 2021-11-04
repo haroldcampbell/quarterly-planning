@@ -1,0 +1,33 @@
+.drop-down-outer-container {
+    position: relative;
+}
+
+.drop-down-text-content {
+    position: relative;
+    cursor: pointer;
+    border-bottom: solid 2px #fff;
+    background-color: #fff;
+}
+
+.drop-down-text-content:hover {
+    border-bottom: solid 2px #e4e4e4;
+}
+
+.drop-down-option-content-container {
+    position: absolute;
+    z-index: 1000;
+
+    border: solid 1px #e4e4e4;
+    background-color: #fff;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
+    padding: 5px;
+
+    margin-top: -2px; /** To account for the bottom-border of the drop-down-text-content*/
+}
+
+/** WARNING: Changing this classname will break the dropdown
+* unless the 'hiddenClassName' variable is also update in
+* dropDownController.tsx file */
+.drop-down-options-hidden {
+    display: none;
+}

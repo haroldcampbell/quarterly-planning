@@ -4,6 +4,7 @@ import * as dataStore from "../../data/dataStore";
 
 import { epicSizeInDays, MilliSecondsInDay } from "../../common/nodePositions";
 import { DateMonthPeriod, Epic, EpicDateInfo, EpicSizes, InputChangeCallback, OSubjectDidChangeEpicSize, SelectedEpicDetailsDataOptions } from "../_defs";
+import { DropDownController } from "../../../core/components/dropDownController";
 
 /** @jsx gtap.$jsx */
 
@@ -16,11 +17,12 @@ export class EpicDetailsView extends lib.BaseView {
         <option value="5">XLarge</option>
         <option value="11">Unknown</option>
     </select>;
-    private epicSizeNode = <div>{this.epicSizeOptions}</div>;
-    private epicNameElm = <input data-option={SelectedEpicDetailsDataOptions.EpicName} type='text' />;
-    private expectedStartWeekNode = <h3></h3>;
-    private expectedEndWeekNode = <h3></h3>;
 
+    private epicSizeNode = <div>{this.epicSizeOptions}</div>;
+    private epicStartWeekContainerNode = <div className="start-date-container"></div>
+
+    private epicNameElm = <input data-option={SelectedEpicDetailsDataOptions.EpicName} type='text' />;
+    private expectedEndWeekNode = <h3></h3>;
 
     private content = <div className='selected-epic-details-container__epic rows' >
         <div className="row-cell">
@@ -38,7 +40,7 @@ export class EpicDetailsView extends lib.BaseView {
         <div className="row-cell-2">
             <div className="cell">
                 <label>EXPECTED STARTED</label>
-                {this.expectedStartWeekNode}
+                {this.epicStartWeekContainerNode}
             </div>
             <div className="cell">
                 <label>PROJECTED END</label>
@@ -47,8 +49,10 @@ export class EpicDetailsView extends lib.BaseView {
         </div>
     </div>;
 
-    public onInputChanged?: InputChangeCallback;
     private selectedEpic?: Epic;
+    private activePeriods?: DateMonthPeriod[];
+    public onInputChanged?: InputChangeCallback;
+    private dropDown = new DropDownController(this.parentController);
 
     viewContent() {
         return this.content;
@@ -65,18 +69,73 @@ export class EpicDetailsView extends lib.BaseView {
             this.onEpicSizeChanged(selectedInput);
         }
 
+        this.initStartDateContent()
         super.initView();
     }
 
-    onEpicSelected(epic: Epic, activePeriods: DateMonthPeriod[]) {
-        this.selectedEpic = epic;
+    initStartDateContent() {
+        const btnClick = (weekNum: number) => {
+            this.onStartWeekOptionSelected(weekNum);
+        }
 
+        const optionContent = <div className="start-date-options-container">
+            <div className="month-name">Oct</div>
+            <div className="weeks-container">
+                <ul>
+                    <li><button onclick={() => btnClick(1)}>W1</button></li>
+                    <li><button onclick={() => btnClick(2)}>W2</button></li>
+                    <li><button onclick={() => btnClick(3)}>W3</button></li>
+                    <li><button onclick={() => btnClick(4)}>W4</button></li>
+                </ul>
+            </div>
+            <div className="month-name">Nov</div>
+            <div className="weeks-container">
+                <ul>
+                    <li><button onclick={() => btnClick(5)}>W5</button></li>
+                    <li><button onclick={() => btnClick(6)}>W6</button></li>
+                    <li><button onclick={() => btnClick(7)}>W7</button></li>
+                    <li><button onclick={() => btnClick(8)}>W8</button></li>
+                </ul>
+            </div>
+            <div className="month-name">DeC</div>
+            <div className="weeks-container">
+                <ul>
+                    <li><button onclick={() => btnClick(9)}>W9</button></li>
+                    <li><button onclick={() => btnClick(10)}>W10</button></li>
+                    <li><button onclick={() => btnClick(11)}>W11</button></li>
+                    <li><button onclick={() => btnClick(12)}>W12</button></li>
+                </ul>
+            </div>
+        </div>
+
+        this.dropDown.TextContentClassName = "selected-start-date-text";
+        this.dropDown.addOptionContent(optionContent);
+        this.dropDown.initController();
+        this.epicStartWeekContainerNode.appendChild(this.dropDown.dropdownView.viewContent())
+    }
+
+    onStartWeekOptionSelected(weekNum: number) {
+        this.dropDown.hideDropdownOptions();
+
+        dataStore.RequestUpdateEpic(this.selectedEpic!.ID, { ExpectedStartPeriod: weekNum }, (newEpic: Epic) => {
+            lib.Observable.notify(OSubjectDidChangeEpicSize, {
+                source: this,
+                value: { epic: newEpic },
+            });
+
+            this.onEpicSelected(newEpic, this.activePeriods!);
+        });
+    }
+
+    onEpicSelected(epic: Epic, activePeriods: DateMonthPeriod[]) {
+        const startDateInfo = getExpectedStartWeekInfo(epic, activePeriods);
+
+        this.selectedEpic = epic;
+        this.activePeriods = activePeriods;
         (this.epicNameElm as HTMLInputElement).value = epic.Name;
 
         this.epicSizeOptions.value = this.selectedEpic!.Size
-
-        const startDateInfo = getExpectedStartWeekInfo(epic, activePeriods);
-        this.expectedStartWeekNode.innerText = startDateInfo.text;
+        this.dropDown.onTextContentChanged(startDateInfo.text);
         this.expectedEndWeekNode.innerText = calProjectedEndWeek(epic, startDateInfo);
     }
 

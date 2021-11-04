@@ -13,6 +13,7 @@ NEXT
     [] Epics can be added to new team
     [] New team is saved to the server
 
+
 --
 
 [] Dependency conflicts
@@ -20,6 +21,7 @@ NEXT
     [] Highlight conflicts between epics that start after upstream dependency
     [] Use multiple rows when epics over-lap
 
+[] Add Team Name to lower-left of Epics swim-lanes
 --
 
 [] Capture Quarterly Planning info
@@ -30,6 +32,7 @@ NEXT
     [] Release plan-view
 
 [] Add annotations (e.g. conflict/accepted) to epics (the Red/Green stars)
+    [] Today's date on quarter
 
 [] Side-pandel dependencies
     [] Update UI to single button for showing the Add Dependency Dialog

@@ -2,6 +2,7 @@ export interface GTapElement extends HTMLElement {
     $appendCSS(className: string): void;
     $removeCSS(className: string): void;
     $style(cssStyle?: string): string;
+    $hasClass(className: string): boolean;
     remove(): void;
 }
 

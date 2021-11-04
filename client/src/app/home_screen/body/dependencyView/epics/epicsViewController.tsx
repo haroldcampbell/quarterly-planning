@@ -589,7 +589,7 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
                 cellKey = `${positionInfo.rectPostion.x}:${updatedY}`;
                 rows++;
             }
-        } while (!didFindEmptySlot && rows < 10); // 10 is just a sanity check
+        } while (!didFindEmptySlot && rows < 500); // 500 is just a sanity check TODO: Find a better way to do this as it currently limits the number of epic rows per team
 
         if (rows > 0) {
             this.maxNumberOfRows = Math.max(rows, this.maxNumberOfRows);
