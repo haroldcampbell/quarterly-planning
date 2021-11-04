@@ -1,18 +1,11 @@
-[] (Client-side) Update Epic details via the Side-panel
-    [X] Change Epic size using a drop-down
-    [X] Show spill-over for epics that are outside of the quarter
-    [X] Change RequestUpdateEpic to allow saving Epic Details back to the server
-    [] Change Epic Start date
-
-========
-NEXT
-========
-
 [] Create new Team via CreateTeam button
     [] New team appears on screen
     [] Epics can be added to new team
     [] New team is saved to the server
 
+========
+NEXT
+========
 
 --
 
@@ -133,6 +126,12 @@ NEXT
 ========
  DONE
 ========
+
+[X] (Client-side) Update Epic details via the Side-panel
+    [X] Change Epic size using a drop-down
+    [X] Show spill-over for epics that are outside of the quarter
+    [X] Change RequestUpdateEpic to allow saving Epic Details back to the server
+    [X] Change Epic Start date
 
 [X] Add ability to delete data from site
     [X] Delete Epic

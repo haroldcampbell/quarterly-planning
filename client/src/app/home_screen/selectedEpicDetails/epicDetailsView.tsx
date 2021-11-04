@@ -3,7 +3,7 @@ import * as lib from "../../../core/lib";
 import * as dataStore from "../../data/dataStore";
 
 import { epicSizeInDays, MilliSecondsInDay } from "../../common/nodePositions";
-import { DateMonthPeriod, Epic, EpicDateInfo, EpicSizes, InputChangeCallback, OSubjectDidChangeEpicSize, SelectedEpicDetailsDataOptions } from "../_defs";
+import { DateMonthPeriod, Epic, EpicDateInfo, EpicSizes, InputChangeCallback, OSubjectDidChangeEpic, SelectedEpicDetailsDataOptions } from "../_defs";
 import { DropDownController } from "../../../core/components/dropDownController";
 
 /** @jsx gtap.$jsx */
@@ -118,7 +118,7 @@ export class EpicDetailsView extends lib.BaseView {
         this.dropDown.hideDropdownOptions();
 
         dataStore.RequestUpdateEpic(this.selectedEpic!.ID, { ExpectedStartPeriod: weekNum }, (newEpic: Epic) => {
-            lib.Observable.notify(OSubjectDidChangeEpicSize, {
+            lib.Observable.notify(OSubjectDidChangeEpic, {
                 source: this,
                 value: { epic: newEpic },
             });
@@ -141,7 +141,7 @@ export class EpicDetailsView extends lib.BaseView {
 
     onEpicSizeChanged(newEpicSize: EpicSizes) {
         dataStore.RequestUpdateEpic(this.selectedEpic!.ID, { Size: Number(newEpicSize) }, (newEpic: Epic) => {
-            lib.Observable.notify(OSubjectDidChangeEpicSize, {
+            lib.Observable.notify(OSubjectDidChangeEpic, {
                 source: this,
                 value: { epic: newEpic },
             });

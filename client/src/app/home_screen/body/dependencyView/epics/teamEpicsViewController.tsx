@@ -5,7 +5,7 @@ import { EpicControllerBounds, MilliSecondsInDay, MinWeekCellWidth, ShapeYOffset
 import * as dataStore from "../../../../data/dataStore";
 import { OSubjectDidDeleteEpic, OSubjectDidDeleteTeam } from "../../../selectedEpicDetails/selectedEpicDetailsViewController";
 
-import { DateMonthPeriod, Epic, EpicID, GTapElement, OSubjectDidChangeEpicSize, OSubjectDimUnhighlightedEpics, OSubjectHighlightDownstreamEpic, OSubjectHighlightUpstreamEpic, OSubjectUnHighlightAllEpic, PathInfo, SVGContainerID, TeamEpics, TeamID, WeekDetail, XYOnly } from "../../../_defs";
+import { DateMonthPeriod, Epic, EpicID, GTapElement, OSubjectDidChangeEpic, OSubjectDimUnhighlightedEpics, OSubjectHighlightDownstreamEpic, OSubjectHighlightUpstreamEpic, OSubjectUnHighlightAllEpic, PathInfo, SVGContainerID, TeamEpics, TeamID, WeekDetail, XYOnly } from "../../../_defs";
 import { EpicsViewController } from "./epicsViewController";
 
 /** @jsx gtap.$jsx */
@@ -185,7 +185,7 @@ export class TeamEpicsViewController extends lib.BaseViewController implements l
         lib.Observable.subscribe(OSubjectDidDeleteEpic, this);
         lib.Observable.subscribe(OSubjectDidDeleteTeam, this);
         lib.Observable.subscribe(OSubjectDimUnhighlightedEpics, this);
-        lib.Observable.subscribe(OSubjectDidChangeEpicSize, this);
+        lib.Observable.subscribe(OSubjectDidChangeEpic, this);
 
         super.initView();
     }
@@ -232,7 +232,7 @@ export class TeamEpicsViewController extends lib.BaseViewController implements l
                 this.onDeleteEpicController(teamID, deletedEpicIDs);
                 break;
             }
-            case OSubjectDidChangeEpicSize: {
+            case OSubjectDidChangeEpic: {
                 const { epic } = state.value;
                 this.relayoutEpicControllers();
 
