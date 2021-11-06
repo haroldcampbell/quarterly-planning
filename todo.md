@@ -1,19 +1,11 @@
-[X] Create new Team via CreateTeam button
-    [X] Wire controls and logic to create new team
-    [X] New team is saved to the server
-    [X] New team appears on screen after button clicked
-    [X] Epics can be added to new team
+[] Dependency conflicts
+    [] Use multiple rows when epics over-lap
+    [] Highlight conflicts between epics that end after upstream start dependency
+    [] Highlight conflicts between epics that start after upstream dependency
 
 ========
 NEXT
 ========
-
---
-
-[] Dependency conflicts
-    [] Highlight conflicts between epics that end after upstream start dependency
-    [] Highlight conflicts between epics that start after upstream dependency
-    [] Use multiple rows when epics over-lap
 
 [] Add Team Name to lower-left of Epics swim-lanes
 --
@@ -47,6 +39,12 @@ NEXT
 [] Write Team Epic changes to JIRA
 
 [] Sync change with JIRA
+
+[] Clicking on Team Name allows user to
+    [] View Epic sequenced in order
+    [] Change epci sequence order
+    [] Remove Team
+    [] Change Team name
 
 [] Edit team name by clicking on the Team Name directly
 
@@ -128,6 +126,14 @@ NEXT
 ========
  DONE
 ========
+
+--
+
+[X] Create new Team via CreateTeam button
+    [X] Wire controls and logic to create new team
+    [X] New team is saved to the server
+    [X] New team appears on screen after button clicked
+    [X] Epics can be added to new team
 
 [X] (Client-side) Update Epic details via the Side-panel
     [X] Change Epic size using a drop-down
