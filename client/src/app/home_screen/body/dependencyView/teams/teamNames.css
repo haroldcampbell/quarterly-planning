@@ -35,6 +35,16 @@
     align-self: center;
 }
 
+.team-names-container-wrapper .teams-nav-container button.add-team-btn:hover {
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+}
+
+.team-names-container-wrapper .teams-nav-container button.add-team-btn:active {
+    box-shadow: 0 0px 2px 0 rgba(0, 0, 0, 0.2);
+    background-color: #e4e4e4;
+}
+
 .team-names-container-wrapper .team-names-container {
     text-align: center;
 

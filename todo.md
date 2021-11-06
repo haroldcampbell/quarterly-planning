@@ -1,7 +1,8 @@
-[] Create new Team via CreateTeam button
-    [] New team appears on screen
-    [] Epics can be added to new team
-    [] New team is saved to the server
+[X] Create new Team via CreateTeam button
+    [X] Wire controls and logic to create new team
+    [X] New team is saved to the server
+    [X] New team appears on screen after button clicked
+    [X] Epics can be added to new team
 
 ========
 NEXT
@@ -33,6 +34,7 @@ NEXT
 
 [] FIX: Scrollbars
 [] FIX: Epic position error. The week dividers aren't correctly included in the epic.x calculation
+[] FIX: Deleting epics doesn't change the height of the epicsController.
 
 [] Mouse-over epic shows full-details (useful for when epic's name is truncated)
 

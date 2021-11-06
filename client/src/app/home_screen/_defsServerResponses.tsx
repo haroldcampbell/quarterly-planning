@@ -9,10 +9,14 @@ export type AllTeamsResponse = {
 }
 export const URLUpdateTeam = "/team/update";
 export const URLDeleteTeam = "/team/delete";
+export const URLCreatTeam = "/team/create";
+export type CreateTeamResponse = {
+    Team: Team;
+}
 
 /** Epics */
 export const URLCreateEpic = "/epic/create";
-export type CreateTeamResponse = {
+export type CreateEpicResponse = {
     EpicID: EpicID
 }
 

@@ -3,8 +3,8 @@ import * as lib from "../../../../core/lib";
 import * as dataStore from "../../../data/dataStore";
 import { OSubjectViewAddDependencyDialog } from "../../selectedEpicDetails/addDependencyDialogController";
 import { OSubjectDidDeleteEpic } from "../../selectedEpicDetails/selectedEpicDetailsViewController";
-import { Team, TeamEpics, Epic, OSubjectDataStoreReady, OSubjectCreateNewEpicRequest, TeamEpicDependency, EpicID, OSubjectChangedTeamEpicHeightBounds } from "../../_defs";
-import { AllTeamsResponse, CreateTeamResponse, URLAllTeams, URLCreateEpic } from "../../_defsServerResponses";
+import { Team, TeamEpics, Epic, OSubjectCreateNewEpicRequest, TeamEpicDependency, EpicID, OSubjectChangedTeamEpicHeightBounds, OSubjectDidCreateNewTeam } from "../../_defs";
+import { AllTeamsResponse, CreateEpicResponse, URLAllTeams, URLCreateEpic } from "../../_defsServerResponses";
 
 /** @jsx gtap.$jsx */
 
@@ -51,28 +51,28 @@ export class DependencyViewController extends lib.BaseViewController implements 
         this.view.addView(this.teamNamesController.view);
         this.view.addView(this.teamEpicsViewController.view);
 
-        lib.Observable.subscribe(OSubjectDataStoreReady, this);
         lib.Observable.subscribe(OSubjectCreateNewEpicRequest, this);
         lib.Observable.subscribe(OSubjectRedrawDependencyConnections, this);
+        lib.Observable.subscribe(OSubjectDidCreateNewTeam, this);
 
         this.fetchData();
 
         super.initView();
     }
 
+    loadTeamEpic(team: Team): TeamEpics {
+        const epics = dataStore.getEpicsByTeamID(team.ID) ?? dataStore.initEpicsByTeamID(team.ID);
+        const teamEpic = { Team: team, Epics: epics };
+
+        this.teamEpics.push(teamEpic);
+
+        return teamEpic;
+    }
+
     loadData() {
         this.teams = dataStore.getTeams();
-        this.teams.forEach((t) => {
-            let epics = dataStore.getEpicsByTeamID(t.ID);
 
-            if (epics === undefined) {
-                epics = dataStore.initEpicsByTeamID(t.ID);
-            }
-
-            const teamEpic = { Team: t, Epics: epics };
-            this.teamEpics.push(teamEpic);
-        })
-
+        this.teams.forEach(team => this.loadTeamEpic(team));
         this.teamNamesController.initData(this.teams);
         this.teamEpicsViewController.initData(this.teamEpics);
     }
@@ -81,24 +81,23 @@ export class DependencyViewController extends lib.BaseViewController implements 
         lib.apiRequest(
             URLAllTeams,
             (ajax, data: any) => {
-                const result: AllTeamsResponse = data.jsonBody;
-
-                dataStore.setTeams(result.Teams);
-                dataStore.setEpics(result.Epics);
-                dataStore.SetEpicConnections(result.EpicConnections);
-                dataStore.createTeamEpics()
-                dataStore.wireServerData();
+                this.onDidFetchData(data.jsonBody as AllTeamsResponse)
             },
             () => { }
         );
     }
 
+    onDidFetchData(response: AllTeamsResponse) {
+        dataStore.setTeams(response.Teams);
+        dataStore.setEpics(response.Epics);
+        dataStore.SetEpicConnections(response.EpicConnections);
+        dataStore.createTeamEpics()
+
+        this.loadData();
+    }
+
     onUpdate(subject: string, state: lib.ObserverState): void {
         switch (subject) {
-            case OSubjectDataStoreReady: {
-                this.loadData();
-                break;
-            }
             case OSubjectCreateNewEpicRequest: {
                 const { epic, epicController } = state.value;
                 this.onRequestCreateNewEpic(epic, epicController);
@@ -108,10 +107,24 @@ export class DependencyViewController extends lib.BaseViewController implements 
                 this.teamEpicsViewController.redrawDependencyConnections();
                 break;
             }
+            case OSubjectDidCreateNewTeam: {
+                const { newTeam } = state.value;
+                this.onDidCreateNewTeam(newTeam);
+                break;
+            }
         }
     }
 
-    onRequestCreateNewEpic(epic: Epic, epicController: EpicsViewController) {
+    private onDidCreateNewTeam(newTeam: Team) {
+        const epics = this.loadTeamEpic(newTeam);
+
+        this.teamNamesController.onDidCreateNewTeam(newTeam);
+        this.teamEpicsViewController.onDidCreateNewTeam(epics);
+
+        // this.teamEpicsViewController.initData(this.teamEpics);
+    }
+
+    private onRequestCreateNewEpic(epic: Epic, epicController: EpicsViewController) {
         dataStore.RequestCreateTeamEpics(epic, (newEpic) => {
             this.onEpicCreated(newEpic, epicController);
         })

@@ -107,9 +107,6 @@ export type EpicDateInfo = {
     text: string;
 }
 
-/** The data has been fetched and processed */
-export const OSubjectDataStoreReady = "data-store-data-ready";
-
 export const OSubjectWillUpdateTeamName = "will-update-team-name";
 export const OSubjectWillUpdateEpicName = "will-update-epic-name";
 
@@ -133,3 +130,6 @@ export const OSubjectDimUnhighlightedEpics = "dim-unhighlighted-epics";
 
 /** Notifies listeners that the epic changed. */
 export const OSubjectDidChangeEpic = "did-change-epic-attributes";
+
+/** Notifies listeners that a new team was added */
+export const OSubjectDidCreateNewTeam = "did-create-new-team";

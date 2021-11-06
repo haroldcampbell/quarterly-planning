@@ -5,7 +5,7 @@ import { EpicControllerBounds, MilliSecondsInDay, MinWeekCellWidth, ShapeYOffset
 import * as dataStore from "../../../../data/dataStore";
 import { OSubjectDidDeleteEpic, OSubjectDidDeleteTeam } from "../../../selectedEpicDetails/selectedEpicDetailsViewController";
 
-import { DateMonthPeriod, Epic, EpicID, GTapElement, OSubjectDidChangeEpic, OSubjectDimUnhighlightedEpics, OSubjectHighlightDownstreamEpic, OSubjectHighlightUpstreamEpic, OSubjectUnHighlightAllEpic, PathInfo, SVGContainerID, TeamEpics, TeamID, WeekDetail, XYOnly } from "../../../_defs";
+import { DateMonthPeriod, Epic, EpicID, GTapElement, OSubjectDidChangeEpic, OSubjectDidCreateNewTeam, OSubjectDimUnhighlightedEpics, OSubjectHighlightDownstreamEpic, OSubjectHighlightUpstreamEpic, OSubjectUnHighlightAllEpic, PathInfo, SVGContainerID, Team, TeamEpics, TeamID, WeekDetail, XYOnly } from "../../../_defs";
 import { EpicsViewController } from "./epicsViewController";
 
 /** @jsx gtap.$jsx */
@@ -195,8 +195,8 @@ export class TeamEpicsViewController extends lib.BaseViewController implements l
 
         this.ctx = gtap.container(SVGContainerID, svgHostElm, "width: 200%; height:100%; position:absolute");
 
-        teamEpics?.forEach((epics) => {
-            this.initTeamEpics(epics)
+        teamEpics?.forEach((teamEpic) => {
+            this.initTeamEpics(teamEpic)
         })
         this.onTeamEpicsAdded();
     }
@@ -239,6 +239,11 @@ export class TeamEpicsViewController extends lib.BaseViewController implements l
                 break;
             }
         }
+    }
+
+    onDidCreateNewTeam(teamEpics: TeamEpics) {
+        this.initTeamEpics(teamEpics)
+        this.relayoutEpicControllers();
     }
 
     private onDimAllConnections(selectedEpic: Epic) {

@@ -1,17 +1,21 @@
 import * as lib from "../../core/lib";
 import { Epic, EpicID, OSubjectWillUpdateTeamName, Team, TeamID } from "../home_screen/_defs";
-import { URLDeleteTeam, URLUpdateTeam } from "../home_screen/_defsServerResponses";
+import { CreateTeamResponse, URLCreatTeam, URLDeleteTeam, URLUpdateTeam } from "../home_screen/_defsServerResponses";
 import { DeleteEpicByEpicID, getEpics } from "./epics";
+import { initEpicsByTeamID } from "./teamEpics";
 
 const _teamIDs: string[] = [];
 const _teamsMap = new Map<string, Team>();
 let _teams: Team[] | undefined = undefined;
 
+function setTeam(team: Team) {
+    _teamsMap.set(team.ID, team)
+    _teamIDs.push(team.ID);
+}
 /** Sets the data for the teams */
 export function setTeams(teams: Team[]) {
     teams.forEach((team) => {
-        _teamsMap.set(team.ID, team)
-        _teamIDs.push(team.ID);
+        setTeam(team);
     })
 }
 
@@ -90,4 +94,26 @@ function deleteTeamByTeamID(teamID: TeamID): EpicID[] {
     buildTeams();
 
     return deletedEpicIDs;// Epics that need to be deleted
+}
+
+export function RequestCreateTeam(onTeamCreatedCallback: (newTeam: Team) => void) {
+    lib.apiPostRequest(
+        URLCreatTeam,
+        (formData: FormData) => {
+            // formData.append("team-id", teamID);
+        },
+        (ajax, data) => {
+            if (data.successStatus == false) {
+                alert("Error creating team. Please try again.");
+                return;
+            }
+
+            const newTeam = (data.jsonBody as CreateTeamResponse).Team
+
+            setTeam(newTeam);
+            initEpicsByTeamID(newTeam.ID);
+
+            onTeamCreatedCallback(newTeam);
+        },
+    );
 }

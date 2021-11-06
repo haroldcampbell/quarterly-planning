@@ -1,7 +1,8 @@
 import * as gtap from "../../../../../../www/dist/js/gtap";
 import * as lib from "../../../../../core/lib";
+import * as dataStore from "../../../../data/dataStore";
 import { OSubjectDidDeleteTeam, OSubjectEpicSelected } from "../../../selectedEpicDetails/selectedEpicDetailsViewController";
-import { Epic, EpicViewSVGNode, GTapElement, OSubjectChangedTeamEpicHeightBounds, OSubjectUnHighlightAllEpic, OSubjectWillUpdateTeamName, Team, TeamEpics, TeamID } from "../../../_defs";
+import { Epic, EpicViewSVGNode, GTapElement, OSubjectChangedTeamEpicHeightBounds, OSubjectDidCreateNewTeam, OSubjectUnHighlightAllEpic, OSubjectWillUpdateTeamName, Team, TeamEpics, TeamID } from "../../../_defs";
 
 /** @jsx gtap.$jsx */
 
@@ -17,16 +18,21 @@ class TeamsNamesView extends lib.BaseView {
     /** TeamID -> element */
     private teamNamesMap: Map<string, GTapElement> = new Map<string, GTapElement>();
 
+    onAddTeamCallback!: () => void;
+
     viewContent() {
         return this.content;
     }
 
     initView() {
+        this.teamsContainer.onclick = () => {
+            this.onAddTeamCallback();
+        }
         this.content.appendChild(this.teamsContainer);
         this.content.appendChild(this.teamNamesElms);
     }
 
-    createTeamNameElement(team: Team): GTapElement {
+    private createTeamNameElement(team: Team): GTapElement {
         return <div className="team-name-wrapper">
             <div className="team-name">
                 {team.Name}
@@ -83,12 +89,12 @@ export class TeamsNamesViewController extends lib.BaseViewController implements 
     protected _view: lib.IView = new TeamsNamesView(this);
     private teamsNamesView = this.view as TeamsNamesView;
 
-    private teams?: Team[];
+    private teams!: Team[];
 
     initData(teams?: Team[]) {
-        this.teams = teams;
+        this.teams = teams ?? [];
 
-        this.teams?.forEach((t) => {
+        this.teams.forEach((t) => {
             this.teamsNamesView.addTeamName(t);
         });
     }
@@ -104,6 +110,9 @@ export class TeamsNamesViewController extends lib.BaseViewController implements 
     }
 
     initView() {
+        this.teamsNamesView.onAddTeamCallback = () => {
+            this.onAddTeam();
+        }
         super.initView();
     }
 
@@ -137,6 +146,24 @@ export class TeamsNamesViewController extends lib.BaseViewController implements 
         }
     }
 
+    private onAddTeam() {
+        dataStore.RequestCreateTeam(
+            (newTeam: Team) => {
+                lib.Observable.notify(OSubjectDidCreateNewTeam, {
+                    source: this,
+                    value: {
+                        newTeam,
+                    }
+                });
+            }
+        );
+    }
+
+    onDidCreateNewTeam(newTeam: Team) {
+        this.teams.push(newTeam);
+        this.teamsNamesView.addTeamName(newTeam);
+    }
+
     private onEpicSelected(epic: Epic) {
         this.teamsNamesView.highlightTeam(epic.TeamID);
     }
@@ -152,6 +179,7 @@ export class TeamsNamesViewController extends lib.BaseViewController implements 
     private onDeleteEpicController(teamID: TeamID) {
         this.teamsNamesView.deleteTeamName(teamID);
     }
+
     onUpdateTeamName(team: Team) {
         this.teamsNamesView.onUpdateTeamName(team);
     }

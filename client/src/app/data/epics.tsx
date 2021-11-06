@@ -1,6 +1,6 @@
 import * as lib from "../../core/lib";
 import { Epic, EpicID, OSubjectWillUpdateEpicName } from "../home_screen/_defs";
-import { URLCreateEpic, CreateTeamResponse, URLUpdateEpic, URLDeleteEpic, DeleteEpicResonse } from "../home_screen/_defsServerResponses";
+import { URLCreateEpic, CreateEpicResponse, URLUpdateEpic, URLDeleteEpic, DeleteEpicResonse } from "../home_screen/_defsServerResponses";
 import { UnlinkEpicConnection } from "./connections";
 
 /** Contains epicID -> Epic mapping */
@@ -42,7 +42,7 @@ export function RequestCreateTeamEpics(epic: Epic, onEpicCreatedCallback: (newEp
                 return;
             }
 
-            const response: CreateTeamResponse = data.jsonBody
+            const response: CreateEpicResponse = data.jsonBody
             epic.ID = response.EpicID;
 
             onEpicCreatedCallback(epic);
