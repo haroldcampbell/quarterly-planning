@@ -51,16 +51,13 @@ NEXT
 [] Side-Panels
     [] Collapse Team side-panel
     [] Add Sticky Team name
-    [] Highlight related Team when side-pandel is open
 
 [] Projected End Date field
-    [] Edit Projected End field
     [] Sync-epic size to align with week boundary
 
 [] Dragging epics
     [] Move epics to new week
-    [] Extend epics by dragging end
-    [] Move epics to different teams
+    [] Extend epics End date by dragging end
 
 [] Start a Quarterly Planning Event
     [] Define period
