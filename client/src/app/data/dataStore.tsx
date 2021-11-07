@@ -12,3 +12,7 @@ export function addNewEpicAtIndex(epic: Epic) {
     addEpicToTeamEpic(epic.TeamID, epic);
     addEpic(epic);
 }
+
+export function initWeekSlots(): string[] {
+    return "a".split(",");
+}

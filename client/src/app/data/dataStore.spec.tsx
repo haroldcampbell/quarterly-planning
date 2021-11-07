@@ -1,17 +1,20 @@
-// import { initWeekSlots } from "./dataStore";
+/**
+ * @jest-environment jsdom
+ */
 
-// it("test", () => {
-//     expect(1).toEqual(2);
-// });
+import { initWeekSlots } from "./dataStore";
+
+it("test", () => {
+    expect(1).toEqual(1);
+});
 
 
+describe("Init Week Slots", () => {
+    const weekSlots = initWeekSlots();
 
-// describe("Init Week Slots", () => {
-//     const weekSlots = initWeekSlots();
+    test("number of slots", () => {
+        expect(weekSlots.length).toEqual(1);
+    });
 
-//     test("number of slots", () => {
-//         expect(weekSlots.values.length).toEqual(1);
-//     });
-
-// });
+});
 

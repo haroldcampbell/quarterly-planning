@@ -1,5 +1,11 @@
 {
-    "jest.jestCommandLine": "jest --config=./jest.config.js",
+    "search.exclude": {
+        "**/.yarn": true,
+        "**/.pnp.*": true
+    },
+    "jest.jestCommandLine": "yarn test",
     "jest.showCoverageOnLoad": true,
-    "jest.rootPath": "./client/src"
+    "jest.rootPath": "./client/src",
+    "typescript.tsdk": "./client/.yarn/sdks/typescript/lib",
+    "typescript.enablePromptUseWorkspaceTsdk": true
 }
