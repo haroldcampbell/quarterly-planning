@@ -3,7 +3,7 @@ import * as lib from "../../../../../core/lib";
 import * as dataStore from "../../../../data/dataStore";
 
 import { IViewController, IScreenController } from "../../../../../core/lib";
-import { calcSVGNodesXYForWeek, ColGap, EpicControllerBounds, epicSizeToWidth, MinWeekCellWidth, placeTextWithEllipsis, RowPadding, ShapeYOffset, SVGMaxContextWidth, TextShapeYGap } from "../../../../common/nodePositions";
+import { CalcEpicWeekPosition, ColGap, EpicControllerBounds, EpicSizeToWidth, MinWeekCellWidth, PlaceTextWithEllipsis, RowPadding, ShapeYOffset, SVGMaxContextWidth, TextShapeYGap } from "../../../../common/nodePositions";
 import { DateMonthPeriod, Epic, EpicID, EpicSizes, EpicViewSVGNode, OSubjectChangedTeamEpicHeightBounds, OSubjectCreateNewEpicRequest, OSubjectDimUnhighlightedEpics, OSubjectHighlightDownstreamEpic, OSubjectHighlightUpstreamEpic, OSubjectUnHighlightAllEpic, OSubjectWillUpdateEpicName, SVGContainerID, TeamEpics, TeamID, XYOnly } from "../../../_defs";
 
 import { OSubjectDidDeleteEpic, OSubjectDidDeleteTeam, OSubjectEpicSelected } from "../../../selectedEpicDetails/selectedEpicDetailsViewController";
@@ -12,48 +12,12 @@ import { OSubjectRedrawDependencyConnections, OSubjectTeamEpicsScrollContainerRe
 /** @jsx gtap.$jsx */
 
 import "./epicsView.css"
+import { NewEpicButton } from "./newEpicButton";
 
 const shapeHeight = 20;
 const shapeEornerRadius = 5;
 export const interRowGap = 10; /** The horizontal space between epics for the same team */
 
-class NewEpicButton {
-    private rCon: any;
-    private r: any;
-    private l: any;
-    private t: any;
-
-    constructor(parentGroupSVGNode: any) {
-        this.rCon = gtap.prect(SVGContainerID);
-        this.rCon.$class("new-epic-btn-container");
-
-        this.t = gtap.text(SVGContainerID);
-        this.t.$class("new-epic-btn-text");
-        this.t.$text("+");
-
-        parentGroupSVGNode.appendChild(this.rCon);
-        parentGroupSVGNode.appendChild(this.t);
-    }
-
-    positionButton(parentX: number, y: number) {
-        const x = parentX;
-
-        this.rCon.$draw({ x, y: y + 1 }, { width: 15, height: 15 }, { c3: 10 });
-
-        this.t.$x(x + 3);
-        this.t.$y(y + 12);
-    }
-
-    addHandler(newEpicCallback: () => void) {
-        this.rCon.onclick = () => {
-            newEpicCallback();
-        }
-    }
-
-    static indexToXPosition(index: number): number {
-        return index * 100 + ColGap * index;
-    }
-}
 class EpicsView extends lib.BaseView {
     private epicsContainerSVGNode = gtap.rect(SVGContainerID);
     private epicsDivderSVGNode = gtap.line(SVGContainerID);
@@ -110,11 +74,7 @@ class EpicsView extends lib.BaseView {
         parentGroupSVGNode.appendChild(r);
         parentGroupSVGNode.appendChild(t);
 
-        const epicViewSVGNode = {
-            parentNode: this.epicsContainerSVGNode,
-            svgRectNode: r,
-            svgTextNode: t
-        }
+        const epicViewSVGNode = new EpicViewSVGNode(this.epicsContainerSVGNode, r, t);
 
         r.onclick = () => { this.onEpicSelected(epic, epicViewSVGNode); }
 
@@ -158,6 +118,11 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
     */
     private possibleEpicSlots = new Map<string, EpicID>();
     private maxNumberOfRows: number = 1;
+
+    private selectedEpicInfo?: { epic: Epic, selectedEpicViewSVGNode: EpicViewSVGNode };
+    private highlightedUpstreamEpicSVGNodes: EpicViewSVGNode[] = [];
+    private highlightedDownstreamEpicSVGNodes: EpicViewSVGNode[] = [];
+    private dimmedEpicSVGNodes: EpicViewSVGNode[] = [];
 
     private get epicsView(): EpicsView {
         return (this.view as unknown) as EpicsView
@@ -231,28 +196,6 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
         super.initController();
     }
 
-    /**
-     *
-     * @param previousNode is the node infront of where the new node will be created
-     */
-    private onCreateNewEpicCallback(teamID: string, weekIndex: number) {
-        const newEpic: Epic = {
-            ID: `epic-${Date.now()}`,
-            TeamID: teamID,
-            Name: "New Epic",
-            Size: EpicSizes.Small,
-            ExpectedStartPeriod: weekIndex + 1, // TODO: Specify the week
-        }
-
-        lib.Observable.notify(OSubjectCreateNewEpicRequest, {
-            source: this,
-            value: {
-                epic: newEpic,
-                epicController: this,
-            },
-        });
-    }
-
     onUpdate(subject: string, state: lib.ObserverState): void {
         switch (subject) {
             case OSubjectTeamEpicsScrollContainerResized: {
@@ -313,11 +256,6 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
             }
         }
     }
-
-    private selectedEpicInfo?: { epic: Epic, selectedEpicViewSVGNode: EpicViewSVGNode };
-    private highlightedUpstreamEpicSVGNodes: EpicViewSVGNode[] = [];
-    private highlightedDownstreamEpicSVGNodes: EpicViewSVGNode[] = [];
-    private dimmedEpicSVGNodes: EpicViewSVGNode[] = [];
 
     private onEpicSelected(epic: Epic, selectedEpicViewSVGNode: EpicViewSVGNode) {
         if (!this.epicsViewSVGMap.has(epic.ID)) {
@@ -480,6 +418,26 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
         })
     }
 
+    private onTeamEpicsScrollContainerResized(contentWidth: DOMRectReadOnly) {
+        if (contentWidth.width > this.maxRowWidth) {
+            this.updateViewWidth(contentWidth.width);
+        } else {
+            this.updateViewWidth(this.maxRowWidth);
+        }
+    }
+
+    private onEpicNameUpdated(epic: Epic) {
+        if (this.teamEpics.Team.ID != epic.TeamID) {
+            return;
+        }
+
+        let svgNodes = this.epicsViewSVGMap.get(epic.ID);
+
+        svgNodes?.svgTextNode.$text(epic.Name);
+
+        this.layoutAllEpics();
+    }
+
     private getBoundsY(): number {
         return this.bounds.position.y;
     }
@@ -495,6 +453,28 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
             btn.addHandler(() => { this.onCreateNewEpicCallback(this.teamEpics.Team.ID, index) });
             this.buttonsArray.push(btn);
         }
+    }
+
+    /**
+     *
+     * @param previousNode is the node infront of where the new node will be created
+     */
+    private onCreateNewEpicCallback(teamID: string, weekIndex: number) {
+        const newEpic: Epic = {
+            ID: `epic-${Date.now()}`,
+            TeamID: teamID,
+            Name: "New Epic",
+            Size: EpicSizes.Small,
+            ExpectedStartPeriod: weekIndex + 1, // TODO: Specify the week
+        }
+
+        lib.Observable.notify(OSubjectCreateNewEpicRequest, {
+            source: this,
+            value: {
+                epic: newEpic,
+                epicController: this,
+            },
+        });
     }
 
     private createEpic(epic: Epic) {
@@ -552,22 +532,21 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
     }
 
     private sizeSVGNodes(epic: Epic, svgEpicNode: EpicViewSVGNode) {
-        const width = epicSizeToWidth(epic.Size)!
+        const width = EpicSizeToWidth(epic.Size)!
 
         svgEpicNode.svgRectNode.$height(shapeHeight);
         svgEpicNode.svgRectNode.$rxy(shapeEornerRadius);
 
-        placeTextWithEllipsis(svgEpicNode.svgTextNode, epic.Name, width);
+        PlaceTextWithEllipsis(svgEpicNode.svgTextNode, epic.Name, width);
 
         svgEpicNode.svgRectNode.$width(width);
     }
 
     private positionSVGNodesByWeek(epic: Epic, svgEpicNode: EpicViewSVGNode) {
-        const positionInfo = calcSVGNodesXYForWeek(epic.ExpectedStartPeriod,
-            this.xOffset,
+        const positionInfo = CalcEpicWeekPosition(epic.ExpectedStartPeriod,
             this.getBoundsY(),
-            epicSizeToWidth(epic.Size)!,
-            svgEpicNode.svgTextNode.$textBoundingBox().width);
+            epic.Size,
+            svgEpicNode.textNodeWidth());
 
         svgEpicNode.svgRectNode.$y(positionInfo.rectPostion.y);
         svgEpicNode.svgTextNode.$y(positionInfo.textPosition.y);
@@ -622,26 +601,6 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
 
     private updateViewWidth(width: number) {
         this.epicsView.updateViewWidth(Math.max(SVGMaxContextWidth, width));
-    }
-
-    onTeamEpicsScrollContainerResized(contentWidth: DOMRectReadOnly) {
-        if (contentWidth.width > this.maxRowWidth) {
-            this.updateViewWidth(contentWidth.width);
-        } else {
-            this.updateViewWidth(this.maxRowWidth);
-        }
-    }
-
-    onEpicNameUpdated(epic: Epic) {
-        if (this.teamEpics.Team.ID != epic.TeamID) {
-            return;
-        }
-
-        let svgNodes = this.epicsViewSVGMap.get(epic.ID);
-
-        svgNodes?.svgTextNode.$text(epic.Name);
-
-        this.layoutAllEpics();
     }
 
     getEpicSVGRectNode(epicID: string): any {

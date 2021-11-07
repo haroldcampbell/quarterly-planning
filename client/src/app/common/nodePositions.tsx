@@ -29,14 +29,14 @@ export const TextShapeYGap = TextYOffset - ShapeYOffset;
 export const MinWeekCellWidth = 100;
 export const SVGMaxContextWidth = MinWeekCellWidth * 12 + 11; // 11 = the column gaps
 
-export function calcSVGNodesXYForWeek(expectedStartPeriod: number, xOffset: number, svgNodeY: number, epicNodeWidth: number, svgTextNodeWidth: number): EpicWeekPosition {
-    let x: number;
+export function CalcEpicWeekPosition(expectedStartPeriod: number, svgNodeY: number, epicSize: EpicSizes, svgTextNodeWidth: number): EpicWeekPosition {
     const y = svgNodeY;
+    const epicNodeWidth = EpicSizeToWidth(epicSize)!;
     const weekIndex = Math.floor(expectedStartPeriod) - 1; /** Convert to zero-based index */
     const textXOffset = (epicNodeWidth - svgTextNodeWidth) / 2.0;
 
     /** Calculate the position from the ExpectedStartPeriod */
-    x = RowPadding + weekIndex * MinWeekCellWidth;
+    let x = RowPadding + weekIndex * MinWeekCellWidth;
 
     if (!Number.isInteger(expectedStartPeriod)) {
         /** Offset for the fractional starting periods (1.5, 2.5, 3.5, etc.) */
@@ -94,9 +94,9 @@ function translateEpicSizeToPixels(): Map<EpicSizes, number> {
 }
 
 const epicSizePixelMap = translateEpicSizeToPixels();
-const minEpicSize = epicSizeToWidth(EpicSizes.XSmall);
+const minEpicSize = EpicSizeToWidth(EpicSizes.XSmall);
 
-export function epicSizeToWidth(size: EpicSizes): number {
+export function EpicSizeToWidth(size: EpicSizes): number {
     return epicSizePixelMap.get(size)!;
 }
 
@@ -104,7 +104,7 @@ export function epicSizeToWidth(size: EpicSizes): number {
  * Adds an ellipsis if text can't fit in width
  * Based on https://stackoverflow.com/questions/9241315/trimming-text-to-a-given-pixel-width-in-svg
  */
-export function placeTextWithEllipsis(textObj: any, textString: string, width: number) {
+export function PlaceTextWithEllipsis(textObj: any, textString: string, width: number) {
     if (textObj.$textBoundingBox().width < width) {
         return;
     }
@@ -119,9 +119,4 @@ export function placeTextWithEllipsis(textObj: any, textString: string, width: n
         }
     }
     textObj.textContent = "..."; //can't place at all
-}
-
-export function XPositionToWeek(x: number): string {
-    // MinWeekCellWidth
-    return ""
 }

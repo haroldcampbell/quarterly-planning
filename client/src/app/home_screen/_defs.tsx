@@ -50,11 +50,22 @@ export type EpicConnection = {
     DownstreamEpicID: EpicID;
 }
 
-export type EpicViewSVGNode = {
+export class EpicViewSVGNode {
     svgRectNode: any;
     svgTextNode: any;
     parentNode: any;
+
+    constructor(pNode: any, r: any, t: any) {
+        this.parentNode = pNode;
+        this.svgRectNode = r;
+        this.svgTextNode = t;
+    }
+
+    textNodeWidth(): number {
+        return this.svgTextNode.$textBoundingBox().width;
+    }
 }
+
 
 export type SelectedEpicInfo = {
     epic: Epic;
