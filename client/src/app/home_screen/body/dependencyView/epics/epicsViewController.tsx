@@ -12,8 +12,6 @@ import { OSubjectRedrawDependencyConnections, OSubjectTeamEpicsScrollContainerRe
 /** @jsx gtap.$jsx */
 
 import "./epicsView.css"
-import { returnStatement } from "@babel/types";
-
 
 const shapeHeight = 20;
 const shapeEornerRadius = 5;
