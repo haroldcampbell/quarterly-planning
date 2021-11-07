@@ -80,6 +80,11 @@ class EpicsView extends lib.BaseView {
     }
 
     onEpicSelected(epic: Epic, selectedEpicViewSVGNode: EpicViewSVGNode) {
+        lib.Observable.notify(OSubjectUnHighlightAllEpic, {
+            source: this,
+            value: {},
+        });
+
         lib.Observable.notify(OSubjectEpicSelected, {
             source: this,
             value: {
@@ -220,7 +225,6 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
                 break;
             }
             case OSubjectDimUnhighlightedEpics: {
-                // const { downstreamEpicID } = state.value;
                 this.onDimUnhighlightedEpics();
                 break;
             }
@@ -253,11 +257,6 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
         if (!this.epicsViewSVGMap.has(epic.ID)) {
             return;
         }
-
-        lib.Observable.notify(OSubjectUnHighlightAllEpic, {
-            source: this,
-            value: { epic },
-        });
 
         this.selectedEpicInfo = {
             epic,
@@ -303,7 +302,7 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
 
         lib.Observable.notify(OSubjectUnHighlightAllEpic, {
             source: this,
-            value: { epic: deletedEpic },
+            value: {},
         });
 
         const epicViewSVGNode = this.epicsViewSVGMap.get(deletedEpic.ID)!;

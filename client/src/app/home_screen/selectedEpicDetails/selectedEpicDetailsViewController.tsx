@@ -108,6 +108,12 @@ export class SelectedEpicDetailsController extends lib.BaseViewController implem
     private inputChangeMap = new Map<string, InputHandler>();
     private activePeriods?: DateMonthPeriod[];
 
+    private sidePandelActive = false;
+
+    get isSidePandelActive(): boolean {
+        return this.sidePandelActive;
+    }
+
     initController() {
         lib.Observable.subscribe(OSubjectEpicSelected, this);
         lib.Observable.subscribe(OSubjectHideEpicDetails, this);
@@ -188,12 +194,14 @@ export class SelectedEpicDetailsController extends lib.BaseViewController implem
         this.selectedEpic = epic;
         this.activePeriods = activePeriods;
         this.detailsView.showEpicDetails(epic, activePeriods);
+        this.sidePandelActive = true;
     }
 
     onHideEpicDetails() {
         this.selectedEpic = undefined;
         this.activePeriods = undefined;
         this.detailsView.hideEpicDetails();
+        this.sidePandelActive = false;
     }
 
     onInputChanged(e: Event, dataOptionKey: string) {

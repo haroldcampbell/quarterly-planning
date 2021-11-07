@@ -120,8 +120,6 @@ export class DependencyViewController extends lib.BaseViewController implements 
 
         this.teamNamesController.onDidCreateNewTeam(newTeam);
         this.teamEpicsViewController.onDidCreateNewTeam(epics);
-
-        // this.teamEpicsViewController.initData(this.teamEpics);
     }
 
     private onRequestCreateNewEpic(epic: Epic, epicController: EpicsViewController) {

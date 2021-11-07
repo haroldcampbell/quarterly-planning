@@ -5,6 +5,10 @@
 
 [X] FIX: Epic position error. The week dividers aren't correctly included in the epic.x calculation
 
+[X] Esc Key
+    [X] Undims all epics
+    [X] Closes side-panel
+
 ========
 NEXT
 ========

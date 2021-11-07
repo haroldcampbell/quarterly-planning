@@ -74,15 +74,21 @@ class TeamsNamesView extends lib.BaseView {
         teamNameElm.$appendCSS("selected-epic-container");
     }
 
-    unhighlightAllTeamExcept(activeTeamID: string) {
-        for (let [teamID, elm] of this.teamNamesMap.entries()) {
-            if (teamID == activeTeamID) {
-                continue;
-            }
-
+    unhighlightAllTeam() {
+        for (let [_, elm] of this.teamNamesMap.entries()) {
             elm.$removeCSS("selected-epic-container");
         }
     }
+
+    // unhighlightAllTeamExcept(activeTeamID: string) {
+    //     for (let [teamID, elm] of this.teamNamesMap.entries()) {
+    //         if (teamID == activeTeamID) {
+    //             continue;
+    //         }
+
+    //         elm.$removeCSS("selected-epic-container");
+    //     }
+    // }
 }
 
 export class TeamsNamesViewController extends lib.BaseViewController implements lib.IObserver {
@@ -134,8 +140,7 @@ export class TeamsNamesViewController extends lib.BaseViewController implements 
                 break;
             }
             case OSubjectUnHighlightAllEpic: {
-                const { epic } = state.value;
-                this.onUnhighlightNonselectedTeams(epic);
+                this.onUnhighlightNonselectedTeams();
                 break;
             }
             case OSubjectDidDeleteTeam: {
@@ -168,8 +173,8 @@ export class TeamsNamesViewController extends lib.BaseViewController implements 
         this.teamsNamesView.highlightTeam(epic.TeamID);
     }
 
-    private onUnhighlightNonselectedTeams(epic: Epic) {
-        this.teamsNamesView.unhighlightAllTeamExcept(epic.TeamID);
+    private onUnhighlightNonselectedTeams() {
+        this.teamsNamesView.unhighlightAllTeam();
     }
 
     private updateTeamContainerHeight(teamID: any, height: any) {

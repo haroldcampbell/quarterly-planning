@@ -7,7 +7,7 @@ import "./homeScreen.css"
 import { HomeNavController } from "./nav/homeNavController";
 import { BodyController } from "./body/bodyController";
 import { SelectedEpicDetailsController } from "./selectedEpicDetails/selectedEpicDetailsViewController";
-import { Epic, EpicID, TeamEpicDependency } from "./_defs";
+import { Epic, EpicID, OSubjectUnHighlightAllEpic, TeamEpicDependency } from "./_defs";
 import { AddDependencyDialogController, OSubjectViewAddDependencyDialog } from "./selectedEpicDetails/addDependencyDialogController";
 
 class MainPanelView extends lib.BaseView {
@@ -98,7 +98,31 @@ export class HomeScreenController extends lib.BaseScreenController implements li
 
     initController() {
         window.history.pushState({}, "", "/");
+        this.wireKeyboardEvent();
         super.initController();
+    }
+
+    wireKeyboardEvent() {
+        const _this = this;
+        document.addEventListener("keydown", function (event) {
+            switch (event.which) {
+                case 27: {
+                    _this.onEscapeKeyPressed();
+                    break;
+                }
+            }
+        });
+    }
+
+    onEscapeKeyPressed() {
+        if (this.selectedEpicDetails.isSidePandelActive) {
+            this.selectedEpicDetails.onHideEpicDetails();
+            return;
+        }
+        lib.Observable.notify(OSubjectUnHighlightAllEpic, {
+            source: this,
+            value: {}
+        });
     }
 
     onUpdate(subject: string, state: lib.ObserverState): void {
