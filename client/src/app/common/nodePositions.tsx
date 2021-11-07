@@ -5,8 +5,13 @@ export type SizeOnly = {
     height: number;
 }
 
+export type NodePos = {
+    rectPos: XYOnly,
+    textPos: XYOnly
+}
+
 export enum EpicSizes {
-    XSmall = 0.5, // 1/4 Sprint, 2-ish Days?
+    XSmall = .5, // 1/4 Sprint, 2-ish Days?
     Small = 1, // 1/2 Sprint, 5 Days
     Medium = 2, // 1 Sprint, 10 Days
     Large = 3, // 2 Sprints, 20 Days
@@ -43,19 +48,23 @@ export const TextShapeYGap = TextYOffset - ShapeYOffset;
 export const MinWeekCellWidth = 100;
 export const SVGMaxContextWidth = MinWeekCellWidth * 12 + 11; // 11 = the column gaps
 
+export function EpicWeekStartToIndex(expectedStartPeriod: number): number {
+    return Math.floor(expectedStartPeriod) - 1; /** Convert to zero-based index */
+}
+
 export function CalcEpicWeekPosition(expectedStartPeriod: number, svgNodeY: number, epicSize: EpicSizes, svgTextNodeWidth: number): EpicWeekPosition {
     const y = svgNodeY;
     const epicNodeWidth = EpicSizeToWidth(epicSize)!;
-    const weekIndex = Math.floor(expectedStartPeriod) - 1; /** Convert to zero-based index */
+    const weekIndex = EpicWeekStartToIndex(expectedStartPeriod)
     const textXOffset = (epicNodeWidth - svgTextNodeWidth) / 2.0;
 
     /** Calculate the position from the ExpectedStartPeriod */
-    let x = RowPadding + weekIndex * MinWeekCellWidth;
+    // let x = RowPadding + weekIndex * MinWeekCellWidth;
+    let x = RowPadding / 2.0 + weekIndex * (MinWeekCellWidth + ColGap)
+    //  (ww + RowPadding + ColGap / 2.0) + RowPadding / 2.0 //+ (weekIndex - 1) * RowPadding//+ RowPadding * 2 + ColGap / 2) + RowPadding / 2.0
+    x += (expectedStartPeriod - Math.floor(expectedStartPeriod)) * MinWeekCellWidth
+    //+ ColGap * weekIndex;
 
-    if (!Number.isInteger(expectedStartPeriod)) {
-        /** Offset for the fractional starting periods (1.5, 2.5, 3.5, etc.) */
-        x += RowPadding + minEpicSize;
-    }
 
     return {
         rectPostion: {
@@ -95,18 +104,20 @@ export function epicSizeInDays(size: EpicSizes): number {
  * Precalculated table for pixel-sizes based on epic-sizes.
  */
 function translateEpicSizeToPixels(): Map<EpicSizes, number> {
-    const rP2 = RowPadding * 2.0;
-
     const sizeMap = new Map<EpicSizes, number>();
-    sizeMap.set(EpicSizes.XSmall, (MinWeekCellWidth + RowPadding) / 2.0 - rP2);
-    sizeMap.set(EpicSizes.Small, MinWeekCellWidth - rP2);
-    sizeMap.set(EpicSizes.Medium, MinWeekCellWidth * 2.0 - rP2);
-    sizeMap.set(EpicSizes.Large, MinWeekCellWidth * 4 - rP2);
-    sizeMap.set(EpicSizes.XLarge, MinWeekCellWidth * 8 - rP2);
-    sizeMap.set(EpicSizes.Unknown, MinWeekCellWidth * 12 - rP2);
+    const tinyCellWidth = MinWeekCellWidth / 2.0 - RowPadding
+
+    sizeMap.set(EpicSizes.XSmall, tinyCellWidth);
+    sizeMap.set(EpicSizes.Small, MinWeekCellWidth - RowPadding);
+    sizeMap.set(EpicSizes.Medium, MinWeekCellWidth * 2.0 - RowPadding);
+    sizeMap.set(EpicSizes.Large, MinWeekCellWidth * 4 - RowPadding);
+    sizeMap.set(EpicSizes.XLarge, MinWeekCellWidth * 8 - RowPadding);
+    sizeMap.set(EpicSizes.Unknown, MinWeekCellWidth * 12 - RowPadding);
 
     return sizeMap;
 }
+
+
 
 const epicSizePixelMap = translateEpicSizeToPixels();
 const minEpicSize = EpicSizeToWidth(EpicSizes.XSmall);
@@ -114,6 +125,7 @@ const minEpicSize = EpicSizeToWidth(EpicSizes.XSmall);
 export function EpicSizeToWidth(size: EpicSizes): number {
     return epicSizePixelMap.get(size)!;
 }
+
 
 /**
  * Adds an ellipsis if text can't fit in width

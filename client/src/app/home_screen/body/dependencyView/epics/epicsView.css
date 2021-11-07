@@ -31,7 +31,8 @@ svg g.epics-container-group:hover text.new-epic-btn-text {
 svg g.epics-container-group rect.epic {
     fill: #fff;
     stroke: #707070;
-    stroke-width: 1px;
+    stroke-width: 1.5px;
+    opacity: 0.5;
 }
 
 svg g.epics-container-group text.epic-name {
@@ -68,6 +69,7 @@ svg g.epics-container-group rect.selected-epic {
     fill: #1f8ce8;
     stroke-width: 2px;
     stroke: #0c4472;
+    opacity: 1;
 }
 
 svg g.epics-container-group text.selected-epic {
@@ -87,6 +89,8 @@ svg g.epics-container-group rect.downstream-highlighed-epic {
 
 svg g.epics-container-group rect.dimmed-epic {
     stroke: #f2f0f0;
+    stroke-width: 1;
+    opacity: 1;
 }
 svg g.epics-container-group text.dimmed-epic {
     fill: #9f9f9f;

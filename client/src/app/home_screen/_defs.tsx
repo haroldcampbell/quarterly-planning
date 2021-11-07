@@ -1,4 +1,4 @@
-import { CalcEpicWeekPosition, EpicSizeToWidth, PlaceTextWithEllipsis, EpicWeekPosition, XYOnly, EpicSizes } from "../common/nodePositions";
+import { CalcEpicWeekPosition, EpicSizeToWidth, PlaceTextWithEllipsis, EpicWeekPosition, XYOnly, EpicSizes, NodePos } from "../common/nodePositions";
 
 export interface GTapElement extends HTMLElement {
     $appendCSS(className: string): void;
@@ -75,6 +75,14 @@ export class EpicViewSVGNode {
             boundsY,
             epic.Size,
             this.textNodeWidth());
+    }
+
+    updateNodePos(nodePos: NodePos) {
+        this.svgRectNode.$x(nodePos.rectPos.x);
+        this.svgRectNode.$y(nodePos.rectPos.y);
+
+        this.svgTextNode.$x(nodePos.textPos.x);
+        this.svgTextNode.$y(nodePos.textPos.y);
     }
 }
 

@@ -1,7 +1,9 @@
-[] Dependency conflicts
-    [] Use multiple rows when epics over-lap
+[X] Dependency conflicts
+    [X] Use multiple rows when epics over-lap
     [] Highlight conflicts between epics that end after upstream start dependency
     [] Highlight conflicts between epics that start after upstream dependency
+
+[X] FIX: Epic position error. The week dividers aren't correctly included in the epic.x calculation
 
 ========
 NEXT
@@ -24,8 +26,11 @@ NEXT
     [] Update UI to single button for showing the Add Dependency Dialog
     [] Closing the Side-Pandel should Undim and unhighlight all epics
 
+[] Improve adding dependencies between epics
+    [] Filter by team
+    [] Show only epics for the current team or all teams
+
 [] FIX: Scrollbars
-[] FIX: Epic position error. The week dividers aren't correctly included in the epic.x calculation
 [] FIX: Deleting epics doesn't change the height of the epicsController.
 
 [] Mouse-over epic shows full-details (useful for when epic's name is truncated)

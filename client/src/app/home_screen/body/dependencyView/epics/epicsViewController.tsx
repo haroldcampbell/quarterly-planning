@@ -485,7 +485,8 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
         }
 
         svgEpicNode.sizeSVGNodes(epic);
-        this.epicSlots.positionSVGNodesByWeek(epic, svgEpicNode, this.getBoundsY());
+        const nodePos = this.epicSlots.positionSVGNodesByWeek(epic, svgEpicNode, this.getBoundsY());
+        svgEpicNode.updateNodePos(nodePos);
         this.updateBoundsWidth(svgEpicNode);
     }
 
