@@ -1,6 +1,7 @@
 # Specify filepatterns you want git to ignore.
 
 **/node_modules/**/*
+
 **/dist/**
 **/.env
 **/vendor
@@ -13,4 +14,11 @@ spikes/**
 
 server/server
 
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
 
