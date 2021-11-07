@@ -1,11 +1,10 @@
-import path from "path/posix";
 import * as gtap from "../../../../../../www/dist/js/gtap";
 import * as lib from "../../../../../core/lib";
-import { EpicControllerBounds, MilliSecondsInDay, MinWeekCellWidth, ShapeYOffset, SVGMaxContextWidth } from "../../../../common/nodePositions";
+import { EpicControllerBounds, MilliSecondsInDay, ShapeYOffset, SVGMaxContextWidth, XYOnly } from "../../../../common/nodePositions";
 import * as dataStore from "../../../../data/dataStore";
 import { OSubjectDidDeleteEpic, OSubjectDidDeleteTeam } from "../../../selectedEpicDetails/selectedEpicDetailsViewController";
 
-import { DateMonthPeriod, Epic, EpicID, GTapElement, OSubjectDidChangeEpic, OSubjectDidCreateNewTeam, OSubjectDimUnhighlightedEpics, OSubjectHighlightDownstreamEpic, OSubjectHighlightUpstreamEpic, OSubjectUnHighlightAllEpic, PathInfo, SVGContainerID, Team, TeamEpics, TeamID, WeekDetail, XYOnly } from "../../../_defs";
+import { DateMonthPeriod, Epic, EpicID, GTapElement, OSubjectDidChangeEpic, OSubjectDidCreateNewTeam, OSubjectDimUnhighlightedEpics, OSubjectHighlightDownstreamEpic, OSubjectHighlightUpstreamEpic, OSubjectUnHighlightAllEpic, PathInfo, SVGContainerID, Team, TeamEpics, TeamID, WeekDetail } from "../../../_defs";
 import { EpicsViewController } from "./epicsViewController";
 
 /** @jsx gtap.$jsx */

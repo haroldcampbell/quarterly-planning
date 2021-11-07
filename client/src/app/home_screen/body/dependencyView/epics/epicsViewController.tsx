@@ -3,8 +3,8 @@ import * as lib from "../../../../../core/lib";
 import * as dataStore from "../../../../data/dataStore";
 
 import { IViewController, IScreenController } from "../../../../../core/lib";
-import { CalcEpicWeekPosition, ColGap, EpicControllerBounds, EpicSizeToWidth, MinWeekCellWidth, PlaceTextWithEllipsis, RowPadding, ShapeYOffset, SVGMaxContextWidth, TextShapeYGap } from "../../../../common/nodePositions";
-import { DateMonthPeriod, Epic, EpicID, EpicSizes, EpicViewSVGNode, OSubjectChangedTeamEpicHeightBounds, OSubjectCreateNewEpicRequest, OSubjectDimUnhighlightedEpics, OSubjectHighlightDownstreamEpic, OSubjectHighlightUpstreamEpic, OSubjectUnHighlightAllEpic, OSubjectWillUpdateEpicName, SVGContainerID, TeamEpics, TeamID, XYOnly } from "../../../_defs";
+import { EpicControllerBounds, EpicSizes, RowPadding, SVGMaxContextWidth } from "../../../../common/nodePositions";
+import { DateMonthPeriod, Epic, EpicID, EpicViewSVGNode, OSubjectChangedTeamEpicHeightBounds, OSubjectCreateNewEpicRequest, OSubjectDimUnhighlightedEpics, OSubjectHighlightDownstreamEpic, OSubjectHighlightUpstreamEpic, OSubjectUnHighlightAllEpic, OSubjectWillUpdateEpicName, SVGContainerID, TeamEpics, TeamID } from "../../../_defs";
 
 import { OSubjectDidDeleteEpic, OSubjectDidDeleteTeam, OSubjectEpicSelected } from "../../../selectedEpicDetails/selectedEpicDetailsViewController";
 import { OSubjectRedrawDependencyConnections, OSubjectTeamEpicsScrollContainerResized } from "./teamEpicsViewController";
@@ -13,10 +13,8 @@ import { OSubjectRedrawDependencyConnections, OSubjectTeamEpicsScrollContainerRe
 
 import "./epicsView.css"
 import { NewEpicButton } from "./newEpicButton";
+import { EpicSlots } from "../../../../common/epicSlots";
 
-const shapeHeight = 20;
-const shapeEornerRadius = 5;
-export const interRowGap = 10; /** The horizontal space between epics for the same team */
 
 class EpicsView extends lib.BaseView {
     private epicsContainerSVGNode = gtap.rect(SVGContainerID);
@@ -112,17 +110,11 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
     /** Array of the createNewEpic buttons */
     private buttonsArray: any[] = [];
 
-    /**
-     * The format of the key is 'cell.x:cell.y'
-     * If possibleEpicSlots.get('cell.x:cell.y') has a value then it is used.
-    */
-    private possibleEpicSlots = new Map<string, EpicID>();
-    private maxNumberOfRows: number = 1;
-
     private selectedEpicInfo?: { epic: Epic, selectedEpicViewSVGNode: EpicViewSVGNode };
     private highlightedUpstreamEpicSVGNodes: EpicViewSVGNode[] = [];
     private highlightedDownstreamEpicSVGNodes: EpicViewSVGNode[] = [];
     private dimmedEpicSVGNodes: EpicViewSVGNode[] = [];
+    private epicSlots = new EpicSlots();
 
     private get epicsView(): EpicsView {
         return (this.view as unknown) as EpicsView
@@ -492,14 +484,14 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
             return;
         }
 
-        this.sizeSVGNodes(epic, svgEpicNode);
-        this.positionSVGNodesByWeek(epic, svgEpicNode);
+        svgEpicNode.sizeSVGNodes(epic);
+        this.epicSlots.positionSVGNodesByWeek(epic, svgEpicNode, this.getBoundsY());
         this.updateBoundsWidth(svgEpicNode);
     }
 
     private layoutAllEpics() {
         this.xOffset = RowPadding;
-        this.possibleEpicSlots = new Map<string, EpicID>();
+        this.epicSlots.resetSlots();
 
         this.teamEpics.Epics?.forEach((e) => {
             this.layoutEpic(e);
@@ -531,54 +523,6 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
         });
     }
 
-    private sizeSVGNodes(epic: Epic, svgEpicNode: EpicViewSVGNode) {
-        const width = EpicSizeToWidth(epic.Size)!
-
-        svgEpicNode.svgRectNode.$height(shapeHeight);
-        svgEpicNode.svgRectNode.$rxy(shapeEornerRadius);
-
-        PlaceTextWithEllipsis(svgEpicNode.svgTextNode, epic.Name, width);
-
-        svgEpicNode.svgRectNode.$width(width);
-    }
-
-    private positionSVGNodesByWeek(epic: Epic, svgEpicNode: EpicViewSVGNode) {
-        const positionInfo = CalcEpicWeekPosition(epic.ExpectedStartPeriod,
-            this.getBoundsY(),
-            epic.Size,
-            svgEpicNode.textNodeWidth());
-
-        svgEpicNode.svgRectNode.$y(positionInfo.rectPostion.y);
-        svgEpicNode.svgTextNode.$y(positionInfo.textPosition.y);
-
-        let cellKey = `${positionInfo.rectPostion.x}:${positionInfo.rectPostion.y}`;
-
-        let didFindEmptySlot = false;
-        let updatedY = positionInfo.rectPostion.y;
-        let rows = 1;
-        do {
-            if (this.possibleEpicSlots.get(cellKey) === undefined) {
-                this.possibleEpicSlots.set(cellKey, epic.ID); /** Slot is now used */
-
-                didFindEmptySlot = true;
-            } else {
-                updatedY += (shapeHeight + interRowGap);
-                cellKey = `${positionInfo.rectPostion.x}:${updatedY}`;
-                rows++;
-            }
-        } while (!didFindEmptySlot && rows < 500); // 500 is just a sanity check TODO: Find a better way to do this as it currently limits the number of epic rows per team
-
-        if (rows > 0) {
-            this.maxNumberOfRows = Math.max(rows, this.maxNumberOfRows);
-        }
-
-        svgEpicNode.svgRectNode.$y(updatedY);
-        svgEpicNode.svgTextNode.$y(updatedY + TextShapeYGap);
-
-        svgEpicNode.svgRectNode.$x(positionInfo.rectPostion.x)
-        svgEpicNode.svgTextNode.$x(positionInfo.textPosition.x)
-    }
-
     private updateBoundsWidth(svgNodes: EpicViewSVGNode) {
         const svgRectNode = svgNodes.svgRectNode;
         const xbounds = svgRectNode.$x() + svgRectNode.$width() + RowPadding;
@@ -586,7 +530,7 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
     }
 
     private updateBoundsHeight() {
-        const height = this.maxNumberOfRows * (interRowGap + shapeHeight) - interRowGap + 2 * ShapeYOffset;
+        const height = this.epicSlots.calcRowHeight();
         this.bounds.size.height = height;
         this.epicsView.setEpicsContainerHeight(height);
 

@@ -1,5 +1,5 @@
 import * as lib from "../../core/lib";
-import { Epic, EpicID, OSubjectWillUpdateEpicName } from "../home_screen/_defs";
+import { Epic, EpicID } from "../home_screen/_defs";
 import { URLCreateEpic, CreateEpicResponse, URLUpdateEpic, URLDeleteEpic, DeleteEpicResonse } from "../home_screen/_defsServerResponses";
 import { UnlinkEpicConnection } from "./connections";
 
@@ -11,7 +11,7 @@ export function getEpicByID(epicID: string): Epic | undefined {
 }
 
 export function getEpics(): Epic[] {
-    return [..._epicsByID.values()].flat();
+    return [..._epicsByID.values()];
 }
 
 export function addEpic(epic: Epic) {

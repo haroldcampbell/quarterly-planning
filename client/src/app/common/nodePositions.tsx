@@ -1,6 +1,20 @@
-import { EpicSizes, SizeOnly, XYOnly } from "../home_screen/_defs";
+export type XYOnly = { x: number, y: number };
 
-type EpicWeekPosition = { rectPostion: XYOnly, textPosition: XYOnly };
+export type SizeOnly = {
+    width: number;
+    height: number;
+}
+
+export enum EpicSizes {
+    XSmall = 0.5, // 1/4 Sprint, 2-ish Days?
+    Small = 1, // 1/2 Sprint, 5 Days
+    Medium = 2, // 1 Sprint, 10 Days
+    Large = 3, // 2 Sprints, 20 Days
+    XLarge = 5, // 4 Sprints, 40 Days
+    Unknown = 11 // at least Sprints, 60 Days
+}
+
+export type EpicWeekPosition = { rectPostion: XYOnly, textPosition: XYOnly };
 
 export const RowPadding = 12; /** The space at the start and end of the row */
 export const ColGap = 1;
@@ -71,6 +85,7 @@ function translateEpicSizeToDays(): Map<EpicSizes, number> {
 
     return durationMap;
 }
+
 const epicSizeDurationMap = translateEpicSizeToDays();
 export function epicSizeInDays(size: EpicSizes): number {
     return epicSizeDurationMap.get(size)!;

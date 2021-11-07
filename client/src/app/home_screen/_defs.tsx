@@ -1,3 +1,5 @@
+import { CalcEpicWeekPosition, EpicSizeToWidth, PlaceTextWithEllipsis, EpicWeekPosition, XYOnly, EpicSizes } from "../common/nodePositions";
+
 export interface GTapElement extends HTMLElement {
     $appendCSS(className: string): void;
     $removeCSS(className: string): void;
@@ -8,11 +10,7 @@ export interface GTapElement extends HTMLElement {
 
 export type EpicID = string;
 export type TeamID = string;
-export type XYOnly = { x: number, y: number };
-export type SizeOnly = {
-    width: number;
-    height: number;
-}
+
 
 export type PathInfo = {
     p: any,
@@ -21,15 +19,6 @@ export type PathInfo = {
     upstreamEpicID: EpicID,
     downstreamEpicID: EpicID,
 };
-
-export enum EpicSizes {
-    XSmall = 0.5, // 1/4 Sprint, 2-ish Days?
-    Small = 1, // 1/2 Sprint, 5 Days
-    Medium = 2, // 1 Sprint, 10 Days
-    Large = 3, // 2 Sprints, 20 Days
-    XLarge = 5, // 4 Sprints, 40 Days
-    Unknown = 11 // at least Sprints, 60 Days
-}
 
 export type Epic = {
     ID: EpicID;
@@ -50,6 +39,12 @@ export type EpicConnection = {
     DownstreamEpicID: EpicID;
 }
 
+const shapeCornerRadius = 5;
+
+export const ShapeHeight = 20;
+export const InterRowGap = 10; /** The horizontal space between epics for the same team */
+
+
 export class EpicViewSVGNode {
     svgRectNode: any;
     svgTextNode: any;
@@ -63,6 +58,23 @@ export class EpicViewSVGNode {
 
     textNodeWidth(): number {
         return this.svgTextNode.$textBoundingBox().width;
+    }
+
+    sizeSVGNodes(epic: Epic) {
+        const width = EpicSizeToWidth(epic.Size)!
+
+        this.svgRectNode.$width(width);
+        this.svgRectNode.$height(ShapeHeight);
+        this.svgRectNode.$rxy(shapeCornerRadius);
+
+        PlaceTextWithEllipsis(this.svgTextNode, epic.Name, width);
+    }
+
+    calcPositionInfo(epic: Epic, boundsY: number): EpicWeekPosition {
+        return CalcEpicWeekPosition(epic.ExpectedStartPeriod,
+            boundsY,
+            epic.Size,
+            this.textNodeWidth());
     }
 }
 

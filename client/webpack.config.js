@@ -45,7 +45,9 @@ module.exports = {
     extensions: ['.tsx', '.ts', '.js', '.jsx']
   },
 
-  devtool: 'cheap-eval-source-map',
+  // devtool: 'eval-cheap-module-source-map',
+
+  devtool: 'inline-source-map',
 
   output: {
     filename: 'desktop_app.js',

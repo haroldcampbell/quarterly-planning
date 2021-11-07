@@ -2,8 +2,8 @@ import * as gtap from "../../../../www/dist/js/gtap";
 import * as lib from "../../../core/lib";
 import * as dataStore from "../../data/dataStore";
 
-import { epicSizeInDays, MilliSecondsInDay } from "../../common/nodePositions";
-import { DateMonthPeriod, Epic, EpicDateInfo, EpicSizes, InputChangeCallback, OSubjectDidChangeEpic, SelectedEpicDetailsDataOptions } from "../_defs";
+import { epicSizeInDays, MilliSecondsInDay, EpicSizes } from "../../common/nodePositions";
+import { DateMonthPeriod, Epic, EpicDateInfo, InputChangeCallback, OSubjectDidChangeEpic, SelectedEpicDetailsDataOptions } from "../_defs";
 import { DropDownController } from "../../../core/components/dropDownController";
 
 /** @jsx gtap.$jsx */
