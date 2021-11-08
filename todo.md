@@ -1,29 +1,44 @@
-[X] Dependency conflicts
-    [X] Use multiple rows when epics over-lap
-    [X] Highlight conflicts between upstream epics that end after downstream epics start
-
-[X] FIX: Epic position error. The week dividers aren't correctly included in the epic.x calculation
-
-[X] Esc Key
-    [X] Undims all epics
-    [X] Closes side-panel
+[] FIX: Side-pandel height becomes too long when number of teams is long
 
 ========
 NEXT
 ========
 
-[] Add Team Name to lower-left of Epics swim-lanes
---
+[] Add team-specific Side-panel to deal with clicking on Team name
+    [] Change team name
+    [] Allow deleting team
 
-[] Capture Quarterly Planning info
-    [] Learning
+[] Capture Quarterly Planning Learning
+    [] Save learning
+    [] View learnings
+    [] Edit learning
+    [] Delete learning
+    [] Add action
+    [] Add action owner
+    [] Check-off actions
+    [] Delete action
+    [] Change action owner
+
+[] Resolving conflicts
+    [] Decisions -> Goes to a decision log?
+    [] Add note to Epic -> This should show up in a separate Kanban board that is linked to the epic
+    [] Add flag to Epic based on conflict state
     [] Conflicts/Resolved (Treat this like a task list with owners and target dates)
-    [] Decisions
-    [] Simplified Roadmap (condensed)
+
+[] Valuestream Features
+    [] Design blank state
+    [] Add blank state for Valuestream
+    [] Create Valuestream (Email/Password) <- default admin
+    [] Admin account (Full permissions)
+    [] Member account (Limited Eediting permissions)
+    [] Visitor account (Read-only permissions)
+    [] Generate URL for Valuestream
+
+[] Simplified Roadmap (condensed)
     [] Release plan-view
 
 [] Add annotations (e.g. conflict/accepted) to epics (the Red/Green stars)
-    [] Today's date on quarter
+    [] Show Today's date on quarter
 
 [] Side-pandel dependencies
     [] Update UI to single button for showing the Add Dependency Dialog
@@ -41,6 +56,8 @@ NEXT
 ========
  OPPORTUNITIES
 ========
+
+[] Add Team Name to lower-left of Epics swim-lanes
 
 [] Read Team Epics from JIRA
 
@@ -131,6 +148,18 @@ NEXT
 ========
  DONE
 ========
+
+--
+
+[X] Dependency conflicts
+    [X] Use multiple rows when epics over-lap
+    [X] Highlight conflicts between upstream epics that end after downstream epics start
+
+[X] FIX: Epic position error. The week dividers aren't correctly included in the epic.x calculation
+
+[X] Esc Key
+    [X] Undims all epics
+    [X] Closes side-panel
 
 --
 
