@@ -96,3 +96,12 @@ svg g.epics-container-group text.dimmed-epic {
     fill: #9f9f9f;
     opacity: 0.5;
 }
+
+svg g.epics-container-group rect.has-conflict {
+    fill: #e6947f;
+    stroke: #e8461f;
+}
+
+svg g.epics-container-group text.has-conflict {
+    fill: #fff;
+}

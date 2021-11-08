@@ -164,3 +164,6 @@ export const OSubjectDidChangeEpic = "did-change-epic-attributes";
 
 /** Notifies listeners that a new team was added */
 export const OSubjectDidCreateNewTeam = "did-create-new-team";
+
+/** Notifies listeners that an epic has been selected and the conflicts should be processed */
+export const OSubjectProcessEpicDependencyConflicts = "process-epic-dependency-conflicts"

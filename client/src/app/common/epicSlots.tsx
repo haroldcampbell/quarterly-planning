@@ -59,16 +59,25 @@ export class RowSlots {
     }
 
     marktSlotAsUsed(slotStartIndex: number, numSlots: number, owner: EpicID) {
-        // console.log(">>[marktSlotAsUsed]: owner:", owner, slotStartIndex, numSlots)
-        // console.log(">>[marktSlotAsUsed]BEFORE:", this)
         for (let index = slotStartIndex; index < (slotStartIndex + numSlots); index++) {
             this.slots[index] = owner;
         }
-        // console.log(">>[marktSlotAsUsed]AFTER:", this)
     }
 
-    freeSlots(slotStartIndex: number, numSlots: number) {
+    hasEpic(owner: EpicID): { isPresent: boolean, index: number } {
+        for (let [i, s] of this.slots.entries()) {
+            if (s === owner) {
+                return {
+                    isPresent: true,
+                    index: i
+                }
+            }
+        };
 
+        return {
+            isPresent: false,
+            index: -1
+        }
     }
 }
 export class EpicSlots {
@@ -136,4 +145,18 @@ export class EpicSlots {
             rectPos, textPos
         }
     }
+
+    getEpicRowSlotIndex(epicID: EpicID): number {
+        for (let [_, r] of this.rows.entries()) {
+
+            let result1 = r.hasEpic(epicID);
+            if (result1.isPresent) {
+
+                return result1.index
+            }
+        }
+
+        return -1;
+    }
+
 }

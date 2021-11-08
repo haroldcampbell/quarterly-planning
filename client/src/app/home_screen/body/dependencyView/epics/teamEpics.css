@@ -124,7 +124,7 @@
     /* pointer-events: none; */
 }
 #dependency-connections path.selected-connection {
-    stroke: #1f8ce8;
+    stroke: #0c4472;
     stroke-width: 1px;
     stroke-dasharray: none;
 }
@@ -134,4 +134,13 @@
     stroke-width: 0.5px;
     stroke-dasharray: none;
     /* pointer-events: none; */
+}
+
+#dependency-connections path.has-conflict {
+    stroke: #e8461f;
+    stroke-width: 1.5px;
+    stroke-dasharray: none;
+    opacity: 1;
+    /* stroke-dasharray: 1px 3px; */
+    stroke-linecap: round;
 }

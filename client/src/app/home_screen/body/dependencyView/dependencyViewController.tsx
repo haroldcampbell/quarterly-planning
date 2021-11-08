@@ -3,7 +3,7 @@ import * as lib from "../../../../core/lib";
 import * as dataStore from "../../../data/dataStore";
 import { OSubjectViewAddDependencyDialog } from "../../selectedEpicDetails/addDependencyDialogController";
 import { OSubjectDidDeleteEpic } from "../../selectedEpicDetails/selectedEpicDetailsViewController";
-import { Team, TeamEpics, Epic, OSubjectCreateNewEpicRequest, TeamEpicDependency, EpicID, OSubjectChangedTeamEpicHeightBounds, OSubjectDidCreateNewTeam } from "../../_defs";
+import { Team, TeamEpics, Epic, OSubjectCreateNewEpicRequest, TeamEpicDependency, EpicID, OSubjectChangedTeamEpicHeightBounds, OSubjectDidCreateNewTeam, OSubjectProcessEpicDependencyConflicts, EpicConnection } from "../../_defs";
 import { AllTeamsResponse, CreateEpicResponse, URLAllTeams, URLCreateEpic } from "../../_defsServerResponses";
 
 /** @jsx gtap.$jsx */
@@ -112,6 +112,7 @@ export class DependencyViewController extends lib.BaseViewController implements 
                 this.onDidCreateNewTeam(newTeam);
                 break;
             }
+
         }
     }
 
@@ -134,4 +135,5 @@ export class DependencyViewController extends lib.BaseViewController implements 
         this.teamEpicsViewController.bindEpicToController(epic, epicController);
         this.teamEpicsViewController.relayoutEpicControllers();
     }
+
 }

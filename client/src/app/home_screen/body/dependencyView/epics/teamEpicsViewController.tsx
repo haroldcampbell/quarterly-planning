@@ -1,10 +1,11 @@
 import * as gtap from "../../../../../../www/dist/js/gtap";
 import * as lib from "../../../../../core/lib";
+import { EpicSizeToSlotLength } from "../../../../common/epicSlots";
 import { EpicControllerBounds, MilliSecondsInDay, ShapeYOffset, SVGMaxContextWidth, XYOnly } from "../../../../common/nodePositions";
 import * as dataStore from "../../../../data/dataStore";
 import { OSubjectDidDeleteEpic, OSubjectDidDeleteTeam } from "../../../selectedEpicDetails/selectedEpicDetailsViewController";
 
-import { DateMonthPeriod, Epic, EpicID, GTapElement, OSubjectDidChangeEpic, OSubjectDidCreateNewTeam, OSubjectDimUnhighlightedEpics, OSubjectHighlightDownstreamEpic, OSubjectHighlightUpstreamEpic, OSubjectUnHighlightAllEpic, PathInfo, SVGContainerID, Team, TeamEpics, TeamID, WeekDetail } from "../../../_defs";
+import { DateMonthPeriod, Epic, EpicConnection, EpicID, GTapElement, OSubjectDidChangeEpic, OSubjectDidCreateNewTeam, OSubjectDimUnhighlightedEpics, OSubjectHighlightDownstreamEpic, OSubjectHighlightUpstreamEpic, OSubjectProcessEpicDependencyConflicts, OSubjectUnHighlightAllEpic, PathInfo, SVGContainerID, Team, TeamEpics, TeamID, WeekDetail } from "../../../_defs";
 import { EpicsViewController } from "./epicsViewController";
 
 /** @jsx gtap.$jsx */
@@ -185,6 +186,7 @@ export class TeamEpicsViewController extends lib.BaseViewController implements l
         lib.Observable.subscribe(OSubjectDidDeleteTeam, this);
         lib.Observable.subscribe(OSubjectDimUnhighlightedEpics, this);
         lib.Observable.subscribe(OSubjectDidChangeEpic, this);
+        lib.Observable.subscribe(OSubjectProcessEpicDependencyConflicts, this);
 
         super.initView();
     }
@@ -234,7 +236,13 @@ export class TeamEpicsViewController extends lib.BaseViewController implements l
             case OSubjectDidChangeEpic: {
                 const { epic } = state.value;
                 this.relayoutEpicControllers();
-
+                break;
+            }
+            case OSubjectProcessEpicDependencyConflicts: {
+                const { selectedEpic,
+                    upstreamConnections,
+                    downstreamConnections } = state.value;
+                this.onProcessEpicDependencyConflicts(selectedEpic, upstreamConnections, downstreamConnections);
                 break;
             }
         }
@@ -258,6 +266,7 @@ export class TeamEpicsViewController extends lib.BaseViewController implements l
             pathInfo.p.$removeCSS("highlighed-downstream-connection");
             pathInfo.p.$removeCSS("selected-connection");
             pathInfo.p.$removeCSS("dimmed-connection");
+            pathInfo.p.$removeCSS("has-conflict");
         });
     }
 
@@ -277,6 +286,34 @@ export class TeamEpicsViewController extends lib.BaseViewController implements l
                 pathInfo.p.$appendCSS("selected-connection");
             }
         });
+    }
+
+    private onProcessEpicDependencyConflicts(selectedEpic: Epic, upstreamConnections: EpicConnection[], downstreamConnections: EpicConnection[]) {
+        const selectedEpicController = this.epicControllerDictionary.get(selectedEpic.ID)!;
+        const selectedEpicRowSlotIndex = selectedEpicController.getEpicRowSlotIndex(selectedEpic.ID)
+
+        let didFindConflict = false;
+        this.dependencyConnections.forEach(pathInfo => {
+            if (pathInfo.downstreamEpicID !== selectedEpic.ID) {
+                return;
+            }
+
+            const upstreamEpic = dataStore.getEpicByID(pathInfo.upstreamEpicID)!;
+            const controller = this.epicControllerDictionary.get(upstreamEpic.ID)!;
+            const epicRowSlotIndex = controller.getEpicRowSlotIndex(upstreamEpic.ID)
+
+            const numSlots = EpicSizeToSlotLength(upstreamEpic.Size);
+            const endIndex = epicRowSlotIndex + numSlots;
+
+            if (endIndex > selectedEpicRowSlotIndex) {
+                pathInfo.p.$appendCSS("has-conflict");
+                didFindConflict = true;
+            }
+        });
+
+        if (didFindConflict) {
+            selectedEpicController.didFindConflict(selectedEpic, didFindConflict);
+        }
     }
 
     private initTeamEpics(teamEpics: TeamEpics) {
@@ -464,3 +501,5 @@ function orienPath(p: any, start: XYOnly, end: XYOnly) {
         p.$path(end, start, true);
     }
 }
+
+

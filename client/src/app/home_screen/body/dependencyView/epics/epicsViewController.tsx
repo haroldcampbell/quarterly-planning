@@ -4,7 +4,7 @@ import * as dataStore from "../../../../data/dataStore";
 
 import { IViewController, IScreenController } from "../../../../../core/lib";
 import { EpicControllerBounds, EpicSizes, RowPadding, SVGMaxContextWidth } from "../../../../common/nodePositions";
-import { DateMonthPeriod, Epic, EpicID, EpicViewSVGNode, OSubjectChangedTeamEpicHeightBounds, OSubjectCreateNewEpicRequest, OSubjectDimUnhighlightedEpics, OSubjectHighlightDownstreamEpic, OSubjectHighlightUpstreamEpic, OSubjectUnHighlightAllEpic, OSubjectWillUpdateEpicName, SVGContainerID, TeamEpics, TeamID } from "../../../_defs";
+import { DateMonthPeriod, Epic, EpicID, EpicViewSVGNode, OSubjectChangedTeamEpicHeightBounds, OSubjectCreateNewEpicRequest, OSubjectDimUnhighlightedEpics, OSubjectHighlightDownstreamEpic, OSubjectHighlightUpstreamEpic, OSubjectProcessEpicDependencyConflicts, OSubjectUnHighlightAllEpic, OSubjectWillUpdateEpicName, SVGContainerID, TeamEpics, TeamID } from "../../../_defs";
 
 import { OSubjectDidDeleteEpic, OSubjectDidDeleteTeam, OSubjectEpicSelected } from "../../../selectedEpicDetails/selectedEpicDetailsViewController";
 import { OSubjectRedrawDependencyConnections, OSubjectTeamEpicsScrollContainerResized } from "./teamEpicsViewController";
@@ -267,6 +267,7 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
         this.notifyUpstreamEpicsForHighlight(epic, selectedEpicViewSVGNode)
         this.notifyDownstreamEpicsForHighlight(epic);
         this.notifyDimHighlightedEpics();
+        this.notifyProcessDependencyConflicts();
     }
 
     private onUnhighlighAllEpics() {
@@ -274,6 +275,9 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
             this.selectedEpicInfo.selectedEpicViewSVGNode.parentNode.$removeCSS("selected-epic-container");
             this.selectedEpicInfo.selectedEpicViewSVGNode.svgRectNode.$removeCSS("selected-epic");
             this.selectedEpicInfo.selectedEpicViewSVGNode.svgTextNode.$removeCSS("selected-epic");
+
+            this.selectedEpicInfo.selectedEpicViewSVGNode.svgRectNode.$removeCSS("has-conflict");
+            this.selectedEpicInfo.selectedEpicViewSVGNode.svgTextNode.$removeCSS("has-conflict");
         };
 
         this.highlightedUpstreamEpicSVGNodes.forEach((oldNode) => {
@@ -348,6 +352,21 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
         lib.Observable.notify(OSubjectDimUnhighlightedEpics, {
             source: this,
             value: { selectedEpic: this.selectedEpicInfo!.epic },
+        });
+    }
+
+    private notifyProcessDependencyConflicts() {
+        // This is not efficient since I'm calling the GetXXStreamConnections twice. Once here and once else were for this same selectedEpic
+        const upstreamConnections = dataStore.GetUpstreamConnections(this.selectedEpicInfo!.epic.ID);
+        const downstreamConnections = dataStore.GetDownstreamConnections(this.selectedEpicInfo!.epic.ID);
+
+        lib.Observable.notify(OSubjectProcessEpicDependencyConflicts, {
+            source: this,
+            value: {
+                selectedEpic: this.selectedEpicInfo!.epic,
+                upstreamConnections,
+                downstreamConnections
+            },
         });
     }
 
@@ -559,5 +578,15 @@ export class EpicsViewController extends lib.BaseViewController implements lib.I
 
     addNewTeamEpic(epic: Epic) {
         this.createEpic(epic)
+    }
+
+    getEpicRowSlotIndex(epicID: EpicID): number {
+        return this.epicSlots.getEpicRowSlotIndex(epicID);
+    }
+
+    didFindConflict(selectedEpic: Epic, didFindConflict: boolean) {
+        const epicSVGNode = this.epicsViewSVGMap.get(selectedEpic.ID)!;
+        epicSVGNode.svgRectNode.$appendCSS("has-conflict");
+        epicSVGNode.svgTextNode.$appendCSS("has-conflict");
     }
 }

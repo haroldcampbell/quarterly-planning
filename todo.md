@@ -1,7 +1,6 @@
 [X] Dependency conflicts
     [X] Use multiple rows when epics over-lap
-    [] Highlight conflicts between epics that end after upstream start dependency
-    [] Highlight conflicts between epics that start after upstream dependency
+    [X] Highlight conflicts between upstream epics that end after downstream epics start
 
 [X] FIX: Epic position error. The week dividers aren't correctly included in the epic.x calculation
 
